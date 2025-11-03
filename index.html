@@ -2,12 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Poppyverse Graph — Random Scatter, Collapsed Legend, 1–30 sizes</title>
+  <title>Poppyverse Graph — Compact Space, Positive Axes</title>
   <style>
     html, body { margin:0; height:100%; background:#0b0b12; overflow:hidden; }
     #g { width:100vw; height:100vh; }
 
-    /* Legend overlay (collapsed by default) */
+    /* Legend (collapsed by default) */
     #legend {
       position: fixed; top: 14px; left: 14px; z-index: 10;
       background: rgba(0,0,0,.58);
@@ -16,34 +16,31 @@
       padding: 10px 12px 12px 12px;
       color: #fff;
       font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      max-width: 46vw; backdrop-filter: blur(4px);
+      max-width: 50vw; backdrop-filter: blur(4px);
       pointer-events: auto; user-select: none;
     }
-    #legend header {
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      cursor: pointer; padding: 4px 2px;
-    }
-    #legend h3 { margin: 0; font-size: 18px; letter-spacing: .02em; opacity:.97; }
+    #legend header { display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; padding:4px 2px; }
+    #legend h3 { margin:0; font-size:18px; letter-spacing:.02em; opacity:.97; }
     #legend .toggle {
-      width: 26px; height: 26px; border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.25);
+      width:26px; height:26px; border-radius:8px;
+      border:1px solid rgba(255,255,255,.25);
       display:flex; align-items:center; justify-content:center;
-      font-size: 16px; line-height: 1; opacity:.9;
+      font-size:16px; line-height:1; opacity:.9;
     }
-    #legend .rows { margin-top: 8px; }
-    #legend .row { display:flex; align-items:center; gap:12px; margin: 8px 0; }
-    #legend .swatch { width: 18px; height: 18px; border-radius: 5px; border:1px solid rgba(255,255,255,.28); box-shadow: 0 0 12px rgba(255,20,71,.18); }
-    #legend .label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 34vw; opacity:.95; }
+    #legend .rows { margin-top:8px; }
+    #legend .row { display:flex; align-items:center; gap:12px; margin:8px 0; }
+    #legend .swatch { width:18px; height:18px; border-radius:5px; border:1px solid rgba(255,255,255,.28); box-shadow:0 0 12px rgba(255,255,255,.18); }
+    #legend .label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:38vw; opacity:.95; }
     #legend.collapsed .rows { display:none; }
-    #legend.collapsed .toggle { opacity: .7; }
+    #legend.collapsed .toggle { opacity:.7; }
+    #legend .static-link { margin-top:6px; font-size:14px; opacity:.95; }
+    #legend .static-link a { color:#FF1447; text-decoration:none; border-bottom:1px dashed #FF1447; }
+    #legend .static-link a:hover { text-decoration:underline; }
 
     /* Tooltip */
-    .poppy-label {
-      color: #fff;
-      font: 18px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    }
-    .poppy-label b { color: #FF1447; text-shadow: 0 0 10px #FF1447; }
-    .poppy-label .hint { opacity:.9; font-size: 16px; }
+    .poppy-label { color:#fff; font:18px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+    .poppy-label b { text-shadow:0 0 10px currentColor; }
+    .poppy-label .hint { opacity:.9; font-size:16px; }
   </style>
 </head>
 <body>
@@ -56,6 +53,9 @@
       <div class="toggle" aria-label="Toggle legend" title="Toggle legend">▸</div>
     </header>
     <div class="rows" id="legend-rows"></div>
+    <div class="static-link">
+      Prefer a calmer, saner static index? See the <a href="https://inpoppyfields.tumblr.com/map" target="_blank" rel="noopener">Story Map</a>.
+    </div>
   </div>
 
   <!-- Three.js, 3d-force-graph, PapaParse -->
@@ -82,7 +82,8 @@
     id: ['id','node id','uid','slug'],
     name: ['name','title','label'],
     tags: ['tag','tags','category','categories'], // Universe cluster
-    size: ['size','val','value','weight'],       // 1..30 (string or number or "(X) text")
+    size: ['size','val','value','weight'],       // 1..30 or "(X) whatever"
+    content: ['content'], meta: ['meta'], relatable: ['relatable'], // XYZ numeric in parentheses
     sequels: ['sequels','sequel','next','edges','to'],
     collision: ['collision','collisions','collide','also to'],
     url: ['url','link','href','permalink']
@@ -103,30 +104,36 @@
     return rgbToHex(Math.round(lerp(a.r,b.r,t)), Math.round(lerp(a.g,b.g,t)), Math.round(lerp(a.b,b.b,t)));
   }
 
-  // ===== Random scatter & animation knobs =====
-  const BOX = 2200;   // scatter range: [-BOX, BOX] on each axis
-  const EXPLODE_MS = 1400;
-  const CAM_FLY_MS = 1600;
-  const START_Z = 5200;
-  const END_Z   = 1700;
+  // ===== Position / spread knobs (CLOSER but not overlapping) =====
+  // Reduced overall scale & spacing; still adds spiral de-overlap + jitter.
+  const POS_SCALE    = 220;  // was ~950 → closer clusters
+  const CLUSTER_BASE = 28;   // base spacing for equal triples (was 48)
+  const CLUSTER_STEP = 20;   // growth per duplicate (was 32)
+  const RANDOM_RADIAL= 26;   // extra spiral radius randomness (was 48)
+  const BASE_JITTER  = 18;   // base 3D jitter (was 26)
+  const EXTRA_JITTER = 26;   // extra randomized jitter (was 40)
+
+  // Axis names (X,Y,Z) — positive-only, white lines
+  const AXIS_NAMES = {
+    x: 'Lumen threshold',        // Content
+    y: 'Metaphysical drift',     // Meta
+    z: 'Proximity to home'       // Relatability
+  };
 
   // Utils
   function normalizeHeaders(fields){const m={};(fields||[]).forEach(f=>{m[String(f||'').trim().toLowerCase()]=f;});return m;}
   function pick(headers, aliases){for(const a of aliases){const k=a.toLowerCase();if(k in headers) return headers[k];for(const key in headers){if(key.includes(k)) return headers[key];}}return null;}
   function splitIdsFlexible(s){if(s==null) return [];const raw=String(s).trim();if(!raw) return [];return raw.split(/[\s,;|]+/).map(t=>t.trim()).filter(Boolean).map(t=>Number(t)).filter(n=>Number.isFinite(n));}
   function parseParenNumber(s,fb=null){const m=/\(\s*([-+]?\d*\.?\d+)\s*\)/.exec(String(s||''));return m?Number(m[1]):fb;}
-  function toSize(s){ // 1..30, from "(X) text" or raw number
-    const fromParen = parseParenNumber(s);
-    const n = (fromParen!=null ? fromParen : (s==null||s==='' ? 5 : Number(s)));
-    const v = Number.isFinite(n) ? n : 5;
-    return Math.max(1, Math.min(30, v));
-  }
+  function toSize(s){ const fromParen = parseParenNumber(s); const n = (fromParen!=null ? fromParen : (s==null||s==='' ? 5 : Number(s))); const v = Number.isFinite(n) ? n : 5; return Math.max(1, Math.min(30, v)); }
   function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-
-  // Seeded randomness
   function hash32(str){let h=2166136261>>>0; for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);} return h>>>0;}
   function rand(seed){ seed = (seed + 0x6D2B79F5) >>> 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
-  const EASE_OUT_CUBIC = t => 1 - Math.pow(1 - t, 3);
+
+  // Cache legend elements ONCE
+  const legendEl = document.getElementById('legend');
+  const rowsEl   = document.getElementById('legend-rows');
+  const toggleEl = document.getElementById('legend-toggle');
 
   // ====== load data ======
   fetchFirstCsv()
@@ -141,13 +148,17 @@
         name: pick(headers,COLNAMES.name),
         tags: pick(headers,COLNAMES.tags),
         size: pick(headers,COLNAMES.size),
+        content: pick(headers,COLNAMES.content),
+        meta: pick(headers,COLNAMES.meta),
+        relatable: pick(headers,COLNAMES.relatable),
         sequels: pick(headers,COLNAMES.sequels),
         collision: pick(headers,COLNAMES.collision),
         url: pick(headers,COLNAMES.url)
       };
       if(!col.id || !col.tags) throw new Error('Need at least ID/NAME and TAG columns');
 
-      // ---------- Nodes (random scatter targets, explode from origin) ----------
+      // ---------- Nodes (compact XYZ + spiral de-overlap + jitter) ----------
+      const nodeBuckets = Object.create(null); // "x|y|z" -> count
       const nodes = rows.map(r=>{
         const id = String(r[col.id] ?? '').trim();
         const label = String(r[col.name] ?? id).trim() || id;
@@ -155,23 +166,41 @@
         if(!id || !cluster) return null;
 
         const url = ((r[col.url] ?? '') + '').trim() || null;
-        const val = toSize(r[col.size]);
+        const size = toSize(r[col.size]);
 
-        const seed = hash32(id);
-        const tx = (rand(seed)*2-1) * BOX;
-        const ty = (rand(seed+1)*2-1) * BOX;
-        const tz = (rand(seed+2)*2-1) * BOX;
+        // parse "(X) part" for XYZ (Content→x, Meta→y, Relatable→z)
+        const xv=parseParenNumber(r[col.content],0), yv=parseParenNumber(r[col.meta],0), zv=parseParenNumber(r[col.relatable],0);
+        const TX=(Number.isFinite(xv)?xv:0)*POS_SCALE, TY=(Number.isFinite(yv)?yv:0)*POS_SCALE, TZ=(Number.isFinite(zv)?zv:0)*POS_SCALE;
 
-        // start near origin for explode
-        const startJ = 6;
-        const sx = (rand(seed+3)-0.5)*startJ;
-        const sy = (rand(seed+4)-0.5)*startJ;
-        const sz = (rand(seed+5)-0.5)*startJ;
+        const bucketKey = `${xv}|${yv}|${zv}`;
+        nodeBuckets[bucketKey]=(nodeBuckets[bucketKey]||0);
+        const idx = nodeBuckets[bucketKey]++;
 
-        return { id, label, cluster, url, val,
-                 x:sx, y:sy, z:sz, fx:sx, fy:sy, fz:sz,
-                 tx, ty, tz,
-                 _dbg:{seed} };
+        const seed = hash32(id + '|' + bucketKey);
+        const r1 = rand(seed), r2 = rand(seed+1), r3 = rand(seed+2), r4 = rand(seed+3);
+
+        const PHI=2.399963229728653;
+        const baseRadius = CLUSTER_BASE + CLUSTER_STEP * Math.sqrt(idx);
+        const radius = baseRadius + (r1 - 0.5) * 2 * RANDOM_RADIAL;
+        const angle  = idx * PHI + r2 * Math.PI * 2;
+
+        const jAmp = BASE_JITTER + r3 * EXTRA_JITTER;
+        const jx = (r4*2 - 1) * jAmp;
+        const jy = (rand(seed+4)*2 - 1) * jAmp;
+        const jz = (rand(seed+5)*2 - 1) * jAmp;
+
+        const dx = radius * Math.cos(angle) + jx;
+        const dy = radius * Math.sin(angle) + jy;
+        const dz = jz;
+
+        const x = TX + dx, y = TY + dy, z = TZ + dz;
+
+        return {
+          id, label, cluster, url, val:size,
+          x, y, z, fx:x, fy:y, fz:z, tx:x, ty:y, tz:z,
+          color: null,
+          _dbg: { seed, idx, baseRadius, radius, angle, jx, jy, jz, TX, TY, TZ }
+        };
       }).filter(Boolean);
 
       // maps for links
@@ -189,8 +218,8 @@
         const key = String(raw);
         let node = nodeById.get(key);
         if (node) return node;
-        node = { id:key, label:key, cluster:'(referenced)', url:null, val:5, color:'#00E5FF',
-                 x:0,y:0,z:0, fx:0,fy:0,fz:0, tx:0,ty:0,tz:0, _dbg:{seed:0} };
+        node = { id:key, label:key, cluster:'(referenced)', url:null, val:5,
+                 x:0,y:0,z:0, fx:0,fy:0,fz:0, tx:0,ty:0,tz:0, color:'#00E5FF', _dbg:{seed:0} };
         nodes.push(node);
         nodeById.set(key, node);
         const num=Number(key); if(Number.isFinite(num)) nodeByNum.set(num, node);
@@ -204,7 +233,7 @@
         if(String(srcId) === String(tgtId)) return;
         const srcNode = ensureNodeForId(srcId);
         const tgtNode = ensureNodeForId(tgtId);
-        links.push({ source: srcNode, target: tgtNode, color:'#FFFFFF', width:0.9 });
+        links.push({ source: srcNode, target: tgtNode, color:'#FFFFFF', width:1.2 });
       }
       rows.forEach(r=>{
         const srcRaw = String(r[col.id] ?? '').trim();
@@ -214,56 +243,14 @@
         const targets = [...seq, ...coln];
         if (targets.includes(0)) {
           nodes.forEach(n => { if (String(n.id) !== srcRaw) addLinkByIds(srcRaw, n.id); });
-          return;
+        } else {
+          targets.forEach(num=>{
+            if (num === 0) return;
+            const tgt = nodeByNum.get(num) || nodeById.get(String(num)) || ensureNodeForId(num);
+            addLinkByIds(srcRaw, tgt.id);
+          });
         }
-        targets.forEach(num=>{
-          if (num === 0) return;
-          const tgt = nodeByNum.get(num) || nodeById.get(String(num)) || ensureNodeForId(num);
-          addLinkByIds(srcRaw, tgt.id);
-        });
       });
-
-      // Legend build + toggle
-      const legend=document.getElementById('legend'),
-            rowsEl=document.getElementById('legend-rows'),
-            toggleEl=document.getElementById('legend-toggle');
-      rowsEl.innerHTML='';
-      clusterOrder.forEach(t=>{
-        const row=document.createElement('div'); row.className='row';
-        const sw=document.createElement('div'); sw.className='swatch'; sw.style.background=clusterColor[t]; sw.style.boxShadow=`0 0 12px ${clusterColor[t]}`;
-        const la=document.createElement('div'); la.className='label'; la.textContent=t;
-        row.appendChild(sw); row.appendChild(la); rowsEl.appendChild(row);
-      });
-      legend.hidden=false;
-      toggleEl.addEventListener('click', ()=>{
-        legend.classList.toggle('collapsed');
-        const chevron = legend.querySelector('.toggle');
-        chevron.textContent = legend.classList.contains('collapsed') ? '▸' : '▾';
-      });
-
-      // ---- Glow (idle tinted to node color; big/bright on hover) ----
-      const glowTexCache={};
-      function makeGlowTexture(hex){
-        if(glowTexCache[hex]) return glowTexCache[hex];
-        const {r,g,b}=hexToRgb(hex); const size=256;
-        const canvas=document.createElement('canvas'); canvas.width=canvas.height=size;
-        const ctx=canvas.getContext('2d');
-        const grd=ctx.createRadialGradient(size/2,size/2,size*0.06,size/2,size/2,size*0.55);
-        grd.addColorStop(0.00,'rgba(255,255,255,0.85)');
-        grd.addColorStop(0.18,`rgba(${r},${g},${b},0.45)`);
-        grd.addColorStop(0.60,`rgba(${r},${g},${b},0.18)`);
-        grd.addColorStop(1.00,'rgba(0,0,0,0)');
-        ctx.fillStyle=grd; ctx.fillRect(0, 0, size, size);
-        const tex=new THREE.CanvasTexture(canvas); tex.needsUpdate=true; glowTexCache[hex]=tex; return tex;
-      }
-      function makeGlowSprite(hex){
-        const map=makeGlowTexture(hex);
-        const mat=new THREE.SpriteMaterial({
-          map, color:0xffffff, transparent:true, depthWrite:false,
-          blending:THREE.AdditiveBlending, opacity:0.30
-        });
-        const spr=new THREE.Sprite(mat); spr.scale.set(1,1,1); return spr;
-      }
 
       // --------- Build Graph ---------
       const elem = document.getElementById('g');
@@ -276,7 +263,7 @@
         .showNavInfo(false)
         .d3Force('link', null)
         .d3Force('charge', null)
-        .enableNodeDrag(false)
+        .enableNodeDrag(false)   // disabled as requested
         .cooldownTicks(0)
         .nodeThreeObject(n => {
           const colorHex = n.color || '#FF1447';
@@ -288,80 +275,63 @@
             new THREE.MeshStandardMaterial({ color, metalness:0.12, roughness:0.38 })
           );
 
-          // size: map 1..30 roughly to visual scale
-          // base scale factor: 3.0 at size=10; grow slower beyond that
           const size = Math.max(1, Math.min(30, n.val || 5));
-          const s = (size / 10) * 3.0; // linear; tweak if you want gamma
+          const s = (size / 10) * 3.0;
           core.scale.set(s,s,s);
 
-          // Idle glow: medium, tinted
+          // Idle glow: smaller
           const glow=makeGlowSprite(colorHex);
-          const idleSize = baseRadius*s*8;
+          const idleSize = baseRadius*s*5;
           glow.scale.set(idleSize,idleSize,1);
-          glow.material.opacity = 0.30;
+          glow.material.opacity = 0.24;
           core.add(glow);
 
-          n.__core=core; n.__glow=glow; n.__sizeScale=s; n.__idleSize=idleSize; n.__idleOpacity=0.30;
+          // only sphere is interactive
+          core.raycast = THREE.Mesh.prototype.raycast;
+          glow.raycast = () => null;
+
+          n.__core=core; n.__glow=glow; n.__sizeScale=s; n.__idleSize=idleSize; n.__idleOpacity=0.24;
           return core;
         })
-        // Tooltips for ALL nodes
         .nodeLabel(n => {
+          const color = n.color || '#FF1447';
           const hint = n.url ? '<span class="hint">Click to open archive</span>' : '<span class="hint">URL: N/A</span>';
           const cl = n.cluster ? `<br><span style="opacity:.9; font-size: 16px">Universe cluster: ${escapeHtml(n.cluster)}</span>` : '';
-          return `<div class="poppy-label"><b>${escapeHtml(n.label || n.id)}</b>${cl}<br>${hint}</div>`;
+          return `<div class="poppy-label"><b style="color:${color}">${escapeHtml(n.label || n.id)}</b>${cl}<br>${hint}</div>`;
         })
         .linkColor(l => l.color || '#FFFFFF')
         .linkWidth(l => l.width || 0.9)
-        .linkOpacity(0.7);
+        .linkOpacity(0.75);
 
       // Lights
       const scene=Graph.scene();
-      scene.add(new THREE.AmbientLight(0xffffff,0.35));
-      const dir=new THREE.DirectionalLight(0xffffff,0.6); dir.position.set(60,80,40); scene.add(dir);
+      scene.add(new THREE.AmbientLight(0xffffff,0.38));
+      const dir=new THREE.DirectionalLight(0xffffff,0.7); dir.position.set(60,80,40); scene.add(dir);
 
-      // Controls + camera fly
+      // Controls
       const controls=Graph.controls();
-      controls.enableRotate=true; controls.enablePan=true; controls.minDistance=20; controls.maxDistance=30000;
-      controls.target.set(0,0,0); controls.update();
-      Graph.cameraPosition({x:0,y:0,z:START_Z},{x:0,y:0,z:0},0);
-      setTimeout(()=>{ Graph.cameraPosition({x:0,y:0,z:END_Z},{x:0,y:0,z:0},CAM_FLY_MS); }, 30);
+      controls.enableRotate = true;
+      controls.enablePan = true;
+      controls.minDistance = 20;
+      controls.maxDistance = 1200;
+      controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.PAN
+      };
+      controls.update();
 
-      // ---------- Explode animation ----------
-      const t0 = performance.now();
-      function animateExplode(now){
-        const t = Math.min(1, (now - t0) / EXPLODE_MS);
-        const e = EASE_OUT_CUBIC(t);
-        for(const n of nodes){
-          n.x = n.fx = n.tx * e + n.fx * (1 - e);
-          n.y = n.fy = n.ty * e + n.fy * (1 - e);
-          n.z = n.fz = n.tz * e + n.fz * (1 - e);
-        }
-        if (t < 1) requestAnimationFrame(animateExplode);
-        else {
-          for (const n of nodes) {
-            n.x = n.fx = n.tx; n.y = n.fy = n.ty; n.z = n.fz = n.tz;
-            console.log('%c[NODE]', 'color:#FF1447;font-weight:bold',
-              n.label || n.id, '→', { x:n.x, y:n.y, z:n.z, seed:n._dbg?.seed }
-            );
-          }
-        }
-      }
-      requestAnimationFrame(animateExplode);
-
-      // Hover pulse: BIG + bright on hover, revert to idle when out
+      // Hover pulse: tinted, subtle
       function pulse(){
         if(!hoveredNode || !hoveredNode.__glow || !hoveredNode.__core){ pulseRAF=requestAnimationFrame(pulse); return; }
         const t=(Date.now()%1200)/1200;
-        const amp = 1 + 0.22 * Math.sin(t * Math.PI * 2);
-        const opacity = 0.40 + 0.35 * (0.5 + 0.5 * Math.sin(t * Math.PI * 2));
-
+        const amp = 1 + 0.12 * Math.sin(t * Math.PI * 2);
+        const opacity = 0.34 + 0.22 * (0.5 + 0.5 * Math.sin(t * 2*Math.PI));
         const b=hoveredNode.__sizeScale;
-        hoveredNode.__core.scale.set(b*1.06,b*1.06,b*1.06);
-
-        const big = hoveredNode.__idleSize * 1.8;
+        hoveredNode.__core.scale.set(b*1.04,b*1.04,b*1.04);
+        const big = hoveredNode.__idleSize * 1.35;
         hoveredNode.__glow.scale.set(big*amp, big*amp, 1);
         hoveredNode.__glow.material.opacity = opacity;
-
         pulseRAF=requestAnimationFrame(pulse);
       }
 
@@ -374,7 +344,7 @@
             prev.__glow.material.opacity = prev.__idleOpacity;
           }
           hoveredNode=node||null;
-          if(hoveredNode){ 
+          if(hoveredNode){
             elem.style.cursor='pointer';
             if(!pulseRAF) pulseRAF=requestAnimationFrame(pulse);
           } else {
@@ -384,12 +354,196 @@
         })
         .onNodeClick(n=>{ if(n.url) window.open(n.url,'_blank','noopener'); });
 
-      // console.log(`nodes: ${nodes.length}, links: ${links.length}`);
+      // -------- Center camera + add positive-only white axes --------
+      fitCameraAndAxes(nodes);
+
+      function fitCameraAndAxes(list){
+        if (!list.length) return;
+        let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;
+        for(const n of list){
+          if(n.x<minX)minX=n.x; if(n.y<minY)minY=n.y; if(n.z<minZ)minZ=n.z;
+          if(n.x>maxX)maxX=n.x; if(n.y>maxY)maxY=n.y; if(n.z>maxZ)maxZ=n.z;
+        }
+        // origin at minima (positive-only axes)
+        const ox=minX, oy=minY, oz=minZ;
+        const spanX=maxX-minX, spanY=maxY-minY, spanZ=maxZ-minZ;
+        const span = Math.max(spanX, spanY, spanZ);
+        const dist = span * 1.1 + 800; // tighter camera distance for compact space
+
+        const cx = ox + spanX/2, cy = oy + spanY/2, cz = oz + spanZ/2;
+
+        controls.target.set(cx, cy, cz);
+        controls.update();
+
+        Graph.cameraPosition(
+          { x: cx + dist, y: cy + dist, z: cz + dist },
+          { x: cx,       y: cy,       z: cz       },
+          0
+        );
+
+        addAxesPositive(scene, {x:ox,y:oy,z:oz}, {x:spanX, y:spanY, z:spanZ});
+      }
+
+      // --- Build legend (reuse clusterOrder & clusterColor) ---
+      rowsEl.innerHTML = '';
+      clusterOrder.forEach(tag => {
+        const color = clusterColor[tag];
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const sw = document.createElement('div');
+        sw.className = 'swatch';
+        sw.style.background = color;
+        sw.style.boxShadow = `0 0 12px ${color}`;
+
+        const la = document.createElement('div');
+        la.className = 'label';
+        la.textContent = tag;
+
+        row.appendChild(sw);
+        row.appendChild(la);
+        rowsEl.appendChild(row);
+      });
+      legendEl.hidden = false;
+      toggleEl.addEventListener('click', () => {
+        legendEl.classList.toggle('collapsed');
+        const chevron = legendEl.querySelector('.toggle');
+        chevron.textContent = legendEl.classList.contains('collapsed') ? '▸' : '▾';
+      });
+
     })
     .catch(err => {
       document.body.innerHTML = '<pre style="color:#fff; padding:16px">'+String(err)+'</pre>';
       console.error(err);
     });
+
+  // ---- Glow helpers (defined once) ----
+  const glowTexCache={};
+  function makeGlowTexture(hex){
+    if(glowTexCache[hex]) return glowTexCache[hex];
+    const {r,g,b}=hexToRgb(hex); const size=256;
+    const canvas=document.createElement('canvas'); canvas.width=canvas.height=size;
+    const ctx=canvas.getContext('2d');
+    const grd=ctx.createRadialGradient(size/2,size/2,size*0.06,size/2,size/2,size*0.5);
+    grd.addColorStop(0.00,'rgba(255,255,255,0.85)');
+    grd.addColorStop(0.18,`rgba(${r},${g},${b},0.38)`);
+    grd.addColorStop(0.60,`rgba(${r},${g},${b},0.14)`);
+    grd.addColorStop(1.00,'rgba(0,0,0,0)');
+    ctx.fillStyle=grd; ctx.fillRect(0,0,size,size);
+    const tex=new THREE.CanvasTexture(canvas); tex.needsUpdate=true; glowTexCache[hex]=tex; return tex;
+  }
+  function makeGlowSprite(hex){
+    const map=makeGlowTexture(hex);
+    const mat=new THREE.SpriteMaterial({
+      map, color:0xffffff, transparent:true, depthWrite:false,
+      blending:THREE.AdditiveBlending, opacity:0.24
+    });
+    const spr=new THREE.Sprite(mat);
+    spr.raycast = () => null; // glow never catches clicks
+    return spr;
+  }
+
+  // ---- Axis helpers (positive-only, white) ----
+  function addAxesPositive(scene, origin, spans){
+    // remove old axes if present
+    const old = scene.getObjectByName('axesGroup');
+    if (old) scene.remove(old);
+
+    const g = new THREE.Group();
+    g.name = 'axesGroup';
+    g.raycast = () => null;
+
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x00FFFF, transparent:true, opacity:0.9 });
+
+    // Lines from origin → positive ends
+    const xGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(origin.x, origin.y, origin.z),
+      new THREE.Vector3(origin.x + spans.x, origin.y, origin.z)
+    ]);
+    const yGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(origin.x, origin.y, origin.z),
+      new THREE.Vector3(origin.x, origin.y + spans.y, origin.z)
+    ]);
+    const zGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(origin.x, origin.y, origin.z),
+      new THREE.Vector3(origin.x, origin.y, origin.z + spans.z)
+    ]);
+    const xAxis = new THREE.Line(xGeo, lineMat); xAxis.raycast = () => null;
+    const yAxis = new THREE.Line(yGeo, lineMat); yAxis.raycast = () => null;
+    const zAxis = new THREE.Line(zGeo, lineMat); zAxis.raycast = () => null;
+
+    // Arrow tips
+    const tipGeom = new THREE.ConeGeometry(12, 38, 16);
+    const tipMat = new THREE.MeshBasicMaterial({ color: 0x00FFFF });
+    const xTip = new THREE.Mesh(tipGeom, tipMat); xTip.position.set(origin.x + spans.x, origin.y, origin.z); xTip.rotation.z = -Math.PI / 2;
+    const yTip = new THREE.Mesh(tipGeom, tipMat); yTip.position.set(origin.x, origin.y + spans.y, origin.z); yTip.rotation.x =  Math.PI / 2;
+    const zTip = new THREE.Mesh(tipGeom, tipMat); zTip.position.set(origin.x, origin.y, origin.z + spans.z);
+    [xTip,yTip,zTip].forEach(m=>{ m.raycast=()=>null; m.renderOrder=1; });
+
+    // Labels
+    const xLabel = makeTextSprite(AXIS_NAMES.x, '#00FFFF');
+    const yLabel = makeTextSprite(AXIS_NAMES.y, '#00FFFF');
+    const zLabel = makeTextSprite(AXIS_NAMES.z, '#00FFFF');
+    const lblOff = 68;
+    xLabel.position.set(origin.x + spans.x + lblOff, origin.y, origin.z);
+    yLabel.position.set(origin.x, origin.y + spans.y + lblOff, origin.z);
+    zLabel.position.set(origin.x, origin.y, origin.z + spans.z + lblOff);
+    [xLabel,yLabel,zLabel].forEach(s=>{ s.raycast=()=>null; s.renderOrder=2; });
+
+    g.add(xAxis,yAxis,zAxis,xTip,yTip,zTip,xLabel,yLabel,zLabel);
+    scene.add(g);
+  }
+
+  function makeTextSprite(text, color='#FFFFFF'){
+    const fontSize = 15;
+    const pad = 8;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.font = `bold ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
+    const metrics = ctx.measureText(text);
+    const w = Math.ceil(metrics.width) + pad*2;
+    const h = Math.ceil(fontSize*1.6) + pad*2;
+    canvas.width = w;
+    canvas.height = h;
+
+    const ctx2 = canvas.getContext('2d');
+    ctx2.font = `bold ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
+    ctx2.textAlign = 'center';
+    ctx2.textBaseline = 'middle';
+
+    // neutral white frame
+    ctx2.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx2.strokeStyle = 'rgba(0,255,255,0.45)';
+    ctx2.lineWidth = 2;
+    roundRect(ctx2, 1,1, w-2,h-2, 12); ctx2.fill(); ctx2.stroke();
+
+    ctx2.fillStyle = color;
+    ctx2.shadowColor = color;
+    ctx2.shadowBlur = 10;
+    ctx2.fillText(text, w/2, h/2);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+    tex.needsUpdate = true;
+
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent:true, depthWrite:false });
+    const spr = new THREE.Sprite(mat);
+    const scale = 80;
+    spr.scale.set(scale*(w/h), scale, 1);
+    return spr;
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    const rr = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr, y);
+    ctx.arcTo(x+w, y,   x+w, y+h, rr);
+    ctx.arcTo(x+w, y+h, x,   y+h, rr);
+    ctx.arcTo(x,   y+h, x,   y,   rr);
+    ctx.arcTo(x,   y,   x+w, y,   rr);
+    ctx.closePath();
+  }
   </script>
 </body>
 </html>
