@@ -7,11 +7,29 @@
 
   <style>
     html, body { margin:0; height:100%; background:#0b0b12; overflow:hidden; }
-    #g { width:100vw; height:100vh;}
     :root {
-        --poppy-red: #FF1447;
-        --chart-color: #fff;
+      --poppy-red: #FF1447;
+      --chart-color: #fff;
     }
+
+    /* --- starry background layer (fades in smoothly) --- */
+    #bg{
+      position: fixed; inset: 0; z-index: 0;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      opacity: 0;
+      transform: scale(1.04);
+      transition:
+        opacity 1200ms ease,
+        transform 3200ms cubic-bezier(.22,.61,.36,1);
+      filter: saturate(1.05) contrast(1.06) brightness(.92);
+    }
+    #bg.show{ opacity: 1; transform: scale(1); }
+
+    /* graph container sits above the bg */
+    #g { position: relative; z-index: 1; width:100vw; height:100vh; }
 
     /* legend: starts collapsed because we respect your attention span */
     #legend {
@@ -43,44 +61,27 @@
     #legend .static-link a { color:var(--poppy-red); text-decoration:none; border-bottom:1px dashed var(--poppy-red); }
     #legend .static-link a:hover { text-decoration:underline; }
 
-    /* tooltip: readable, dramatic, and just a little extra */
-    /* tooltip layout */
+    /* tooltip layout — clearer key/value vibes */
     .poppy-label .title {
-        display:block;
-        font-weight:800;
-        letter-spacing:.01em;
-        text-shadow:0 0 12px currentColor, 0 0 28px currentColor;
-        margin-bottom:4px;
+      display:block; font-weight:800; letter-spacing:.01em;
+      text-shadow:0 0 12px currentColor, 0 0 28px currentColor;
+      margin-bottom:4px;
     }
-    .poppy-label .kv {
-        display:block;
-        font-size:16px;
-        line-height:1.45;
-        margin:2px 0;
-    }
+    .poppy-label .kv { display:block; font-size:16px; line-height:1.45; margin:2px 0; }
     .poppy-label .kv .key {
-        opacity:.75;
-        text-transform:uppercase;
-        letter-spacing:.06em;
-        font-size:13px;
-        margin-right:6px;
+      opacity:.75; text-transform:uppercase; letter-spacing:.06em;
+      font-size:13px; margin-right:6px;
     }
-    .poppy-label .kv .val {
-        font-weight:600;
-        opacity:.98;
-    }
-    .poppy-label .kv.cluster .val {
-     text-shadow:0 0 10px currentColor;
-    }
+    .poppy-label .kv .val { font-weight:600; opacity:.98; }
+    .poppy-label .kv.cluster .val { text-shadow:0 0 10px currentColor; }
     .poppy-label .sep {
-        display:block;
-        height:1px;
-        margin:6px 0 4px 0;
-        background:linear-gradient(90deg, rgba(255,255,255,.22), rgba(255,255,255,.06) 60%, rgba(255,255,255,0));
+      display:block; height:1px; margin:6px 0 4px 0;
+      background:linear-gradient(90deg, rgba(255,255,255,.22), rgba(255,255,255,.06) 60%, rgba(255,255,255,0));
     }
   </style>
 </head>
 <body>
+  <div id="bg"></div>
   <div id="g"></div>
 
   <!-- yes, it’s collapsed by default; curiosity optional -->
@@ -95,15 +96,13 @@
     </div>
   </div>
 
-  <!-- three.js, 3d-force-graph, and papaparse wander in like they own the place -->
+  <!-- libs -->
   <script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/3d-force-graph"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <script>
-  //#region csv setup (yes, we’ll go find it for you)
-
-  // csv candidates living in the same folder, because convenience
+  //#region csv setup
   const CSV_CANDIDATES = [
     'table.csv',
     'table - export.csv',
@@ -112,228 +111,82 @@
     'the poppy board v2.csv',
     'the poppy board, v2 28b95a1c19ee80249fb2fd23fc0b9532.csv'
   ];
-
   async function fetchFirstCsv() {
     for (const name of CSV_CANDIDATES) {
       try {
         const res = await fetch(name, { cache: 'no-cache' });
-        if (res.ok) {
-          return await res.text();
-        }
-      } catch {
-        // silence is golden; we’ll try the next name
-      }
+        if (res.ok) return await res.text();
+      } catch {}
     }
     throw new Error('csv not found. add your filename to CSV_CANDIDATES (must contain "table" or "the poppy board").');
   }
-
   //#endregion
 
-  //#region columns, palette, helpers (aka everything that makes this look intentional)
-
-  // flexible columns, because everyone names things differently and that’s fine
+  //#region columns, palette, helpers
   const COLNAMES = {
     id: ['id','node id','uid','slug'],
     name: ['name','title','label'],
-    tags: ['tag','tags','category','categories'], // universe cluster, your vibe bucket
-    size: ['size','val','value','weight'],        // 1..30 or “(X) absolutely”
+    tags: ['tag','tags','category','categories'],
+    size: ['size','val','value','weight'],
     content: ['content'],
     meta: ['meta'],
-    relatable: ['relatable'],                     // xyz: numbers hiding in parentheses
+    relatable: ['relatable'],
     sequels: ['sequels','sequel','next','edges','to'],
     collision: ['collision','collisions','collide','also to'],
     url: ['url','link','href','permalink']
   };
 
-  // poppy → pink → purple → cyan, because subtlety is overrated
-  const TAG_PALETTE = [
-    '#FF1447',
-    '#FF2E7A',
-    '#FF5AC8',
-    '#C243FF',
-    '#8A3DFF',
-    '#4F6CFF',
-    '#1CC6FF',
-    '#00E5FF'
-  ];
+  const TAG_PALETTE = ['#FF1447','#FF2E7A','#FF5AC8','#C243FF','#8A3DFF','#4F6CFF','#1CC6FF','#00E5FF'];
 
   const AXES_COLOR = 0xFF1447;
   const AXES_COLOR_STRING = '#FF1447';
 
-  function lerp(a, b, t) {
-    return a + (b - a) * t;
-  }
+  const POS_SCALE = 100, CLUSTER_BASE=28, CLUSTER_STEP=20, RANDOM_RADIAL=26, BASE_JITTER=100, EXTRA_JITTER=26;
 
-  function hexToRgb(hex) {
-    const s = String(hex).replace('#', '');
-    return {
-      r: parseInt(s.slice(0, 2), 16),
-      g: parseInt(s.slice(2, 4), 16),
-      b: parseInt(s.slice(4, 6), 16)
-    };
-  }
-
-  function rgbToHex(r, g, b) {
-    const h = v => v.toString(16).padStart(2, '0');
-    return '#' + h(r) + h(g) + h(b);
-  }
-
-  function extendCool(i) {
-    const a = hexToRgb(TAG_PALETTE[TAG_PALETTE.length - 2]);
-    const b = hexToRgb(TAG_PALETTE[TAG_PALETTE.length - 1]);
-    const t = (i % 6) / 6;
-    return rgbToHex(
-      Math.round(lerp(a.r, b.r, t)),
-      Math.round(lerp(a.g, b.g, t)),
-      Math.round(lerp(a.b, b.b, t))
-    );
-  }
-
-  // position and spread: closer clusters, zero mush, still not on top of each other
-  // yes, these knobs are here to tweak when your data gets feisty
-  const POS_SCALE     = 100; // space is big; we decided to be modest
-  const CLUSTER_BASE  = 28;  // base spacing for the well-behaved ones
-  const CLUSTER_STEP  = 20;  // more neighbors? expand politely
-  const RANDOM_RADIAL = 26;  // sprinkle some chaos
-  const BASE_JITTER   = 100; // dramatic jitter, because overlap is a sin
-  const EXTRA_JITTER  = 26;  // bonus chaos for flavor
-
-  // axis names: all positive, all judgemental
   const AXIS_NAMES = {
-    x: 'Lumen Inversion',    // yes, darker means bigger, because we said so
-    y: 'Metaphysical Drift', // vibes but make it academic
-    z: 'Proximity to Home'   // how likely this is to ruin your grocery trip
+    x: 'Lumen Inversion',
+    y: 'Metaphysical Drift',
+    z: 'Proximity to Home'
   };
 
-  // utilities: the unsung heroes
-  function normalizeHeaders(fields) {
-    const map = {};
-    (fields || []).forEach(f => {
-      const key = String(f || '').trim().toLowerCase();
-      map[key] = f;
-    });
-    return map;
-  }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function hexToRgb(hex){ const s=String(hex).replace('#',''); return { r:parseInt(s.slice(0,2),16), g:parseInt(s.slice(2,4),16), b:parseInt(s.slice(4,6),16) }; }
+  function rgbToHex(r,g,b){ const h=v=>v.toString(16).padStart(2,'0'); return '#'+h(r)+h(g)+h(b); }
+  function extendCool(i){ const a=hexToRgb(TAG_PALETTE[TAG_PALETTE.length-2]), b=hexToRgb(TAG_PALETTE[TAG_PALETTE.length-1]); const t=(i%6)/6; return rgbToHex(Math.round(lerp(a.r,b.r,t)),Math.round(lerp(a.g,b.g,t)),Math.round(lerp(a.b,b.b,t))); }
 
-  function pick(headers, aliases) {
-    for (const a of aliases) {
-      const k = a.toLowerCase();
-      if (k in headers) {
-        return headers[k];
-      }
-      for (const key in headers) {
-        if (key.includes(k)) {
-          return headers[key];
-        }
-      }
+  function normalizeHeaders(fields){ const map={}; (fields||[]).forEach(f=>map[String(f||'').trim().toLowerCase()]=f); return map; }
+  function pick(headers, aliases){
+    for (const a of aliases){
+      const k=a.toLowerCase();
+      if (k in headers) return headers[k];
+      for (const key in headers){ if (key.includes(k)) return headers[key]; }
     }
     return null;
   }
-
-  function splitIdsFlexible(s) {
-    if (s == null) return [];
-    const raw = String(s).trim();
-    if (!raw) return [];
-    return raw
-      .split(/[\s,;|]+/)
-      .map(t => t.trim())
-      .filter(Boolean)
-      .map(t => Number(t))
-      .filter(n => Number.isFinite(n));
+  function splitIdsFlexible(s){
+    if (s==null) return [];
+    const raw=String(s).trim(); if (!raw) return [];
+    return raw.split(/[\s,;|]+/).map(t=>t.trim()).filter(Boolean).map(t=>Number(t)).filter(n=>Number.isFinite(n));
   }
+  function parseParenNumber(s, fb=null){ const m=/\(\s*([-+]?\d*\.?\d+)\s*\)/.exec(String(s||'')); return m?Number(m[1]):fb; }
+  function toSize(s){ const fromParen=parseParenNumber(s); const n=(fromParen!=null)?fromParen:((s==null||s==='')?5:Number(s)); const v=Number.isFinite(n)?n:5; return Math.max(1, Math.min(30, v)); }
+  function escapeHtml(s){ const map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}; return String(s||'').replace(/[&<>"']/g,c=>map[c]); }
+  function hash32(str){ let h=2166136261>>>0; for (let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,1677619);} return h>>>0; }
+  function rand(seed){ seed=(seed+0x6D2B79F5)>>>0; let t=Math.imul(seed^(seed>>>15),1|seed); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }
 
-  function parseParenNumber(s, fb = null) {
-    const m = /\(\s*([-+]?\d*\.?\d+)\s*\)/.exec(String(s || ''));
-    return m ? Number(m[1]) : fb;
-  }
-
-  // node size: the law of tastefully large
-  function toSize(s) {
-    const fromParen = parseParenNumber(s);
-    const n = (fromParen != null) ? fromParen : ((s == null || s === '') ? 5 : Number(s));
-    const v = Number.isFinite(n) ? n : 5;
-    return Math.max(1, Math.min(30, v));
-  }
-
-  function escapeHtml(s) {
-    const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
-    return String(s || '').replace(/[&<>"']/g, c => map[c]);
-  }
-
-  function hash32(str) {
-    let h = 2166136261 >>> 0;
-    for (let i = 0; i < str.length; i++) {
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 1677619);
-    }
-    return h >>> 0;
-  }
-
-  function rand(seed) {
-    seed = (seed + 0x6D2B79F5) >>> 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  }
-
-  // legend elements: cached like a raccoon hoarding shiny things
-  const legendEl = document.getElementById('legend');
-  const rowsEl   = document.getElementById('legend-rows');
-  const toggleEl = document.getElementById('legend-toggle');
-
+  function describeMeta(v){ if (v==null) return '???'; if (v<=1) return 'grounded'; if (v<=2) return 'a bit wobbly'; if (v<=3) return 'glitch-prone'; if (v<=4) return 'esoteric'; return 'full transcendence'; }
+  function describeLumen(v){ if (v==null) return '???'; if (v<=1) return 'daylight-adjacent'; if (v<=2) return 'bring a dimmer'; if (v<=3) return 'bring a flashlight'; if (v<=4) return 'pitchy'; return 'void-certified'; }
+  function describeHome(v){ if (v==null) return '???'; if (v<=1) return 'far-out'; if (v<=2) return 'road-trip distance'; if (v<=3) return 'local-ish'; if (v<=4) return 'next-door energy'; return 'inside your kitchen'; }
   //#endregion
 
-  //#region qualitative vibes (because numbers are just vibes with cosplay)
-
-  // turn raw (x) values into polite lies
-  function describeMeta(v) {
-    if (v == null) return '???';
-    if (v <= 1) return 'grounded';
-    if (v <= 2) return 'a bit wobbly';
-    if (v <= 3) return 'glitch-prone';
-    if (v <= 4) return 'esoteric';
-    return 'full transcendence';
-  }
-  function describeLumen(v) {
-    // higher = darker (lumen inversion). yes, science™
-    if (v == null) return '???';
-    if (v <= 1) return 'daylight-adjacent';
-    if (v <= 2) return 'bring a dimmer';
-    if (v <= 3) return 'bring a flashlight';
-    if (v <= 4) return 'pitchy';
-    return 'void-certified';
-  }
-  function describeHome(v) {
-    // “proximity to home”: higher = closer to home
-    if (v == null) return '???';
-    if (v <= 1) return 'far-out';
-    if (v <= 2) return 'road-trip distance';
-    if (v <= 3) return 'local-ish';
-    if (v <= 4) return 'next-door energy';
-    return 'inside your kitchen';
-  }
-
-  //#endregion
-
-  //#region data load → nodes → links (aka the main act)
-
-  // load data like we mean it
+  //#region data load → nodes → links
   fetchFirstCsv()
-    .then(txt => {
-      return new Promise(resolve => {
-        Papa.parse(txt, {
-          header: true,
-          dynamicTyping: false,
-          skipEmptyLines: true,
-          complete: resolve
-        });
-      });
-    })
+    .then(txt => new Promise(resolve => {
+      Papa.parse(txt, { header:true, dynamicTyping:false, skipEmptyLines:true, complete: resolve });
+    }))
     .then(result => {
       const rows = result.data || [];
-      if (!rows.length) {
-        throw new Error('csv has no rows');
-      }
+      if (!rows.length) throw new Error('csv has no rows');
 
       const headers = normalizeHeaders(result.meta.fields || Object.keys(rows[0] || {}));
       const col = {
@@ -348,213 +201,121 @@
         collision: pick(headers, COLNAMES.collision),
         url: pick(headers, COLNAMES.url)
       };
+      if (!col.id || !col.tags) throw new Error('need at least id/name and tag columns');
 
-      if (!col.id || !col.tags) {
-        throw new Error('need at least id/name and tag columns');
-      }
+      const nodeBuckets = Object.create(null);
 
-      // nodes: compact xyz + spiral untangling + jitter therapy
-      const nodeBuckets = Object.create(null); // “x|y|z” → how crowded this coordinate is
+      const nodes = rows.map(r => {
+        const id = String(r[col.id] ?? '').trim();
+        const label = String(r[col.name] ?? id).trim() || id;
+        const cluster = String(r[col.tags] ?? '').trim() || '(unclustered)';
+        if (!id || !cluster) return null;
 
-      const nodes = rows
-        .map(r => {
-          const id = String(r[col.id] ?? '').trim();
-          const label = String(r[col.name] ?? id).trim() || id;
-          const cluster = String(r[col.tags] ?? '').trim() || '(unclustered)';
+        const url = ((r[col.url] ?? '') + '').trim() || null;
+        const size = toSize(r[col.size]);
 
-          if (!id || !cluster) return null;
+        const xv = parseParenNumber(r[col.content], 0);
+        const yv = parseParenNumber(r[col.meta], 0);
+        const zv = parseParenNumber(r[col.relatable], 0);
 
-          const url = ((r[col.url] ?? '') + '').trim() || null;
-          const size = toSize(r[col.size]);
+        const qMeta  = describeMeta(yv);
+        const qLumen = describeLumen(xv);
+        const qHome  = describeHome(zv);
 
-          // parse “(X) blah blah” for xyz — content→x, meta→y, relatable→z
-          const xv = parseParenNumber(r[col.content], 0);
-          const yv = parseParenNumber(r[col.meta], 0);
-          const zv = parseParenNumber(r[col.relatable], 0);
+        const TX = (Number.isFinite(xv) ? xv : 0) * POS_SCALE;
+        const TY = (Number.isFinite(yv) ? yv : 0) * POS_SCALE;
+        const TZ = (Number.isFinite(zv) ? zv : 0) * POS_SCALE;
 
-          // qualitative summaries (pre-jitter)
-          const qMeta  = describeMeta(yv);
-          const qLumen = describeLumen(xv);
-          const qHome  = describeHome(zv);
+        const bucketKey = `${xv}|${yv}|${zv}`;
+        nodeBuckets[bucketKey] = (nodeBuckets[bucketKey] || 0);
+        const idx = nodeBuckets[bucketKey]++;
 
-          const TX = (Number.isFinite(xv) ? xv : 0) * POS_SCALE;
-          const TY = (Number.isFinite(yv) ? yv : 0) * POS_SCALE;
-          const TZ = (Number.isFinite(zv) ? zv : 0) * POS_SCALE;
+        const seed = hash32(id + '|' + bucketKey);
+        const r1 = rand(seed), r2 = rand(seed+1), r3 = rand(seed+2), r4 = rand(seed+3);
 
-          const bucketKey = `${xv}|${yv}|${zv}`;
-          nodeBuckets[bucketKey] = (nodeBuckets[bucketKey] || 0);
-          const idx = nodeBuckets[bucketKey]++;
+        const PHI = 2.399963229728653;
+        const baseRadius = CLUSTER_BASE + CLUSTER_STEP * Math.sqrt(idx);
+        const radius = baseRadius + (r1 - 0.5) * 2 * RANDOM_RADIAL;
+        const angle  = idx * PHI + r2 * Math.PI * 2;
 
-          const seed = hash32(id + '|' + bucketKey);
-          const r1 = rand(seed);
-          const r2 = rand(seed + 1);
-          const r3 = rand(seed + 2);
-          const r4 = rand(seed + 3);
+        const jAmp = BASE_JITTER + r3 * EXTRA_JITTER;
+        const jx = (r4 * 2 - 1) * jAmp;
+        const jy = (rand(seed + 4) * 2 - 1) * jAmp;
+        const jz = (rand(seed + 5) * 2 - 1) * jAmp;
 
-          const PHI = 2.399963229728653; // golden angle, because we’re fancy
-          const baseRadius = CLUSTER_BASE + CLUSTER_STEP * Math.sqrt(idx);
-          const radius = baseRadius + (r1 - 0.5) * 2 * RANDOM_RADIAL;
-          const angle  = idx * PHI + r2 * Math.PI * 2;
+        const dx = radius * Math.cos(angle) + jx;
+        const dy = radius * Math.sin(angle) + jy;
+        const dz = jz;
 
-          const jAmp = BASE_JITTER + r3 * EXTRA_JITTER;
-          const jx = (r4 * 2 - 1) * jAmp;
-          const jy = (rand(seed + 4) * 2 - 1) * jAmp;
-          const jz = (rand(seed + 5) * 2 - 1) * jAmp;
+        const x = TX + dx, y = TY + dy, z = TZ + dz;
 
-          const dx = radius * Math.cos(angle) + jx;
-          const dy = radius * Math.sin(angle) + jy;
-          const dz = jz;
+        return {
+          id, label, cluster, url,
+          val: size,
+          x,y,z, fx:x,fy:y,fz:z, tx:x,ty:y,tz:z,
+          color: null,
+          _axes: { xv,yv,zv },
+          _q: { meta: qMeta, lumen: qLumen, home: qHome },
+          _dbg: { seed, idx, baseRadius, radius, angle, jx, jy, jz, TX, TY, TZ }
+        };
+      }).filter(Boolean);
 
-          const x = TX + dx;
-          const y = TY + dy;
-          const z = TZ + dz;
-
-          return {
-            id,
-            label,
-            cluster,
-            url,
-            val: size,
-            x, y, z,
-            fx: x, fy: y, fz: z,
-            tx: x, ty: y, tz: z,
-            color: null,
-
-            // stash raw numeric triples and qualitative blurbs for tooltips
-            _axes: { xv, yv, zv },
-            _q: { meta: qMeta, lumen: qLumen, home: qHome },
-
-            _dbg: { seed, idx, baseRadius, radius, angle, jx, jy, jz, TX, TY, TZ }
-          };
-        })
-        .filter(Boolean);
-
-      // id maps: because finding things by name should not be a side quest
-      const nodeById  = new Map();
-      const nodeByNum = new Map();
-
+      const nodeById = new Map(), nodeByNum = new Map();
       nodes.forEach(n => {
         nodeById.set(String(n.id), n);
         const num = Number(n.id);
-        if (Number.isFinite(num)) {
-          nodeByNum.set(num, n);
-        }
+        if (Number.isFinite(num)) nodeByNum.set(num, n);
       });
 
-      // cluster → color, aka your house sorting ceremony
-      const clusterOrder = [];
-      const seen = new Set();
-      const clusterColor = {};
+      const clusterOrder = [], seen = new Set(), clusterColor = {};
+      nodes.forEach(n => { if (!seen.has(n.cluster)) { seen.add(n.cluster); clusterOrder.push(n.cluster); }});
+      clusterOrder.forEach((t,i) => clusterColor[t] = (i < TAG_PALETTE.length) ? TAG_PALETTE[i] : extendCool(i - TAG_PALETTE.length));
+      nodes.forEach(n => n.color = clusterColor[n.cluster]);
 
-      nodes.forEach(n => {
-        if (!seen.has(n.cluster)) {
-          seen.add(n.cluster);
-          clusterOrder.push(n.cluster);
-        }
-      });
-
-      clusterOrder.forEach((t, i) => {
-        clusterColor[t] = (i < TAG_PALETTE.length)
-          ? TAG_PALETTE[i]
-          : extendCool(i - TAG_PALETTE.length);
-      });
-
-      nodes.forEach(n => {
-        n.color = clusterColor[n.cluster];
-      });
-
-      // if a link points to something imaginary, we give it a body anyway
-      function ensureNodeForId(raw) {
+      function ensureNodeForId(raw){
         const key = String(raw);
         let node = nodeById.get(key);
-
-        if (node) {
-          return node;
-        }
-
-        node = {
-          id: key,
-          label: key,
-          cluster: '(referenced)',
-          url: null,
-          val: 5,
-          x: 0, y: 0, z: 0,
-          fx: 0, fy: 0, fz: 0,
-          tx: 0, ty: 0, tz: 0,
-          color: '#00E5FF',
-          _dbg: { seed: 0 }
-        };
-
-        nodes.push(node);
-        nodeById.set(key, node);
-
-        const num = Number(key);
-        if (Number.isFinite(num)) {
-          nodeByNum.set(num, node);
-        }
-
+        if (node) return node;
+        node = { id:key, label:key, cluster:'(referenced)', url:null, val:5, x:0,y:0,z:0, fx:0,fy:0,fz:0, tx:0,ty:0,tz:0, color:'#00E5FF', _dbg:{seed:0} };
+        nodes.push(node); nodeById.set(key,node);
+        const num = Number(key); if (Number.isFinite(num)) nodeByNum.set(num,node);
         return node;
       }
 
-      // links: thin, persistent, and totally fine with duplicates
-      // also: 0 means “link to literally everyone”, because chaos is a feature
       const links = [];
-
-      function addLinkByIds(srcId, tgtId) {
+      function addLinkByIds(srcId, tgtId){
         if (!srcId || !tgtId) return;
         if (String(srcId) === String(tgtId)) return;
-
         const srcNode = ensureNodeForId(srcId);
         const tgtNode = ensureNodeForId(tgtId);
-
-        links.push({
-          source: srcNode,
-          target: tgtNode,
-          color: '#FFFFFF',
-          width: 0.7
-        });
+        links.push({ source: srcNode, target: tgtNode, color:'#FFFFFF', width:0.7 });
       }
 
       rows.forEach(r => {
-        const srcRaw = String(r[col.id] ?? '').trim();
-        if (!srcRaw) return;
-
-        const seq  = splitIdsFlexible(r[col.sequels]);
-        const coln = splitIdsFlexible(r[col.collision]);
-
+        const srcRaw = String(r[col.id] ?? '').trim(); if (!srcRaw) return;
+        const seq = splitIdsFlexible(r[col.sequels]);
+        const coln= splitIdsFlexible(r[col.collision]);
         const targets = [...seq, ...coln];
-
         if (targets.includes(0)) {
-          nodes.forEach(n => {
-            if (String(n.id) !== srcRaw) {
-              addLinkByIds(srcRaw, n.id);
-            }
-          });
+          nodes.forEach(n => { if (String(n.id) !== srcRaw) addLinkByIds(srcRaw, n.id); });
         } else {
-          targets.forEach(num => {
-            if (num === 0) return;
-            const tgt = nodeByNum.get(num) || nodeById.get(String(num)) || ensureNodeForId(num);
-            addLinkByIds(srcRaw, tgt.id);
-          });
+          targets.forEach(num => { if (num===0) return; const tgt=nodeByNum.get(num)||nodeById.get(String(num))||ensureNodeForId(num); addLinkByIds(srcRaw, tgt.id); });
         }
       });
 
       //#endregion
 
-      //#region graph build (assemble the sparkly chaos)
-
+      //#region graph build (transparent renderer + bg)
       const elem = document.getElementById('g');
-      let hoveredNode = null;
-      let pulseRAF = null;
+      let hoveredNode = null, pulseRAF = null;
 
       const Graph = ForceGraph3D()(elem)
         .enablePointerInteraction(true)
         .graphData({ nodes, links })
-        //.backgroundColor('#000014')
         .showNavInfo(false)
         .d3Force('link', null)
         .d3Force('charge', null)
-        .enableNodeDrag(false)  // hands off the dots; camera is your friend
+        .enableNodeDrag(false)
         .cooldownTicks(0)
         .nodeThreeObject(n => {
           const colorHex = n.color || '#FF1447';
@@ -570,14 +331,13 @@
           const s = (size / 5);
           core.scale.set(s, s, s);
 
-          // idle glow: smaller radius, denser, a bit intense on purpose
+          // idle glow — ensure minimum pixel size so tiny nodes still pop
           const glow = makeGlowSprite(colorHex);
-          const idleSize = baseRadius * s * 3;    // was 5 → denser/smaller
+          const idleSize = Math.max(18, baseRadius * s * 3); // ⬅ bigger floor for small nodes
           glow.scale.set(idleSize, idleSize, 1);
-          glow.material.opacity = 0.55;           // was 0.6 → slightly less blinding
+          glow.material.opacity = 0.55;
           core.add(glow);
 
-          // only the sphere gets to be clicked; glow is just pretty
           core.raycast = THREE.Mesh.prototype.raycast;
           glow.raycast = () => null;
 
@@ -585,95 +345,116 @@
           n.__glow = glow;
           n.__sizeScale = s;
           n.__idleSize = idleSize;
-          n.__idleOpacity = 0.28;
+          n.__idleOpacity = 0.35; // a touch brighter idle
 
           return core;
         })
         .nodeLabel(n => {
-            const color = n.color || '#FF1447';
-
-            // friendly qualitative readouts (pre-jitter, already computed)
-            const meta  = n._q?.meta  ?? '—';
-            const lumen = n._q?.lumen ?? '—';
-            const home  = n._q?.home  ?? '—';
-
-            const hint = n.url
-                ? '<span class="hint">Click to open archive</span>'
-                : '<span class="hint">URL: N/A</span>';
-
-            return `
-                <div class="poppy-label">
-                <span class="title" style="color:${color}">${escapeHtml(n.label || n.id)}</span>
-
-                <span class="kv cluster">
-                    <span class="key">Cluster</span>
-                    <span class="val" style="color:${color}">${escapeHtml(n.cluster || '(unclustered)')}</span>
-                </span>
-
-                <span class="sep"></span>
-
-                <span class="kv">
-                    <span class="key">Lumen</span>
-                    <span class="val">${escapeHtml(lumen)}</span>
-                </span>
-
-                <span class="kv">
-                    <span class="key">Meta</span>
-                    <span class="val">${escapeHtml(meta)}</span>
-                </span>
-
-                <span class="kv">
-                    <span class="key">Home</span>
-                    <span class="val">${escapeHtml(home)}</span>
-                </span>
-
-                <span class="sep"></span>
-                ${hint}
-                </div>
-            `;
+          const color = n.color || '#FF1447';
+          const meta  = n._q?.meta  ?? '—';
+          const lumen = n._q?.lumen ?? '—';
+          const home  = n._q?.home  ?? '—';
+          const hint = n.url ? '<span class="hint">Click to open archive</span>' : '<span class="hint">URL: N/A</span>';
+          return `
+            <div class="poppy-label">
+              <span class="title" style="color:${color}">${escapeHtml(n.label || n.id)}</span>
+              <span class="kv cluster"><span class="key">Cluster</span><span class="val" style="color:${color}">${escapeHtml(n.cluster || '(unclustered)')}</span></span>
+              <span class="sep"></span>
+              <span class="kv"><span class="key">Lumen</span><span class="val">${escapeHtml(lumen)}</span></span>
+              <span class="kv"><span class="key">Meta</span><span class="val">${escapeHtml(meta)}</span></span>
+              <span class="kv"><span class="key">Home</span><span class="val">${escapeHtml(home)}</span></span>
+              <span class="sep"></span>
+              ${hint}
+            </div>`;
         })
         .linkColor(l => l.color || '#FFFFFF')
         .linkWidth(l => l.width || 0.9)
         .linkOpacity(0.75);
 
-      // lighting: ambiance set to “cosmic noir”
-      const scene = Graph.scene();
-      scene.add(new THREE.AmbientLight(0xffffff, 0.38));
+      // Transparent renderer so CSS bg shows through
+      // --- Transparent renderer that actually renders :)
+const w = window.innerWidth;
+const h = window.innerHeight;
 
-      const dir = new THREE.DirectionalLight(0xffffff, 0.7);
-      dir.position.set(60, 80, 40);
-      scene.add(dir);
+const transparentRenderer = new THREE.WebGLRenderer({
+  antialias: true,
+  alpha: true,
+  powerPreference: 'high-performance',
+  preserveDrawingBuffer: false
+});
+transparentRenderer.setPixelRatio(window.devicePixelRatio || 1);
+transparentRenderer.setSize(w, h);
+transparentRenderer.setClearColor(0x000000, 0);
+transparentRenderer.setClearAlpha(0);
+transparentRenderer.outputColorSpace = THREE.SRGBColorSpace;
+transparentRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+transparentRenderer.toneMappingExposure = 1.05;
 
-      // controls: orbit, pan, zoom — no grabbing the stars, sorry
+// hand to the graph BEFORE we query scene/camera
+Graph.renderer(transparentRenderer);
+
+// make sure the canvas is in the DOM (FG usually does this, we ensure it)
+if (!transparentRenderer.domElement.parentNode) {
+  elem.appendChild(transparentRenderer.domElement);
+}
+
+// force graph to know its width/height (critical with custom renderer)
+Graph.width(w).height(h);
+
+// fully transparent background (don’t pass null)
+Graph.backgroundColor('rgba(0,0,0,0)');
+
+// now safe to tweak scene
+const scene = Graph.scene();
+scene.background = null;
+
+// keep everything sized correctly on resize
+window.addEventListener('resize', () => {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+
+  transparentRenderer.setSize(W, H);
+  const cam = Graph.camera();
+  cam.aspect = W / H;
+  cam.updateProjectionMatrix();
+
+  Graph.width(W).height(H);
+  Graph.refresh(); // ensure a redraw
+});
+      
+
+      // controls
       const controls = Graph.controls();
       controls.enableRotate = true;
       controls.enablePan = true;
       controls.minDistance = 20;
       controls.maxDistance = 1200;
-      controls.mouseButtons = {
-        LEFT: THREE.MOUSE.ROTATE,
-        MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT: THREE.MOUSE.PAN
-      };
+      controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
       controls.update();
 
-      // hover pulse: smaller than before but punchy
+      // keep renderer sized
+      window.addEventListener('resize', () => {
+        const w = elem.clientWidth, h = elem.clientHeight;
+        transparentRenderer.setSize(w, h);
+      });
+
+      // hover pulse — slightly larger swing so small nodes are obvious
       function pulse() {
         if (!hoveredNode || !hoveredNode.__glow || !hoveredNode.__core) {
           pulseRAF = requestAnimationFrame(pulse);
           return;
         }
-
         const t = (Date.now() % 1200) / 1200;
-        const amp = 1 + 0.10 * Math.sin(t * Math.PI * 2);   // a little calmer
-        const opacity = 0.36 + 0.18 * (0.5 + 0.5 * Math.sin(t * 2 * Math.PI));
+        const amp = 1 + 0.14 * Math.sin(t * Math.PI * 2);
+        const opacity = 0.48 + 0.28 * (0.5 + 0.5 * Math.sin(t * 2 * Math.PI));
 
         const b = hoveredNode.__sizeScale;
-        hoveredNode.__core.scale.set(b * 1.035, b * 1.035, b * 1.035);
+        hoveredNode.__core.scale.set(b * 1.045, b * 1.045, b * 1.045);
 
-        const big = hoveredNode.__idleSize * 1.25;          // was 1.35 → smaller
+        const big = Math.max(hoveredNode.__idleSize * 1.35, 28); // ⬅ ensure visible size
         hoveredNode.__glow.scale.set(big * amp, big * amp, 1);
         hoveredNode.__glow.material.opacity = opacity;
+
         pulseRAF = requestAnimationFrame(pulse);
       }
 
@@ -685,313 +466,198 @@
             prev.__glow.scale.set(prev.__idleSize, prev.__idleSize, 1);
             prev.__glow.material.opacity = prev.__idleOpacity;
           }
-
           hoveredNode = node || null;
-
           if (hoveredNode) {
             elem.style.cursor = 'pointer';
-            if (!pulseRAF) {
-              pulseRAF = requestAnimationFrame(pulse);
-            }
+            if (!pulseRAF) pulseRAF = requestAnimationFrame(pulse);
           } else {
             elem.style.cursor = null;
-            if (pulseRAF) {
-              cancelAnimationFrame(pulseRAF);
-              pulseRAF = null;
-            }
+            if (pulseRAF) { cancelAnimationFrame(pulseRAF); pulseRAF = null; }
           }
         })
-        .onNodeClick(n => {
-          if (n.url) {
-            window.open(n.url, '_blank', 'noopener');
-          }
-        });
+        .onNodeClick(n => { if (n.url) window.open(n.url, '_blank', 'noopener'); });
 
       //#endregion
 
-      //#region camera + axes (center nicely, judge quietly)
-
+      //#region camera + axes + origin
       fitCameraAndAxes(nodes);
 
       function fitCameraAndAxes(list) {
         if (!list.length) return;
 
-        let minX = Infinity;
-        let minY = Infinity;
-        let minZ = Infinity;
-
-        let maxX = -Infinity;
-        let maxY = -Infinity;
-        let maxZ = -Infinity;
-
+        let minX=Infinity, minY=Infinity, minZ=Infinity, maxX=-Infinity, maxY=-Infinity, maxZ=-Infinity;
         for (const n of list) {
-          if (n.x < minX) minX = n.x;
-          if (n.y < minY) minY = n.y;
-          if (n.z < minZ) minZ = n.z;
-
-          if (n.x > maxX) maxX = n.x;
-          if (n.y > maxY) maxY = n.y;
-          if (n.z > maxZ) maxZ = n.z;
+          if (n.x < minX) minX = n.x; if (n.y < minY) minY = n.y; if (n.z < minZ) minZ = n.z;
+          if (n.x > maxX) maxX = n.x; if (n.y > maxY) maxY = n.y; if (n.z > maxZ) maxZ = n.z;
         }
 
-        // origin at minima (positive-only axes, because we like boundaries)
-        const ox = minX;
-        const oy = minY;
-        const oz = minZ;
-
-        const spanX = maxX - minX;
-        const spanY = maxY - minY;
-        const spanZ = maxZ - minZ;
-
+        // axes with positive-only span (origin at minima)
+        const ox=minX, oy=minY, oz=minZ;
+        const spanX = maxX - minX, spanY = maxY - minY, spanZ = maxZ - minZ;
         const span = Math.max(spanX, spanY, spanZ);
 
-        // closer camera, less cardio
-        const dist = span * 0.7;
-        const yOffset = 50;
-
-        const cx = ox + spanX / 2;
-        const cy = oy + spanY / 2;
-        const cz = oz + spanZ / 2;
+        const dist = span * 0.7, yOffset = 50;
+        const cx = ox + spanX/2, cy = oy + spanY/2, cz = oz + spanZ/2;
 
         controls.target.set(cx, cy, cz);
         controls.update();
 
         Graph.cameraPosition(
           { x: cx + dist, y: cy + dist + yOffset, z: cz + dist },
-          { x: cx,       y: cy + yOffset,        z: cz       },
+          { x: cx,        y: cy + yOffset,        z: cz       },
           0
         );
 
         addAxesPositive(scene, { x: ox, y: oy, z: oz }, { x: spanX, y: spanY, z: spanZ });
-      }
 
+        // add absolute origin marker at (0,0,0) independent of the dataset bounds
+        addOriginMarker(scene, { x:0, y:0, z:0 });
+      }
       //#endregion
 
-      //#region legend (now with colors and minimal commitment)
+      //#region legend
+      const legendEl = document.getElementById('legend');
+      const rowsEl   = document.getElementById('legend-rows');
+      const toggleEl = document.getElementById('legend-toggle');
 
       rowsEl.innerHTML = '';
-
       clusterOrder.forEach(tag => {
         const color = clusterColor[tag];
-
-        const row = document.createElement('div');
-        row.className = 'row';
-
-        const sw = document.createElement('div');
-        sw.className = 'swatch';
-        sw.style.background = color;
-        sw.style.boxShadow = `0 0 12px ${color}`;
-
-        const la = document.createElement('div');
-        la.className = 'label';
-        la.textContent = tag;
-
-        row.appendChild(sw);
-        row.appendChild(la);
-        rowsEl.appendChild(row);
+        const row = document.createElement('div'); row.className='row';
+        const sw = document.createElement('div'); sw.className='swatch'; sw.style.background=color; sw.style.boxShadow=`0 0 12px ${color}`;
+        const la = document.createElement('div'); la.className='label'; la.textContent=tag;
+        row.appendChild(sw); row.appendChild(la); rowsEl.appendChild(row);
       });
-
       legendEl.hidden = false;
-
       toggleEl.addEventListener('click', () => {
         legendEl.classList.toggle('collapsed');
         const chevron = legendEl.querySelector('.toggle');
         chevron.textContent = legendEl.classList.contains('collapsed') ? '▸' : '▾';
       });
-
       //#endregion
+
+      // finally, fade in the wallpaper behind our now-transparent canvas
+      fadeInGalaxyBackground('https://images.unsplash.com/photo-1648563643923-2091f9c0c12f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2831');
     })
     .catch(err => {
       document.body.innerHTML = '<pre style="color:#fff; padding:16px">' + String(err) + '</pre>';
       console.error(err);
     });
 
-  //#region glow helpers (toned-down idle, tighter hover, still pretty)
+  //#region background helper
+  function fadeInGalaxyBackground(url){
+    const el = document.getElementById('bg');
+    if (!el) return;
+    const img = new Image();
+    img.onload = () => {
+      el.style.backgroundImage = `url("${url}")`;
+      requestAnimationFrame(() => el.classList.add('show'));
+    };
+    img.onerror = () => console.warn('Background failed to load:', url);
+    img.src = url;
+  }
+  //#endregion
 
+  //#region glow helpers
   const glowTexCache = {};
-
-  function makeGlowTexture(hex) {
-    if (glowTexCache[hex]) {
-      return glowTexCache[hex];
-    }
-
-    const { r, g, b } = hexToRgb(hex);
+  function makeGlowTexture(hex){
+    if (glowTexCache[hex]) return glowTexCache[hex];
+    const { r,g,b } = hexToRgb(hex);
     const size = 256;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-
+    const canvas = document.createElement('canvas'); canvas.width=size; canvas.height=size;
     const ctx = canvas.getContext('2d');
-
-    // tighter radius + steeper falloff for a denser glow
-    const grd = ctx.createRadialGradient(
-      size / 2, size / 2, size * 0.05,
-      size / 2, size / 2, size * 0.42
-    );
-
-    // stronger center, quicker fade
+    const grd = ctx.createRadialGradient(size/2,size/2,size*0.05, size/2,size/2,size*0.42);
     grd.addColorStop(0.06, 'rgba(255,255,255,0.92)');
     grd.addColorStop(0.32, `rgba(${r},${g},${b},0.50)`);
     grd.addColorStop(0.62, `rgba(${r},${g},${b},0.18)`);
     grd.addColorStop(1.00, 'rgba(0,0,0,0)');
-
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, size, size);
-
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.needsUpdate = true;
-
-    glowTexCache[hex] = tex;
-    return tex;
+    ctx.fillStyle = grd; ctx.fillRect(0,0,size,size);
+    const tex = new THREE.CanvasTexture(canvas); tex.needsUpdate = true;
+    glowTexCache[hex] = tex; return tex;
   }
-
-  function makeGlowSprite(hex) {
+  function makeGlowSprite(hex){
     const map = makeGlowTexture(hex);
-
-    // material color uses hex; idle opacity gets tuned elsewhere
-    const mat = new THREE.SpriteMaterial({
-      map,
-      color: hex,
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      opacity: 0.7
-    });
-
-    const spr = new THREE.Sprite(mat);
-    spr.raycast = () => null; // pretty, not clickable
-    return spr;
+    const mat = new THREE.SpriteMaterial({ map, color:hex, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.7 });
+    const spr = new THREE.Sprite(mat); spr.raycast = () => null; return spr;
   }
-
   //#endregion
 
-  //#region axes (cyan, positive-only, and pointed directly at your feelings)
+  //#region axes + origin
+  function addAxesPositive(scene, origin, spans){
+    const old = scene.getObjectByName('axesGroup'); if (old) scene.remove(old);
+    const g = new THREE.Group(); g.name='axesGroup'; g.raycast=()=>null;
+    const lineMat = new THREE.LineBasicMaterial({ color: AXES_COLOR, transparent:true, opacity:1.0 });
 
-  function addAxesPositive(scene, origin, spans) {
-    // sweep out old axes like last season’s lore
-    const old = scene.getObjectByName('axesGroup');
-    if (old) {
-      scene.remove(old);
-    }
+    const xGeo = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x + spans.x, origin.y, origin.z) ]);
+    const yGeo = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y + spans.y, origin.z) ]);
+    const zGeo = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y, origin.z + spans.z) ]);
+    const xAxis = new THREE.Line(xGeo, lineMat), yAxis = new THREE.Line(yGeo, lineMat), zAxis = new THREE.Line(zGeo, lineMat);
+    xAxis.raycast=()=>null; yAxis.raycast=()=>null; zAxis.raycast=()=>null;
 
-    const g = new THREE.Group();
-    g.name = 'axesGroup';
-    g.raycast = () => null;
-
-    const lineMat = new THREE.LineBasicMaterial({
-      color: AXES_COLOR,
-      transparent: true,
-      opacity: 1.0
-    });
-
-    // lines from origin to the optimistic ends
-    const xGeo = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(origin.x, origin.y, origin.z),
-      new THREE.Vector3(origin.x + spans.x, origin.y, origin.z)
-    ]);
-
-    const yGeo = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(origin.x, origin.y, origin.z),
-      new THREE.Vector3(origin.x, origin.y + spans.y, origin.z)
-    ]);
-
-    const zGeo = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(origin.x, origin.y, origin.z),
-      new THREE.Vector3(origin.x, origin.y, origin.z + spans.z)
-    ]);
-
-    const xAxis = new THREE.Line(xGeo, lineMat);
-    const yAxis = new THREE.Line(yGeo, lineMat);
-    const zAxis = new THREE.Line(zGeo, lineMat);
-
-    xAxis.raycast = () => null;
-    yAxis.raycast = () => null;
-    zAxis.raycast = () => null;
-
-    // labels: small, cyan, and judgmental
     const xLabel = makeTextSprite(AXIS_NAMES.x, AXES_COLOR_STRING);
     const yLabel = makeTextSprite(AXIS_NAMES.y, AXES_COLOR_STRING);
     const zLabel = makeTextSprite(AXIS_NAMES.z, AXES_COLOR_STRING);
-
     const lblOff = 8;
     xLabel.position.set(origin.x + spans.x + lblOff, origin.y, origin.z);
     yLabel.position.set(origin.x, origin.y + spans.y + lblOff, origin.z);
     zLabel.position.set(origin.x, origin.y, origin.z + spans.z + lblOff);
-
-    [xLabel, yLabel, zLabel].forEach(s => {
-      s.raycast = () => null;
-      s.renderOrder = 2;
-    });
+    [xLabel, yLabel, zLabel].forEach(s => { s.raycast=()=>null; s.renderOrder=2; });
 
     g.add(xAxis, yAxis, zAxis, xLabel, yLabel, zLabel);
     scene.add(g);
   }
 
-  function makeTextSprite(text, color = '#FFFFFF') {
-    // axes labels live here; keep them legible and slightly glowy
-    const fontSize = 12;
-    const pad = 8;
+  function addOriginMarker(scene, origin){
+    const old = scene.getObjectByName('originMarker'); if (old) scene.remove(old);
+    const g = new THREE.Group(); g.name='originMarker'; g.raycast=()=>null;
 
+    // tiny trihedra at (0,0,0)
+    const len = 18;
+    const mat = new THREE.LineBasicMaterial({ color: AXES_COLOR, transparent:true, opacity:0.9 });
+    const gx = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x+len, origin.y, origin.z) ]);
+    const gy = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y+len, origin.z) ]);
+    const gz = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y, origin.z+len) ]);
+    g.add(new THREE.Line(gx, mat), new THREE.Line(gy, mat), new THREE.Line(gz, mat));
+
+    // little glowing core at origin
+    const core = new THREE.Mesh(
+      new THREE.SphereGeometry(1.6, 20, 20),
+      new THREE.MeshStandardMaterial({ color: AXES_COLOR_STRING, metalness: 0.1, roughness: 0.25, emissive: 0x882222, emissiveIntensity: 0.8 })
+    );
+    core.position.set(origin.x, origin.y, origin.z);
+    const glow = makeGlowSprite(AXES_COLOR_STRING); glow.scale.set(22,22,1); glow.material.opacity = 0.55;
+    core.add(glow);
+    g.add(core);
+
+    // label
+    const label = makeTextSprite('Origin (0, 0, 0)', AXES_COLOR_STRING);
+    label.position.set(origin.x + 2, origin.y + 2, origin.z);
+    g.add(label);
+
+    scene.add(g);
+  }
+
+  function makeTextSprite(text, color = '#FFFFFF'){
+    const fontSize = 12, pad = 8;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-
     ctx.font = `bold ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
     const metrics = ctx.measureText(text);
-
-    const w = Math.ceil(metrics.width) + pad * 2;
-    const h = Math.ceil(fontSize * 1.6) + pad * 2;
-
-    canvas.width = w;
-    canvas.height = h;
+    const w = Math.ceil(metrics.width) + pad*2, h = Math.ceil(fontSize*1.6) + pad*2;
+    canvas.width=w; canvas.height=h;
 
     const ctx2 = canvas.getContext('2d');
     ctx2.font = `bold ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
-    ctx2.textAlign = 'center';
-    ctx2.textBaseline = 'middle';
+    ctx2.textAlign='center'; ctx2.textBaseline='middle';
+    ctx2.fillStyle='rgba(0,0,0,0.35)'; ctx2.strokeStyle=AXES_COLOR_STRING; ctx2.lineWidth=1;
+    roundRect(ctx2,1,1,w-2,h-2,12); ctx2.fill(); ctx2.stroke();
+    ctx2.fillStyle=color; ctx2.shadowColor=color; ctx2.shadowBlur=10; ctx2.fillText(text, w/2, h/2);
 
-    // tasteful little frame so it doesn’t vanish into the void
-    ctx2.fillStyle = 'rgba(0,0,0,0.35)';
-    ctx2.strokeStyle = AXES_COLOR_STRING;
-    ctx2.lineWidth = 1;
-
-    roundRect(ctx2, 1, 1, w - 2, h - 2, 12);
-    ctx2.fill();
-    ctx2.stroke();
-
-    ctx2.fillStyle = color;
-    ctx2.shadowColor = color;
-    ctx2.shadowBlur = 10;
-    ctx2.fillText(text, w / 2, h / 2);
-
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.minFilter = THREE.LinearFilter;
-    tex.needsUpdate = true;
-
-    const mat = new THREE.SpriteMaterial({
-      map: tex,
-      transparent: true,
-      depthWrite: false
-    });
-
-    const spr = new THREE.Sprite(mat);
-    const scale = 40;
-    spr.scale.set(scale * (w / h), scale, 1);
-    return spr;
+    const tex = new THREE.CanvasTexture(canvas); tex.minFilter = THREE.LinearFilter; tex.needsUpdate=true;
+    const mat = new THREE.SpriteMaterial({ map:tex, transparent:true, depthWrite:false });
+    const spr = new THREE.Sprite(mat); const scale = 40; spr.scale.set(scale * (w/h), scale, 1); return spr;
   }
-
-  function roundRect(ctx, x, y, w, h, r) {
-    const rr = Math.min(r, w / 2, h / 2);
-
-    ctx.beginPath();
-    ctx.moveTo(x + rr, y);
-    ctx.arcTo(x + w, y,     x + w, y + h, rr);
-    ctx.arcTo(x + w, y + h, x,     y + h, rr);
-    ctx.arcTo(x,     y + h, x,     y,     rr);
-    ctx.arcTo(x,     y,     x + w, y,     rr);
-    ctx.closePath();
-  }
-
+  function roundRect(ctx,x,y,w,h,r){ const rr=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+rr,y); ctx.arcTo(x+w,y, x+w,y+h, rr); ctx.arcTo(x+w,y+h, x,y+h, rr); ctx.arcTo(x,y+h, x,y, rr); ctx.arcTo(x,y, x+w,y, rr); ctx.closePath(); }
   //#endregion
   </script>
 </body>
