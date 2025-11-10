@@ -5,219 +5,130 @@
   <title>Into the Poppyverse - A Multiversal Story Map</title>
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="50%" x="50%" dominant-baseline="middle" text-anchor="middle" font-size="52">🌷</text></svg>'>
 
-  <!-- Michroma (proper preconnect + swap) -->
+  <!-- Michroma -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
 
   <style>
     html, body { margin:0; height:100%; background:#0b0b12; overflow:hidden; }
-    :root {
-      --poppy-red: #FF1447;
-      --chart-color: #fff;
-    }
+    :root { --poppy-red:#FF1447; --chart-color:#fff; }
 
-    /* --- starry background layer (fades in smoothly) --- */
-    #bg{
-      position: fixed; inset: 0; z-index: 0;
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-attachment: fixed;
-      opacity: 0;
-      transform: scale(1.04);
-      transition:
-        opacity 1200ms ease,
-        transform 3200ms cubic-bezier(.22,.61,.36,1);
-      filter: saturate(1.05) contrast(1.06) brightness(.92);
-    }
-    #bg.show{ opacity: 1; transform: scale(1); }
+    #bg{ position:fixed; inset:0; z-index:0; background-position:center; background-size:cover; background-attachment:fixed; opacity:0; transform:scale(1.04);
+         transition:opacity 1200ms ease, transform 3200ms cubic-bezier(.22,.61,.36,1); filter:saturate(1.05) contrast(1.06) brightness(.92); }
+    #bg.show{ opacity:1; transform:scale(1); }
 
-    /* graph container sits above the bg */
-    #g { position: relative; z-index: 1; width:100vw; height:100vh; }
+    #g{ position:relative; z-index:1; width:100vw; height:100vh; }
 
-    /* -------- HUD (header UI) -------- */
-    #hud {
-      position: fixed; top: 0; left: 0; width: 100%;
-      z-index: 20;
-      pointer-events: none;          /* disable by default */
-    }
+    /* ---------- HUD ---------- */
+    #hud { position:fixed; top:0; left:0; width:100%; z-index:20; pointer-events:none; }
     #hud-bar {
-      display: grid;
-      grid-template-columns: 30vw 40vw 1fr; /* left / middle / right */
-      align-items: start;
-      gap: 0;
-      padding: 10px 18px;
-      background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,0));
-      pointer-events: auto;          /* re-enable interaction within bar */
-      transition: transform 420ms cubic-bezier(.22,.61,.36,1), opacity 320ms ease;
+      display:grid; grid-template-columns:30vw 36vw 30vw;
+      align-items:start; gap:0; padding:10px 18px;
+      background:linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,0));
+      transition: transform .35s ease, opacity .35s ease;
+    }
+    #hud.expanded #hud-bar{ transform:translateY(0); opacity:1; }
+    #hud.collapsed #hud-bar{ transform:translateY(-110%); opacity:0; }
+
+    #hud-left, #hud-right { pointer-events:auto; }
+    #hud-middle{ pointer-events:none; }
+
+    .hud-arrow{
+      background:none; border:none; cursor:pointer; user-select:none; padding:0 6px 0 0;
+      color:var(--poppy-red); font-size:26px; line-height:1;
+      text-shadow:0 0 12px rgba(255,20,71,.6); transition:transform .25s ease, opacity .25s ease;
+    }
+    #hud.expanded #hud-toggle{ visibility:visible; opacity:1; }
+    #hud.collapsed #hud-toggle{ visibility:hidden; opacity:0; }
+
+    #hud-tab{
+      position:fixed; top:8px; left:10px; z-index:21; pointer-events:auto;
+      background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.25); border-radius:10px; padding:6px 10px;
+      display:flex; align-items:center; gap:8px;
+    }
+    #hud.expanded #hud-tab{ visibility:hidden; opacity:0; pointer-events:none; }
+    #hud.collapsed #hud-tab{ visibility:visible; opacity:1; }
+
+    /* ▲ when visible (expanded), ▼ when hidden (collapsed) */
+    #hud.expanded .hud-arrow-icon{ transform:rotate(0deg); }
+    #hud.collapsed .hud-arrow-icon{ transform:rotate(180deg); }
+
+    #hud-left{ display:grid; grid-template-columns:auto 1fr; align-items:center; column-gap:10px; }
+    #title{
+      margin:0; font-family:'Michroma', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size:20px; letter-spacing:2px; color:var(--poppy-red);
+      text-shadow:0 0 10px rgba(255,20,71,.7), 0 0 22px rgba(255,20,71,.4);
+      opacity:0; transform:translateY(-8px); animation:fadeDown 700ms ease both .25s; text-align:left;
     }
 
-    /* Left: arrow + title */
-    #hud-left {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      align-items: center;
-      column-gap: 10px;
+    /* Compact Legend */
+    #hud-right{ justify-self:end; }
+    #legend{
+      background:rgba(0,0,0,.42); border:1px solid rgba(255,255,255,.28); border-radius:10px;
+      padding:8px 10px 10px; color:#fff; font:13px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      max-width:20vw; backdrop-filter:blur(3px);
+      opacity:0; transform:translateY(-8px); animation:fadeUp 700ms ease both .45s; margin:0 0 0 auto;
     }
-    #hud-toggle {
-      background: none;
-      border: 1px solid rgba(255,20,71,.45);
-      color: var(--poppy-red);
-      font-size: 24px;
-      line-height: 1;
-      cursor: pointer;
-      text-shadow: 0 0 14px rgba(255,20,71,.6);
-      transition: transform .25s ease, background .2s ease, box-shadow .2s ease;
-      padding: 6px 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 18px rgba(255,20,71,.25) inset, 0 0 18px rgba(255,20,71,.25);
+    #legend h3{ margin:0 0 6px; font-size:14px; letter-spacing:.02em; opacity:.95; }
+    #legend .rows{ margin-top:6px; }
+    #legend .row{ display:flex; align-items:center; gap:8px; margin:6px 0; }
+    #legend .swatch{ width:12px; height:12px; border-radius:4px; border:1px solid rgba(255,255,255,.25); box-shadow:0 0 8px rgba(255,255,255,.16); }
+    #legend .label{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:18vw; opacity:.92; }
+    #legend .static-link{ margin-top:8px; font-size:12px; opacity:.9; }
+    #legend .static-link a{ color:var(--poppy-red); text-decoration:none; border-bottom:1px dashed var(--poppy-red); }
+    #legend .static-link a:hover{ text-decoration:underline; }
+    #legend.collapsed .rows{ display:none; }
+    #show-more{
+      margin-top:8px; width:100%; background:var(--poppy-red); color:#fff; border:none; border-radius:7px;
+      padding:6px 0; font-weight:600; letter-spacing:.04em; cursor:pointer; transition:background .2s, transform .15s; font-size:12px;
     }
-    #hud-toggle:hover { background: rgba(255,20,71,.08); }
+    #show-more:hover{ background:#ff2e7a; transform:scale(1.02); }
 
-    #title {
-      margin: 0;
-      font-family: 'Michroma', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      font-size: 20px;
-      letter-spacing: .08em;
-      color: var(--poppy-red);
-      text-shadow: 0 0 10px rgba(255,20,71,.7), 0 0 22px rgba(255,20,71,.4);
-      opacity: 0;
-      transform: translateY(-8px);
-      animation: fadeDown 700ms ease both .25s;
-    }
+    /* Hover tooltip (unchanged, but easy to shrink if you want) */
+    .poppy-label .title{ display:block; font-weight:800; letter-spacing:.01em; text-shadow:0 0 12px currentColor, 0 0 28px currentColor; margin-bottom:4px; }
+    .poppy-label .kv{ display:block; font-size:15px; line-height:1.4; margin:2px 0; }
+    .poppy-label .kv .key{ opacity:.75; text-transform:uppercase; letter-spacing:.06em; font-size:12px; margin-right:6px; }
+    .poppy-label .kv .val{ font-weight:600; opacity:.98; }
+    .poppy-label .kv.cluster .val{ text-shadow:0 0 10px currentColor; }
+    .poppy-label .sep{ display:block; height:1px; margin:6px 0 4px; background:linear-gradient(90deg, rgba(255,255,255,.22), rgba(255,255,255,.06) 60%, rgba(255,255,255,0)); }
 
-    /* Right: legend pinned to top-right cell */
-    #hud-right { justify-self: end; }
-
-    #legend {
-      background: rgba(0,0,0,.45);
-      border: 1px solid rgba(255,255,255,.35);
-      border-radius: 12px;
-      padding: 10px 14px 14px 14px;
-      color: #fff;
-      font: 16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      max-width: 20vw;
-      backdrop-filter: blur(4px);
-      opacity: 0;
-      transform: translateY(-8px);
-      animation: fadeUp 700ms ease both .45s;
-      position: static !important;
-      inset: auto !important;
-      margin: 0 0 0 auto;
-      z-index: 1;
-    }
-    #legend header {
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    #legend h3 { margin: 0 0 8px; font-size: 18px; letter-spacing:.02em; opacity:.97; }
-    #legend .rows { margin-top:8px; }
-    #legend .row { display:flex; align-items:center; gap:12px; margin:8px 0; }
-    #legend .swatch { width:18px; height:18px; border-radius:5px; border:1px solid rgba(255,255,255,.28); box-shadow:0 0 12px rgba(255,255,255,.18); }
-    #legend .label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:.95; }
-    #legend .static-link { font-size:14px; opacity:.95; }
-    #legend .static-link a { color:var(--poppy-red); text-decoration:none; border-bottom:1px dashed var(--poppy-red); }
-    #legend .static-link a:hover { text-decoration:underline; }
-
-    /* SHOW MORE replaces old chevron */
-    #show-more {
-      margin-top: 10px;
-      width: 100%;
-      background: var(--poppy-red);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 0;
-      font-family: inherit;
-      font-weight: 600;
-      letter-spacing: .05em;
-      cursor: pointer;
-      transition: background .2s ease, transform .15s ease;
-    }
-    #show-more:hover { background: #ff2e7a; transform: scale(1.02); }
-
-    /* Collapsed legend content */
-    #legend.collapsed .rows { display:none; }
-
-    /* COLLAPSE THE WHOLE HUD (fully off-screen, canvas gets all events) */
-    body.hud-collapsed #hud-bar{
-      transform: translateY(-150%);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* Floating reveal arrow (only visible when collapsed) */
-    #hud-reveal{
-      position: fixed;
-      top: 12px; left: 12px;
-      z-index: 21;
-      display: none;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,20,71,.5);
-      color: var(--poppy-red);
-      font-size: 20px;
-      line-height: 1;
-      padding: 8px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 0 18px rgba(255,20,71,.25), 0 0 18px rgba(255,20,71,.25) inset;
-      text-shadow: 0 0 14px rgba(255,20,71,.6);
-    }
-    body.hud-collapsed #hud-reveal{ display: inline-block; }
-
-    /* Tooltip layout */
-    .poppy-label .title {
-      display:block; font-weight:800; letter-spacing:.01em;
-      text-shadow:0 0 12px currentColor, 0 0 28px currentColor;
-      margin-bottom:4px;
-    }
-    .poppy-label .kv { display:block; font-size:16px; line-height:1.45; margin:2px 0; }
-    .poppy-label .kv .key {
-      opacity:.75; text-transform:uppercase; letter-spacing:.06em;
-      font-size:13px; margin-right:6px;
-    }
-    .poppy-label .kv .val { font-weight:600; opacity:.98; }
-    .poppy-label .kv.cluster .val { text-shadow:0 0 10px currentColor; }
-    .poppy-label .sep {
-      display:block; height:1px; margin:6px 0 4px 0;
-      background:linear-gradient(90deg, rgba(255,255,255,.22), rgba(255,255,255,.06) 60%, rgba(255,255,255,0));
-    }
-
-    /* Intro fades */
-    @keyframes fadeDown { from {opacity:0;transform:translateY(-10px)} to {opacity:1;transform:translateY(0)} }
-    @keyframes fadeUp   { from {opacity:0;transform:translateY(-6px)}  to {opacity:1;transform:translateY(0)} }
+    @keyframes fadeDown{ from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+    @keyframes fadeUp{ from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);} }
   </style>
 </head>
 <body>
 
-  <!-- Floating reveal arrow (appears only when HUD collapsed) -->
-  <button id="hud-reveal" aria-label="Show HUD" title="Show HUD">▾</button>
-
-  <!-- HUD -->
-  <div id="hud">
+  <!-- HUD (bar + floating tab) -->
+  <div id="hud" class="expanded">
     <div id="hud-bar">
-      <!-- Left: arrow + title (30vw) -->
       <div id="hud-left">
-        <button id="hud-toggle" aria-expanded="true" aria-controls="hud-bar" title="Hide HUD">▲</button>
+        <button id="hud-toggle" class="hud-arrow" aria-label="Hide HUD" title="Hide HUD">
+          <span class="hud-arrow-icon">▲</span>
+        </button>
         <h1 id="title">WELCOME TO THE POPPYVERSE</h1>
       </div>
-      <!-- Middle: spacer (40vw) -->
       <div id="hud-middle"></div>
-      <!-- Right: legend (rest) -->
       <div id="hud-right">
         <div id="legend" class="collapsed">
-          <header id="legend-toggle">
-            <h3>Universe Clusters</h3>
-          </header>
+          <header><h3>Universe Clusters</h3></header>
           <div class="rows" id="legend-rows"></div>
           <div class="static-link">
-            Prefer a calmer, saner, static table of contents? Visit the
+            Prefer a calmer, saner version? Visit the
             <a href="https://inpoppyfields.tumblr.com/map" target="_blank" rel="noopener">Story Map</a>.
           </div>
           <button id="show-more">SHOW MORE</button>
         </div>
       </div>
     </div>
+
+    <!-- Always-visible tab when HUD collapsed -->
+    <button id="hud-tab" class="hud-arrow" aria-label="Show HUD" title="Show HUD">
+      <span class="hud-arrow-icon">▲</span>
+      <span style="font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:#fff; opacity:.9;">
+        WELCOME TO THE POPPYVERSE
+      </span>
+    </button>
   </div>
 
   <div id="bg"></div>
@@ -229,88 +140,61 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <script>
-  //#region csv setup
+  // CSVs to try
   const CSV_CANDIDATES = [
-    'table.csv',
-    'table - export.csv',
-    'table (export).csv',
-    'the poppy board.csv',
-    'the poppy board v2.csv',
+    'table.csv','table - export.csv','table (export).csv',
+    'the poppy board.csv','the poppy board v2.csv',
     'the poppy board, v2 28b95a1c19ee80249fb2fd23fc0b9532.csv'
   ];
-  async function fetchFirstCsv() {
-    for (const name of CSV_CANDIDATES) {
-      try {
-        const res = await fetch(name, { cache: 'no-cache' });
-        if (res.ok) return await res.text();
-      } catch {}
+  async function fetchFirstCsv(){
+    for (const name of CSV_CANDIDATES){
+      try{ const res = await fetch(name, {cache:'no-cache'}); if (res.ok) return await res.text(); }catch{}
     }
     throw new Error('csv not found. add your filename to CSV_CANDIDATES (must contain "table" or "the poppy board").');
   }
-  //#endregion
 
-  //#region columns, palette, helpers
+  // columns, palette, helpers
   const COLNAMES = {
-    id: ['id','node id','uid','slug'],
-    name: ['name','title','label'],
-    tags: ['tag','tags','category','categories'],
-    size: ['size','val','value','weight'],
-    content: ['content'],
-    meta: ['meta'],
-    relatable: ['relatable'],
-    sequels: ['sequels','sequel','next','edges','to'],
-    collision: ['collision','collisions','collide','also to'],
-    url: ['url','link','href','permalink']
+    id:['id','node id','uid','slug'],
+    name:['name','title','label'],         // UNIVERSE NAME
+    tags:['tag','tags','category','categories'],   // cluster/tag
+    size:['size','val','value','weight'],
+    content:['content'],
+    meta:['meta'],
+    relatable:['relatable'],
+    sequels:['sequels','sequel','next','edges','to'],
+    collision:['collision','collisions','collide','also to'],
+    url:['url','link','href','permalink'],
+    featured:['featured','is featured','star','⭐','highlight']
   };
 
   const TAG_PALETTE = ['#FF1447','#FF2E7A','#FF5AC8','#C243FF','#8A3DFF','#4F6CFF','#1CC6FF','#00E5FF'];
-
-  const AXES_COLOR = 0xFF1447;
-  const AXES_COLOR_STRING = '#FF1447';
-
+  const AXES_COLOR = 0xFF1447, AXES_COLOR_STRING = '#FF1447';
   const POS_SCALE = 100, CLUSTER_BASE=28, CLUSTER_STEP=20, RANDOM_RADIAL=26, BASE_JITTER=100, EXTRA_JITTER=26;
 
-  const AXIS_NAMES = {
-    x: 'Lumen Inversion',
-    y: 'Metaphysical Drift',
-    z: 'Proximity to Home'
-  };
+  const AXIS_NAMES = { x:'Lumen Inversion', y:'Metaphysical Drift', z:'Proximity to Home' };
 
-  function lerp(a,b,t){ return a + (b-a)*t; }
+  function lerp(a,b,t){ return a+(b-a)*t; }
   function hexToRgb(hex){ const s=String(hex).replace('#',''); return { r:parseInt(s.slice(0,2),16), g:parseInt(s.slice(2,4),16), b:parseInt(s.slice(4,6),16) }; }
   function rgbToHex(r,g,b){ const h=v=>v.toString(16).padStart(2,'0'); return '#'+h(r)+h(g)+h(b); }
-  function extendCool(i){ const a=hexToRgb(TAG_PALETTE[TAG_PALETTE.length-2]), b=hexToRgb(TAG_PALETTE[TAG_PALETTE.length-1]); const t=(i%6)/6; return rgbToHex(Math.round(lerp(a.r,b.r,t)),Math.round(lerp(a.g,b.g,t)),Math.round(lerp(a.b,b.b,t))); }
-
+  function extendCool(i){ const a=hexToRgb(TAG_PALETTE[TAG_PALETTE.length-2]), b=hexToRgb(TAG_PALETTE[TAG_PALETTE.length-1]); const t=(i%6)/6; return rgbToHex(Math.round(lerp(a.r,b.r,t)),Math.round(lerp(a.g,b.g,t))); }
   function normalizeHeaders(fields){ const map={}; (fields||[]).forEach(f=>map[String(f||'').trim().toLowerCase()]=f); return map; }
-  function pick(headers, aliases){
-    for (const a of aliases){
-      const k=a.toLowerCase();
-      if (k in headers) return headers[k];
-      for (const key in headers){ if (key.includes(k)) return headers[key]; }
-    }
-    return null;
-  }
-  function splitIdsFlexible(s){
-    if (s==null) return [];
-    const raw=String(s).trim(); if (!raw) return [];
-    return raw.split(/[\s,;|]+/).map(t=>t.trim()).filter(Boolean).map(t=>Number(t)).filter(n=>Number.isFinite(n));
-  }
-  function parseParenNumber(s, fb=null){ const m=/\(\s*([-+]?\d*\.?\d+)\s*\)/.exec(String(s||'')); return m?Number(m[1]):fb; }
+  function pick(headers, aliases){ for (const a of aliases){ const k=a.toLowerCase(); if (k in headers) return headers[k]; for (const key in headers){ if (key.includes(k)) return headers[key]; } } return null; }
+  function splitIdsFlexible(s){ if (s==null) return []; const raw=String(s).trim(); if (!raw) return []; return raw.split(/[\s,;|]+/).map(t=>t.trim()).filter(Boolean).map(t=>Number(t)).filter(n=>Number.isFinite(n)); }
+  function parseParenNumber(s,fb=null){ const m=/\(\s*([-+]?\d*\.?\d+)\s*\)/.exec(String(s||'')); return m?Number(m[1]):fb; }
   function toSize(s){ const fromParen=parseParenNumber(s); const n=(fromParen!=null)?fromParen:((s==null||s==='')?5:Number(s)); const v=Number.isFinite(n)?n:5; return Math.max(1, Math.min(30, v)); }
   function escapeHtml(s){ const map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}; return String(s||'').replace(/[&<>"']/g,c=>map[c]); }
   function hash32(str){ let h=2166136261>>>0; for (let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,1677619);} return h>>>0; }
-  function rand(seed){ seed=(seed+0x6D2B79F5)>>>0; let t=Math.imul(seed^(seed>>>15),1|seed); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }
+  function rand(seed){ seed=(seed+0x6D2B79F5)>>>0; let t=Math.imul(seed^(seed>>>15),1|seed); t=(t+Math.imul(t^(t>>>7),61|seed))^t; return ((t^(t>>>14))>>>0)/4294967296; }
+  function toBool(v){ if (v==null) return false; const s=String(v).trim().toLowerCase(); return ['y','yes','true','1','✓','✔','⭐','star','featured'].includes(s); }
 
   function describeMeta(v){ if (v==null) return '???'; if (v<=1) return 'grounded'; if (v<=2) return 'a bit wobbly'; if (v<=3) return 'glitch-prone'; if (v<=4) return 'esoteric'; return 'full transcendence'; }
   function describeLumen(v){ if (v==null) return '???'; if (v<=1) return 'daylight-adjacent'; if (v<=2) return 'bring a dimmer'; if (v<=3) return 'bring a flashlight'; if (v<=4) return 'pitchy'; return 'void-certified'; }
   function describeHome(v){ if (v==null) return '???'; if (v<=1) return 'far-out'; if (v<=2) return 'road-trip distance'; if (v<=3) return 'local-ish'; if (v<=4) return 'next-door energy'; return 'inside your kitchen'; }
-  //#endregion
 
-  //#region data load → nodes → links
+  // load + build
   fetchFirstCsv()
-    .then(txt => new Promise(resolve => {
-      Papa.parse(txt, { header:true, dynamicTyping:false, skipEmptyLines:true, complete: resolve });
-    }))
+    .then(txt => new Promise(resolve => { Papa.parse(txt, { header:true, dynamicTyping:false, skipEmptyLines:true, complete: resolve }); }))
     .then(result => {
       const rows = result.data || [];
       if (!rows.length) throw new Error('csv has no rows');
@@ -326,7 +210,8 @@
         relatable: pick(headers, COLNAMES.relatable),
         sequels: pick(headers, COLNAMES.sequels),
         collision: pick(headers, COLNAMES.collision),
-        url: pick(headers, COLNAMES.url)
+        url: pick(headers, COLNAMES.url),
+        featured: pick(headers, COLNAMES.featured)
       };
       if (!col.id || !col.tags) throw new Error('need at least id/name and tag columns');
 
@@ -334,12 +219,13 @@
 
       const nodes = rows.map(r => {
         const id = String(r[col.id] ?? '').trim();
-        const label = String(r[col.name] ?? id).trim() || id;
-        const cluster = String(r[col.tags] ?? '').trim() || '(unclustered)';
+        const label = String(r[col.name] ?? id).trim() || id;              // universe name
+        const cluster = String(r[col.tags] ?? '').trim() || '(unclustered)'; // tag
         if (!id || !cluster) return null;
 
         const url = ((r[col.url] ?? '') + '').trim() || null;
         const size = toSize(r[col.size]);
+        const featured = toBool(r[col.featured]);
 
         const xv = parseParenNumber(r[col.content], 0);
         const yv = parseParenNumber(r[col.meta], 0);
@@ -377,110 +263,88 @@
         const x = TX + dx, y = TY + dy, z = TZ + dz;
 
         return {
-          id, label, cluster, url,
-          val: size,
+          id, label, cluster, url, val:size, featured,
           x,y,z, fx:x,fy:y,fz:z, tx:x,ty:y,tz:z,
-          color: null,
-          _axes: { xv,yv,zv },
-          _q: { meta: qMeta, lumen: qLumen, home: qHome },
-          _dbg: { seed, idx, baseRadius, radius, angle, jx, jy, jz, TX, TY, TZ }
+          color:null,
+          _axes:{xv,yv,zv}, _q:{meta:qMeta, lumen:qLumen, home:qHome}
         };
       }).filter(Boolean);
 
       const nodeById = new Map(), nodeByNum = new Map();
-      nodes.forEach(n => {
-        nodeById.set(String(n.id), n);
-        const num = Number(n.id);
-        if (Number.isFinite(num)) nodeByNum.set(num, n);
-      });
+      nodes.forEach(n => { nodeById.set(String(n.id), n); const num=Number(n.id); if (Number.isFinite(num)) nodeByNum.set(num, n); });
 
-      const clusterOrder = [], seen = new Set(), clusterColor = {};
-      nodes.forEach(n => { if (!seen.has(n.cluster)) { seen.add(n.cluster); clusterOrder.push(n.cluster); }});
-      clusterOrder.forEach((t,i) => clusterColor[t] = (i < TAG_PALETTE.length) ? TAG_PALETTE[i] : extendCool(i - TAG_PALETTE.length));
+      const clusterOrder = [], seen=new Set(), clusterColor={};
+      nodes.forEach(n => { if (!seen.has(n.cluster)){ seen.add(n.cluster); clusterOrder.push(n.cluster); } });
+      clusterOrder.forEach((t,i)=>clusterColor[t]=(i<TAG_PALETTE.length)?TAG_PALETTE[i]:extendCool(i - TAG_PALETTE.length));
       nodes.forEach(n => n.color = clusterColor[n.cluster]);
 
       function ensureNodeForId(raw){
-        const key = String(raw);
-        let node = nodeById.get(key);
+        const key=String(raw); let node=nodeById.get(key);
         if (node) return node;
-        node = { id:key, label:key, cluster:'(referenced)', url:null, val:5, x:0,y:0,z:0, fx:0,fy:0,fz:0, tx:0,ty:0,tz:0, color:'#00E5FF', _dbg:{seed:0} };
+        node={ id:key, label:key, cluster:'(referenced)', url:null, val:5, featured:false, x:0,y:0,z:0, fx:0,fy:0,fz:0, tx:0,ty:0,tz:0, color:'#00E5FF' };
         nodes.push(node); nodeById.set(key,node);
-        const num = Number(key); if (Number.isFinite(num)) nodeByNum.set(num,node);
+        const num=Number(key); if (Number.isFinite(num)) nodeByNum.set(num,node);
         return node;
       }
 
-      const links = [];
-      function addLinkByIds(srcId, tgtId){
+      const links=[];
+      function addLinkByIds(srcId,tgtId){
         if (!srcId || !tgtId) return;
-        if (String(srcId) === String(tgtId)) return;
-        const srcNode = ensureNodeForId(srcId);
-        const tgtNode = ensureNodeForId(tgtId);
-        links.push({ source: srcNode, target: tgtNode, color:'#FFFFFF', width:0.7 });
+        if (String(srcId)===String(tgtId)) return;
+        const s=ensureNodeForId(srcId), t=ensureNodeForId(tgtId);
+        links.push({ source:s, target:t, color:'#FFFFFF', width:0.7 });
       }
-
-      rows.forEach(r => {
-        const srcRaw = String(r[col.id] ?? '').trim(); if (!srcRaw) return;
-        const seq = splitIdsFlexible(r[col.sequels]);
-        const coln= splitIdsFlexible(r[col.collision]);
-        const targets = [...seq, ...coln];
-        if (targets.includes(0)) {
-          nodes.forEach(n => { if (String(n.id) !== srcRaw) addLinkByIds(srcRaw, n.id); });
-        } else {
-          targets.forEach(num => { if (num===0) return; const tgt=nodeByNum.get(num)||nodeById.get(String(num))||ensureNodeForId(num); addLinkByIds(srcRaw, tgt.id); });
-        }
+      rows.forEach(r=>{
+        const srcRaw=String(r[col.id] ?? '').trim(); if (!srcRaw) return;
+        const seq=splitIdsFlexible(r[col.sequels]); const coln=splitIdsFlexible(r[col.collision]);
+        const targets=[...seq,...coln];
+        if (targets.includes(0)){ nodes.forEach(n=>{ if (String(n.id)!==srcRaw) addLinkByIds(srcRaw,n.id); }); }
+        else { targets.forEach(num=>{ if (num===0) return; const tgt=nodeByNum.get(num)||nodeById.get(String(num))||ensureNodeForId(num); addLinkByIds(srcRaw,tgt.id); }); }
       });
 
-      //#endregion
+      // ---------- Graph ----------
+      const elem=document.getElementById('g');
+      let hoveredNode=null, pulseRAF=null;
 
-      //#region graph build (transparent renderer + bg)
-      const elem = document.getElementById('g');
-      let hoveredNode = null, pulseRAF = null;
-
-      const Graph = ForceGraph3D()(elem)
+      const Graph=ForceGraph3D()(elem)
         .enablePointerInteraction(true)
-        .graphData({ nodes, links })
+        .graphData({nodes,links})
         .showNavInfo(false)
         .d3Force('link', null)
         .d3Force('charge', null)
         .enableNodeDrag(false)
         .cooldownTicks(0)
-        .nodeThreeObject(n => {
-          const colorHex = n.color || '#FF1447';
-          const color = new THREE.Color(colorHex);
-          const baseRadius = 5;
+        .nodeThreeObject(n=>{
+          const colorHex=n.color||'#FF1447';
+          const color=new THREE.Color(colorHex);
+          const baseRadius=5;
 
-          const core = new THREE.Mesh(
-            new THREE.SphereGeometry(baseRadius, 24, 24),
-            new THREE.MeshStandardMaterial({ color, metalness: 0.12, roughness: 0.38 })
+          const core=new THREE.Mesh(
+            new THREE.SphereGeometry(baseRadius,24,24),
+            new THREE.MeshStandardMaterial({ color, metalness:.12, roughness:.38 })
           );
 
-          const size = Math.max(5, Math.min(30, n.val || 5));
-          const s = (size / 5);
-          core.scale.set(s, s, s);
+          const size=Math.max(5, Math.min(30, n.val||5));
+          const s=(size/5);
+          core.scale.set(s,s,s);
 
-          const glow = makeGlowSprite(colorHex);
-          const idleSize = Math.max(18, baseRadius * s * 3);
-          glow.scale.set(idleSize, idleSize, 1);
-          glow.material.opacity = 0.55;
+          const glow=makeGlowSprite(colorHex);
+          const idleSize=Math.max(14, baseRadius*s*2.4);
+          glow.scale.set(idleSize,idleSize,1);
+          glow.material.opacity=.48;
           core.add(glow);
 
-          core.raycast = THREE.Mesh.prototype.raycast;
-          glow.raycast = () => null;
-
-          n.__core = core;
-          n.__glow = glow;
-          n.__sizeScale = s;
+          core.raycast=THREE.Mesh.prototype.raycast;
+          n.__core=core; n.__glow=glow; n.__colorHex=colorHex;
+          n.__sizeScale=s;
           n.__idleSize = idleSize;
-          n.__idleOpacity = 0.35;
-
+          n.__idleOpacity = 0.33;
           return core;
         })
-        .nodeLabel(n => {
-          const color = n.color || '#FF1447';
-          const meta  = n._q?.meta  ?? '—';
-          const lumen = n._q?.lumen ?? '—';
-          const home  = n._q?.home  ?? '—';
-          const hint = n.url ? '<span class="hint">Click to open archive</span>' : '<span class="hint">URL: N/A</span>';
+        .nodeLabel(n=>{
+          const color=n.color||'#FF1447';
+          const meta=n._q?.meta ?? '—', lumen=n._q?.lumen ?? '—', home=n._q?.home ?? '—';
+          const hint=n.url ? '<span class="hint">Click to open archive</span>' : '<span class="hint">URL: N/A</span>';
           return `
             <div class="poppy-label">
               <span class="title" style="color:${color}">${escapeHtml(n.label || n.id)}</span>
@@ -489,331 +353,382 @@
               <span class="kv"><span class="key">Lumen</span><span class="val">${escapeHtml(lumen)}</span></span>
               <span class="kv"><span class="key">Meta</span><span class="val">${escapeHtml(meta)}</span></span>
               <span class="kv"><span class="key">Home</span><span class="val">${escapeHtml(home)}</span></span>
-              <span class="sep"></span>
-              ${hint}
+              <span class="kv"><span class="key">Featured</span><span class="val">${n.featured ? 'Yes' : 'No'}</span></span>
+              <span class="sep"></span>${hint}
             </div>`;
         })
-        .linkColor(l => l.color || '#FFFFFF')
-        .linkWidth(l => l.width || 0.9)
+        .linkColor(l=>l.color||'#FFFFFF')
+        .linkWidth(l=>l.width||0.9)
         .linkOpacity(0.75);
 
-      // --- Transparent renderer that actually shows CSS bg ---
-      const W = window.innerWidth;
-      const H = window.innerHeight;
+      // transparent renderer
+      const w=window.innerWidth, h=window.innerHeight;
+      const renderer=new THREE.WebGLRenderer({ antialias:true, alpha:true, powerPreference:'high-performance' });
+      renderer.setPixelRatio(window.devicePixelRatio||1);
+      renderer.setSize(w,h);
+      renderer.setClearColor(0x000000,0);
+      renderer.setClearAlpha(0);
+      renderer.outputColorSpace=THREE.SRGBColorSpace;
+      renderer.toneMapping=THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure=1.05;
 
-      const transparentRenderer = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: true,
-        powerPreference: 'high-performance',
-        preserveDrawingBuffer: false
-      });
-      transparentRenderer.setPixelRatio(window.devicePixelRatio || 1);
-      transparentRenderer.setSize(W, H);
-      transparentRenderer.setClearColor(0x000000, 0);
-      transparentRenderer.setClearAlpha(0);
-      transparentRenderer.outputColorSpace = THREE.SRGBColorSpace;
-      transparentRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-      transparentRenderer.toneMappingExposure = 1.05;
+      Graph.renderer(renderer);
+      if (!renderer.domElement.parentNode) elem.appendChild(renderer.domElement);
+      Graph.width(w).height(h); Graph.backgroundColor('rgba(0,0,0,0)');
 
-      Graph.renderer(transparentRenderer);
-      if (!transparentRenderer.domElement.parentNode) {
-        elem.appendChild(transparentRenderer.domElement);
-      }
-      Graph.width(W).height(H);
-      Graph.backgroundColor('rgba(0,0,0,0)');
+      const scene=Graph.scene();
+      scene.background=null;
+      scene.add(new THREE.AmbientLight(0xffffff, .36));
+      const dir=new THREE.DirectionalLight(0xffffff, .7); dir.position.set(60,80,40); scene.add(dir);
 
-      const scene = Graph.scene();
-      scene.background = null;
-
-      // Lighting
-      scene.add(new THREE.AmbientLight(0xffffff, 0.38));
-      const dir = new THREE.DirectionalLight(0xffffff, 0.7);
-      dir.position.set(60, 80, 40);
-      scene.add(dir);
-
-      // Unified resize handler
-      window.addEventListener('resize', () => {
-        const w = window.innerWidth, h = window.innerHeight;
-        transparentRenderer.setSize(w, h);
-        const cam = Graph.camera();
-        cam.aspect = w / h;
-        cam.updateProjectionMatrix();
-        Graph.width(w).height(h);
-        Graph.refresh();
+      window.addEventListener('resize', ()=>{
+        const W=window.innerWidth, H=window.innerHeight;
+        renderer.setSize(W,H);
+        const cam=Graph.camera(); cam.aspect=W/H; cam.updateProjectionMatrix();
+        Graph.width(W).height(H); Graph.refresh();
       });
 
-      // Controls
-      const controls = Graph.controls();
-      controls.enableRotate = true;
-      controls.enablePan = true;
-      controls.minDistance = 20;
-      controls.maxDistance = 1200;
-      controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+      const controls=Graph.controls();
+      controls.enableRotate=true; controls.enablePan=true;
+      controls.minDistance=20; controls.maxDistance=1200;
+      controls.mouseButtons={ LEFT:THREE.MOUSE.ROTATE, MIDDLE:THREE.MOUSE.DOLLY, RIGHT:THREE.MOUSE.PAN };
       controls.update();
 
-      // Hover pulse
-      function pulse() {
-        if (!hoveredNode || !hoveredNode.__glow || !hoveredNode.__core) {
-          pulseRAF = requestAnimationFrame(pulse);
-          return;
-        }
-        const t = (Date.now() % 1200) / 1200;
-        const amp = 1 + 0.14 * Math.sin(t * Math.PI * 2);
-        const opacity = 0.48 + 0.28 * (0.5 + 0.5 * Math.sin(t * 2 * Math.PI));
+      // --- FEATURED: tiny pill + leader line in WORLD SPACE ---
+      // --- FEATURED: world-space pill + leader line (node color) ---
+const featured = nodes.filter(n => n.featured);
+featured.forEach(n => {
+  const pill = makePillSprite(`${n.label} ▸`, n.__colorHex, 18, 10);
+  pill.renderOrder = 10; pill.raycast = () => null;
+  scene.add(pill);
 
-        const b = hoveredNode.__sizeScale;
-        hoveredNode.__core.scale.set(b * 1.045, b * 1.045, b * 1.045);
+  const geom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+  const mat  = new THREE.LineBasicMaterial({ color: n.__colorHex, transparent:false });
+  const line = new THREE.Line(geom, mat);
+  line.raycast = () => null;
+  line.renderOrder = 9;
+  scene.add(line);
 
-        const big = Math.max(hoveredNode.__idleSize * 1.35, 28);
-        hoveredNode.__glow.scale.set(big * amp, big * amp, 1);
-        hoveredNode.__glow.material.opacity = opacity;
+  n.__pillWorld = pill;
+  n.__leader = line;
+});
 
-        pulseRAF = requestAnimationFrame(pulse);
+// Per-frame: push pills farther from nodes toward camera, with slight sideways/up jitter.
+// This keeps them readable and de-cluttered.
+const tmpNodePos = new THREE.Vector3();
+const tmpCamDir  = new THREE.Vector3();
+const tmpRight   = new THREE.Vector3();
+const tmpUp      = new THREE.Vector3();
+
+renderer.setAnimationLoop(() => {
+  const cam = Graph.camera();
+
+  featured.forEach(n => {
+    if (!n.__core || !n.__pillWorld || !n.__leader) return;
+
+    // node position
+    n.__core.getWorldPosition(tmpNodePos);
+
+    // direction node -> camera
+    tmpCamDir.copy(cam.position).sub(tmpNodePos).normalize();
+
+    // camera's right & up in world space
+    const camForward = new THREE.Vector3();
+    cam.getWorldDirection(camForward); // forward
+    tmpRight.copy(camForward).cross(cam.up).normalize(); // right
+    tmpUp.copy(cam.up).normalize();                      // up
+
+    // scale displacement by camera distance for clutter-free spacing
+    const camDist = cam.position.distanceTo(tmpNodePos);
+    const BASE_FACTOR = 0.5; // how aggressively to push with distance
+    const SIZE_TERM   = n.__sizeScale * 26; // extra for large nodes
+    const MIN_PUSH    = 200; // floor to keep away from links/labels
+
+    let dist = Math.max(MIN_PUSH, BASE_FACTOR * camDist + SIZE_TERM);
+
+    // small deterministic jitter so pills don’t stack on the same ray
+    const h = (hash32(String(n.id)) % 1000) / 1000; // 0..1
+    const SIDE_JITTER = 18 + 18 * h; // px-ish in world scaling
+    const UP_JITTER   = 10 + 12 * (1 - h);
+
+    const pillPos = tmpNodePos.clone()
+      .addScaledVector(tmpCamDir, dist)               // out toward camera
+      .addScaledVector(tmpRight, (h < 0.5 ? -1 : 1) * SIDE_JITTER) // sideways split
+      .addScaledVector(tmpUp,    (h < 0.33 ? -1 : 1) * UP_JITTER);  // slight up/down
+
+    n.__pillWorld.position.copy(pillPos);
+
+    // update leader line (node -> pill) and ensure correct color
+    const posAttr = n.__leader.geometry.attributes.position;
+    posAttr.setXYZ(0, tmpNodePos.x, tmpNodePos.y, tmpNodePos.z);
+    posAttr.setXYZ(1, pillPos.x,     pillPos.y,     pillPos.z);
+    posAttr.needsUpdate = true;
+
+    if (n.__leader.material.color) {
+      n.__leader.material.color.set(n.__colorHex);
+    }
+  });
+});
+
+      // per-frame: position featured pills outward toward camera; update leader segments
+      renderer.setAnimationLoop(() => {
+        const cam = Graph.camera();
+
+        featured.forEach(n => {
+          if (!n.__core || !n.__pillWorld || !n.__leader) return;
+
+          // node world position
+          n.__core.getWorldPosition(tmpNodePos);
+
+          // direction from node -> camera (so pill sits toward viewer, clearing node)
+          tmpCamDir.copy(cam.position).sub(tmpNodePos).normalize();
+
+          // distance scales a touch with node size / zoom
+          const base = 40;                      // base separation
+          const bySize = n.__sizeScale * 22;    // add separation for larger nodes
+          const byZoom = 0.0;                   // can tune with cam distance if desired
+          const dist = base + bySize + byZoom;
+
+          const pillPos = tmpNodePos.clone().addScaledVector(tmpCamDir, dist);
+          n.__pillWorld.position.copy(pillPos);
+
+          // update leader line: node -> pill
+          const posAttr = n.__leader.geometry.attributes.position;
+          posAttr.setXYZ(0, tmpNodePos.x, tmpNodePos.y, tmpNodePos.z);
+          posAttr.setXYZ(1, pillPos.x, pillPos.y, pillPos.z);
+          posAttr.needsUpdate = true;
+        });
+      });
+
+      // hover pulse
+      function pulse(){
+        if (!hoveredNode || !hoveredNode.__glow || !hoveredNode.__core){ pulseRAF=requestAnimationFrame(pulse); return; }
+        const t=(Date.now()%1200)/1200;
+        const amp=1 + 0.11*Math.sin(t*Math.PI*2);
+        const opacity=0.45 + 0.24*(0.5+0.5*Math.sin(t*2*Math.PI));
+        const b=hoveredNode.__sizeScale*1.035;
+        hoveredNode.__core.scale.set(b,b,b);
+        const baseBig=Math.max(hoveredNode.__idleSize*1.22, 20);
+        hoveredNode.__glow.scale.set(baseBig*amp, baseBig*amp, 1);
+        hoveredNode.__glow.material.opacity=opacity;
+        pulseRAF=requestAnimationFrame(pulse);
       }
 
-      Graph
-        .onNodeHover((node, prev) => {
-          if (prev && prev.__core && prev.__glow) {
-            const b = prev.__sizeScale;
-            prev.__core.scale.set(b, b, b);
-            prev.__glow.scale.set(prev.__idleSize, prev.__idleSize, 1);
-            prev.__glow.material.opacity = prev.__idleOpacity;
-          }
-          hoveredNode = node || null;
-          if (hoveredNode) {
-            elem.style.cursor = 'pointer';
-            if (!pulseRAF) pulseRAF = requestAnimationFrame(pulse);
-          } else {
-            elem.style.cursor = null;
-            if (pulseRAF) { cancelAnimationFrame(pulseRAF); pulseRAF = null; }
-          }
-        })
-        .onNodeClick(n => { if (n.url) window.open(n.url, '_blank', 'noopener'); });
-
-      //#endregion
-
-      //#region camera + axes + origin
-      fitCameraAndAxes(nodes);
-
-      function fitCameraAndAxes(list) {
-        if (!list.length) return;
-
-        let minX=Infinity, minY=Infinity, minZ=Infinity, maxX=-Infinity, maxY=-Infinity, maxZ=-Infinity;
-        for (const n of list) {
-          if (n.x < minX) minX = n.x; if (n.y < minY) minY = n.y; if (n.z < minZ) minZ = n.z;
-          if (n.x > maxX) maxX = n.x; if (n.y > maxY) maxY = n.y; if (n.z > maxZ) maxZ = n.z;
+      Graph.onNodeHover((node, prev)=>{
+        if (prev && prev.__core && prev.__glow){
+          const b=prev.__sizeScale;
+          prev.__core.scale.set(b,b,b);
+          prev.__glow.scale.set(prev.__idleSize, prev.__idleSize, 1);
+          prev.__glow.material.opacity=prev.__idleOpacity;
         }
+        hoveredNode=node||null;
+        if (hoveredNode){ elem.style.cursor='pointer'; if (!pulseRAF) pulseRAF=requestAnimationFrame(pulse); }
+        else { elem.style.cursor=null; if (pulseRAF){ cancelAnimationFrame(pulseRAF); pulseRAF=null; } }
+      }).onNodeClick(n=>{ if (n.url) window.open(n.url,'_blank','noopener'); });
 
+      // camera + axes
+      fitCameraAndAxes(nodes);
+      function fitCameraAndAxes(list){
+        if (!list.length) return;
+        let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;
+        for (const n of list){ if (n.x<minX)minX=n.x; if (n.y<minY)minY=n.y; if (n.z<minZ)minZ=n.z; if (n.x>maxX)maxX=n.x; if (n.y>maxY)maxY=n.y; if (n.z>maxZ)maxZ=n.z; }
         const ox=minX, oy=minY, oz=minZ;
-        const spanX = maxX - minX, spanY = maxY - minY, spanZ = maxZ - minZ;
-        const span = Math.max(spanX, spanY, spanZ);
+        const spanX=maxX-minX, spanY=maxY-minY, spanZ=maxZ-minZ;
+        const span=Math.max(spanX,spanY,spanZ);
+        const dist=span*0.7, yOffset=50;
+        const cx=ox+spanX/2, cy=oy+spanY/2, cz=oz+spanZ/2;
 
-        const dist = span * 0.7, yOffset = 50;
-        const cx = ox + spanX/2, cy = oy + spanY/2, cz = oz + spanZ/2;
-
-        controls.target.set(cx, cy, cz);
-        controls.update();
-
+        const controls=Graph.controls();
+        controls.target.set(cx,cy,cz); controls.update();
         Graph.cameraPosition(
-          { x: cx + dist, y: cy + dist + yOffset, z: cz + dist },
-          { x: cx,        y: cy + yOffset,        z: cz       },
-          0
+          { x:cx+dist, y:cy+dist+yOffset, z:cz+dist },
+          { x:cx, y:cy+yOffset, z:cz }, 0
         );
 
-        addAxesPositive(scene, { x: ox, y: oy, z: oz }, { x: spanX, y: spanY, z: spanZ });
-        addOriginMarker(scene, { x:ox, y:oy, z:oz });
+        addAxesPositive(scene,{x:ox,y:oy,z:oz},{x:spanX,y:spanY,z:spanZ});
+        addOriginMarker(scene,{x:0,y:0,z:0});
       }
-      //#endregion
 
-      //#region legend
-      const legendEl = document.getElementById('legend');
-      const rowsEl   = document.getElementById('legend-rows');
-
-      rowsEl.innerHTML = '';
-      clusterOrder.forEach(tag => {
-        const color = clusterColor[tag];
-        const row = document.createElement('div'); row.className='row';
-        const sw = document.createElement('div'); sw.className='swatch';
-        sw.style.background=color; sw.style.boxShadow=`0 0 12px ${color}`;
-        const la = document.createElement('div'); la.className='label'; la.textContent=tag;
+      // legend rows
+      const legendEl=document.getElementById('legend');
+      const rowsEl=document.getElementById('legend-rows');
+      rowsEl.innerHTML='';
+      clusterOrder.forEach(tag=>{
+        const color=clusterColor[tag];
+        const row=document.createElement('div'); row.className='row';
+        const sw=document.createElement('div'); sw.className='swatch'; sw.style.background=color; sw.style.boxShadow=`0 0 8px ${color}`;
+        const la=document.createElement('div'); la.className='label'; la.textContent=tag;
         row.appendChild(sw); row.appendChild(la); rowsEl.appendChild(row);
       });
-      legendEl.hidden = false;
-      //#endregion
 
-      // Fade in the wallpaper behind our transparent canvas
+      // bg
       fadeInGalaxyBackground('https://images.unsplash.com/photo-1648563643923-2091f9c0c12f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2831');
     })
-    .catch(err => {
-      document.body.innerHTML = '<pre style="color:#fff; padding:16px">' + String(err) + '</pre>';
-      console.error(err);
-    });
+    .catch(err => { document.body.innerHTML = '<pre style="color:#fff; padding:16px">' + String(err) + '</pre>'; console.error(err); });
 
-  //#region background helper
+  // bg helper
   function fadeInGalaxyBackground(url){
-    const el = document.getElementById('bg');
-    if (!el) return;
-    const img = new Image();
-    img.onload = () => {
-      el.style.backgroundImage = `url("${url}")`;
-      requestAnimationFrame(() => el.classList.add('show'));
-    };
-    img.onerror = () => console.warn('Background failed to load:', url);
-    img.src = url;
+    const el=document.getElementById('bg'); if (!el) return;
+    const img=new Image();
+    img.onload=()=>{ el.style.backgroundImage=`url("${url}")`; requestAnimationFrame(()=>el.classList.add('show')); };
+    img.onerror=()=>console.warn('Background failed to load:', url);
+    img.src=url;
   }
-  //#endregion
 
-  //#region glow helpers
-  const glowTexCache = {};
+  // sprite helpers
+  const glowTexCache={};
   function makeGlowTexture(hex){
     if (glowTexCache[hex]) return glowTexCache[hex];
-    const { r,g,b } = hexToRgb(hex);
-    const size = 256;
-    const canvas = document.createElement('canvas'); canvas.width=size; canvas.height=size;
-    const ctx = canvas.getContext('2d');
-    const grd = ctx.createRadialGradient(size/2,size/2,size*0.05, size/2,size/2,size*0.42);
-    grd.addColorStop(0.06, 'rgba(255,255,255,0.92)');
-    grd.addColorStop(0.32, `rgba(${r},${g},${b},0.50)`);
-    grd.addColorStop(0.62, `rgba(${r},${g},${b},0.18)`);
-    grd.addColorStop(1.00, 'rgba(0,0,0,0)');
-    ctx.fillStyle = grd; ctx.fillRect(0,0,size,size);
-    const tex = new THREE.CanvasTexture(canvas); tex.needsUpdate = true;
-    glowTexCache[hex] = tex; return tex;
+    const {r,g,b}=hexToRgb(hex), size=256;
+    const c=document.createElement('canvas'); c.width=size; c.height=size;
+    const ctx=c.getContext('2d');
+    const grd=ctx.createRadialGradient(size/2,size/2,size*0.05, size/2,size/2,size*0.42);
+    grd.addColorStop(0.06,'rgba(255,255,255,0.9)');
+    grd.addColorStop(0.32,`rgba(${r},${g},${b},0.45)`);
+    grd.addColorStop(0.62,`rgba(${r},${g},${b},0.16)`);
+    grd.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=grd; ctx.fillRect(0,0,size,size);
+    const tex=new THREE.CanvasTexture(c); tex.needsUpdate=true;
+    glowTexCache[hex]=tex; return tex;
   }
   function makeGlowSprite(hex){
-    const map = makeGlowTexture(hex);
-    const mat = new THREE.SpriteMaterial({ map, color:hex, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.7 });
-    const spr = new THREE.Sprite(mat); spr.raycast = () => null; return spr;
+    const map=makeGlowTexture(hex);
+    const mat=new THREE.SpriteMaterial({ map, color:hex, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:.65 });
+    const spr=new THREE.Sprite(mat); spr.raycast=()=>null; return spr;
   }
-  //#endregion
+  function makePillSprite(text, colorHex, baseScale=18, fontPx=10){
+    const padX=6, padY=3, radius=7, font=`bold ${fontPx}px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif`;
+    const m=document.createElement('canvas').getContext('2d'); m.font=font;
+    const tw=Math.ceil(m.measureText(text).width);
+    const hPx=14 + padY*2;
+    const w=tw+padX*2, h=hPx+padY*2;
+    const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+    const ctx=canvas.getContext('2d');
 
-  //#region axes + origin
+    ctx.fillStyle='rgba(0,0,0,0.55)';
+    ctx.strokeStyle=colorHex; ctx.lineWidth=1;
+    roundRect(ctx, .5, .5, w-1, h-1, radius); ctx.fill(); ctx.stroke();
+
+    ctx.shadowColor=colorHex; ctx.shadowBlur=5;
+    ctx.font=font; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle='#fff';
+    ctx.fillText(text, w/2, h/2);
+
+    const tex=new THREE.CanvasTexture(canvas); tex.minFilter=THREE.LinearFilter; tex.needsUpdate=true;
+    const mat=new THREE.SpriteMaterial({ map:tex, transparent:true, depthWrite:false });
+    const spr=new THREE.Sprite(mat);
+    spr.scale.set(baseScale*(w/h), baseScale, 1);
+    return spr;
+  }
+  function roundRect(ctx,x,y,w,h,r){
+    const rr=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y);
+    ctx.arcTo(x+w,y, x+w,y+h, rr);
+    ctx.arcTo(x+w,y+h, x,y+h, rr);
+    ctx.arcTo(x,y+h, x,y, rr);
+    ctx.arcTo(x,y, x+w,y, rr);
+    ctx.closePath();
+  }
+
+  // axes + origin
   function addAxesPositive(scene, origin, spans){
-    const old = scene.getObjectByName('axesGroup'); if (old) scene.remove(old);
-    const g = new THREE.Group(); g.name='axesGroup'; g.raycast=()=>null;
-    const lineMat = new THREE.LineBasicMaterial({ color: AXES_COLOR, transparent:true, opacity:1.0 });
+    const old=scene.getObjectByName('axesGroup'); if (old) scene.remove(old);
+    const g=new THREE.Group(); g.name='axesGroup'; g.raycast=()=>null;
+    const lineMat=new THREE.LineBasicMaterial({ color:AXES_COLOR, transparent:true, opacity:1.0 });
 
-    const xGeo = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x + spans.x, origin.y, origin.z) ]);
-    const yGeo = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y + spans.y, origin.z) ]);
-    const zGeo = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y, origin.z + spans.z) ]);
-    const xAxis = new THREE.Line(xGeo, lineMat), yAxis = new THREE.Line(yGeo, lineMat), zAxis = new THREE.Line(zGeo, lineMat);
+    const xGeo=new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x,origin.y,origin.z), new THREE.Vector3(origin.x+spans.x,origin.y,origin.z) ]);
+    const yGeo=new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x,origin.y,origin.z), new THREE.Vector3(origin.x,origin.y+spans.y,origin.z) ]);
+    const zGeo=new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x,origin.y,origin.z), new THREE.Vector3(origin.x,origin.y,origin.z+spans.z) ]);
+    const xAxis=new THREE.Line(xGeo,lineMat), yAxis=new THREE.Line(yGeo,lineMat), zAxis=new THREE.Line(zGeo,lineMat);
     xAxis.raycast=()=>null; yAxis.raycast=()=>null; zAxis.raycast=()=>null;
 
-    const xLabel = makeTextSprite(AXIS_NAMES.x, AXES_COLOR_STRING);
-    const yLabel = makeTextSprite(AXIS_NAMES.y, AXES_COLOR_STRING);
-    const zLabel = makeTextSprite(AXIS_NAMES.z, AXES_COLOR_STRING);
-    const lblOff = 8;
-    xLabel.position.set(origin.x + spans.x + lblOff, origin.y, origin.z);
-    yLabel.position.set(origin.x, origin.y + spans.y + lblOff, origin.z);
-    zLabel.position.set(origin.x, origin.y, origin.z + spans.z + lblOff);
-    [xLabel, yLabel, zLabel].forEach(s => { s.raycast=()=>null; s.renderOrder=2; });
+    const xLabel=makeTextSprite(AXIS_NAMES.x, AXES_COLOR_STRING);
+    const yLabel=makeTextSprite(AXIS_NAMES.y, AXES_COLOR_STRING);
+    const zLabel=makeTextSprite(AXIS_NAMES.z, AXES_COLOR_STRING);
+    const lblOff=8;
+    xLabel.position.set(origin.x+spans.x+lblOff, origin.y, origin.z);
+    yLabel.position.set(origin.x, origin.y+spans.y+lblOff, origin.z);
+    zLabel.position.set(origin.x, origin.y, origin.z+spans.z+lblOff);
+    [xLabel,yLabel,zLabel].forEach(s=>{ s.raycast=()=>null; s.renderOrder=2; });
 
-    g.add(xAxis, yAxis, zAxis, xLabel, yLabel, zLabel);
+    g.add(xAxis,yAxis,zAxis,xLabel,yLabel,zLabel);
     scene.add(g);
   }
 
   function addOriginMarker(scene, origin){
-    const old = scene.getObjectByName('originMarker'); if (old) scene.remove(old);
-    const g = new THREE.Group(); g.name='originMarker'; g.raycast=()=>null;
+    const old=scene.getObjectByName('originMarker'); if (old) scene.remove(old);
+    const g=new THREE.Group(); g.name='originMarker'; g.raycast=()=>null;
 
-    const len = 18;
-    const mat = new THREE.LineBasicMaterial({ color: AXES_COLOR, transparent:true, opacity:0.9 });
-    const gx = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x+len, origin.y, origin.z) ]);
-    const gy = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y+len, origin.z) ]);
-    const gz = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y, origin.z+len) ]);
-    g.add(new THREE.Line(gx, mat), new THREE.Line(gy, mat), new THREE.Line(gz, mat));
+    const len=18, mat=new THREE.LineBasicMaterial({ color:AXES_COLOR, transparent:true, opacity:.9 });
+    const gx=new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x,origin.y,origin.z), new THREE.Vector3(origin.x+len,origin.y,origin.z) ]);
+    const gy=new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x,origin.y,origin.z), new THREE.Vector3(origin.x,origin.y+len,origin.z) ]);
+    const gz=new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x,origin.y,origin.z), new THREE.Vector3(origin.x,origin.y,origin.z+len) ]);
+    g.add(new THREE.Line(gx,mat), new THREE.Line(gy,mat), new THREE.Line(gz,mat));
 
-    const core = new THREE.Mesh(
-      new THREE.SphereGeometry(1.6, 20, 20),
-      new THREE.MeshStandardMaterial({ color: AXES_COLOR_STRING, metalness: 0.1, roughness: 0.25, emissive: 0x882222, emissiveIntensity: 0.8 })
+    const core=new THREE.Mesh(
+      new THREE.SphereGeometry(1.6,20,20),
+      new THREE.MeshStandardMaterial({ color:AXES_COLOR_STRING, metalness:.1, roughness:.25, emissive:0x882222, emissiveIntensity:.8 })
     );
-    core.position.set(origin.x, origin.y, origin.z);
-    const glow = makeGlowSprite(AXES_COLOR_STRING); glow.scale.set(22,22,1); glow.material.opacity = 0.55;
-    core.add(glow);
-    g.add(core);
+    core.position.set(origin.x,origin.y,origin.z);
+    const glow=makeGlowSprite(AXES_COLOR_STRING); glow.scale.set(22,22,1); glow.material.opacity=.55;
+    core.add(glow); g.add(core);
 
-    const label = makeTextSprite('Origin (0, 0, 0)', AXES_COLOR_STRING);
-    label.position.set(origin.x + 2, origin.y + 2, origin.z);
+    const label=makeTextSprite('Origin (0,0,0)', AXES_COLOR_STRING);
+    label.position.set(origin.x+.8, origin.y+.8, origin.z);
     g.add(label);
 
     scene.add(g);
   }
 
-  function makeTextSprite(text, color = '#FFFFFF'){
-    const fontSize = 12, pad = 8;
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    ctx.font = `bold ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
-    const metrics = ctx.measureText(text);
-    const w = Math.ceil(metrics.width) + pad*2, h = Math.ceil(fontSize*1.6) + pad*2;
+  function makeTextSprite(text, color='#FFFFFF'){
+    const fontSize=12, pad=8;
+    const canvas=document.createElement('canvas'); const ctx=canvas.getContext('2d');
+    ctx.font=`bold ${fontSize}px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif`;
+    const metrics=ctx.measureText(text);
+    const w=Math.ceil(metrics.width)+pad*2, h=Math.ceil(fontSize*1.6)+pad*2;
     canvas.width=w; canvas.height=h;
 
-    const ctx2 = canvas.getContext('2d');
-    ctx2.font = `bold ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
+    const ctx2=canvas.getContext('2d');
+    ctx2.font=`bold ${fontSize}px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif`;
     ctx2.textAlign='center'; ctx2.textBaseline='middle';
     ctx2.fillStyle='rgba(0,0,0,0.35)'; ctx2.strokeStyle=AXES_COLOR_STRING; ctx2.lineWidth=1;
-    roundRect(ctx2,1,1,w-2,h-2,12); ctx2.fill(); ctx2.stroke();
-    ctx2.fillStyle=color; ctx2.shadowColor=color; ctx2.shadowBlur=10; ctx2.fillText(text, w/2, h/2);
+    roundRect(ctx2,1,1,w-2,h-2,10); ctx2.fill(); ctx2.stroke();
+    ctx2.fillStyle=color; ctx2.shadowColor=color; ctx2.shadowBlur=8; ctx2.fillText(text, w/2, h/2);
 
-    const tex = new THREE.CanvasTexture(canvas); tex.minFilter = THREE.LinearFilter; tex.needsUpdate=true;
-    const mat = new THREE.SpriteMaterial({ map:tex, transparent:true, depthWrite:false });
-    const spr = new THREE.Sprite(mat); const scale = 40; spr.scale.set(scale * (w/h), scale, 1); return spr;
+    const tex=new THREE.CanvasTexture(canvas); tex.minFilter=THREE.LinearFilter; tex.needsUpdate=true;
+    const mat=new THREE.SpriteMaterial({ map:tex, transparent:true, depthWrite:false });
+    const spr=new THREE.Sprite(mat); const scale=28; spr.scale.set(scale*(w/h), scale, 1); return spr;
   }
-  function roundRect(ctx,x,y,w,h,r){ const rr=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+rr,y); ctx.arcTo(x+w,y, x+w,y+h, rr); ctx.arcTo(x+w,y+h, x,y+h, rr); ctx.arcTo(x,y+h, x,y, rr); ctx.arcTo(x,y, x+w,y, rr); ctx.closePath(); }
-  //#endregion
 
-  // HUD interactions
-// HUD interactions
-const hudToggle  = document.getElementById('hud-toggle');
-const hudReveal  = document.getElementById('hud-reveal');
-const legend     = document.getElementById('legend');
-const showMoreBtn= document.getElementById('show-more');
+  // HUD logic
+  const hud=document.getElementById('hud');
+  const hudToggle=document.getElementById('hud-toggle');
+  const hudTab=document.getElementById('hud-tab');
+  const legendEl=document.getElementById('legend');
+  const showMoreBtn=document.getElementById('show-more');
 
-function updateArrows() {
-  const collapsed = document.body.classList.contains('hud-collapsed');
-  // When HUD is visible, inline arrow points UP
-  // When HUD is hidden, floating reveal arrow points DOWN
-  if (collapsed) {
-    // HUD hidden
-    hudToggle.textContent = '▼';            // not visible, but keep consistent
-    hudToggle.title = 'Show HUD';
-    hudToggle.setAttribute('aria-label', 'Show HUD');
-    hudToggle.setAttribute('aria-expanded', 'false');
-
-    hudReveal.textContent = '▼';            // the visible one
-    hudReveal.title = 'Show HUD';
-    hudReveal.setAttribute('aria-label', 'Show HUD');
-  } else {
-    // HUD visible
-    hudToggle.textContent = '▲';            // the visible one
-    hudToggle.title = 'Hide HUD';
-    hudToggle.setAttribute('aria-label', 'Hide HUD');
-    hudToggle.setAttribute('aria-expanded', 'true');
-
-    hudReveal.textContent = '▼';            // hidden, but set anyway
-    hudReveal.title = 'Show HUD';
-    hudReveal.setAttribute('aria-label', 'Show HUD');
+  function setHud(expanded){
+    hud.classList.toggle('expanded', expanded);
+    hud.classList.toggle('collapsed', !expanded);
   }
-}
+  setHud(true);
 
-function setHudCollapsed(collapsed){
-  document.body.classList.toggle('hud-collapsed', collapsed);
-  updateArrows();
-}
+  hudToggle.addEventListener('click', ()=> setHud(false));  // hide
+  hudTab.addEventListener('click', ()=> setHud(true));      // show
 
-hudToggle.addEventListener('click', () =>
-  setHudCollapsed(!document.body.classList.contains('hud-collapsed'))
-);
-hudReveal.addEventListener('click', () => setHudCollapsed(false));
-
-// initialize UI state once
-updateArrows();
-
-  // Legend: SHOW MORE / SHOW LESS
-  showMoreBtn.addEventListener('click', () => {
-    legend.classList.toggle('collapsed');
-    showMoreBtn.textContent = legend.classList.contains('collapsed') ? 'SHOW MORE' : 'SHOW LESS';
+  showMoreBtn.addEventListener('click', ()=>{
+    legendEl.classList.toggle('collapsed');
+    showMoreBtn.textContent = legendEl.classList.contains('collapsed') ? 'SHOW MORE' : 'SHOW LESS';
   });
+
+  // bg set
+  function fadeInGalaxyBackground(url){
+    const el=document.getElementById('bg'); if (!el) return;
+    const img=new Image();
+    img.onload=()=>{ el.style.backgroundImage=`url("${url}")`; requestAnimationFrame(()=>el.classList.add('show')); };
+    img.onerror=()=>console.warn('Background failed to load:', url);
+    img.src=url;
+  }
   </script>
 </body>
 </html>
