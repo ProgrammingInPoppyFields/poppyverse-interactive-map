@@ -5,6 +5,11 @@
   <title>Into the Poppyverse - A Multiversal Story Map</title>
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="50%" x="50%" dominant-baseline="middle" text-anchor="middle" font-size="52">🌷</text></svg>'>
 
+  <!-- Michroma (proper preconnect + swap) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+
   <style>
     html, body { margin:0; height:100%; background:#0b0b12; overflow:hidden; }
     :root {
@@ -31,37 +36,136 @@
     /* graph container sits above the bg */
     #g { position: relative; z-index: 1; width:100vw; height:100vh; }
 
-    /* legend: starts collapsed because we respect your attention span */
+    /* -------- HUD (header UI) -------- */
+    #hud {
+      position: fixed; top: 0; left: 0; width: 100%;
+      z-index: 20;
+      pointer-events: none;          /* disable by default */
+    }
+    #hud-bar {
+      display: grid;
+      grid-template-columns: 30vw 40vw 1fr; /* left / middle / right */
+      align-items: start;
+      gap: 0;
+      padding: 10px 18px;
+      background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,0));
+      pointer-events: auto;          /* re-enable interaction within bar */
+      transition: transform 420ms cubic-bezier(.22,.61,.36,1), opacity 320ms ease;
+    }
+
+    /* Left: arrow + title */
+    #hud-left {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      column-gap: 10px;
+    }
+    #hud-toggle {
+      background: none;
+      border: 1px solid rgba(255,20,71,.45);
+      color: var(--poppy-red);
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      text-shadow: 0 0 14px rgba(255,20,71,.6);
+      transition: transform .25s ease, background .2s ease, box-shadow .2s ease;
+      padding: 6px 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 18px rgba(255,20,71,.25) inset, 0 0 18px rgba(255,20,71,.25);
+    }
+    #hud-toggle:hover { background: rgba(255,20,71,.08); }
+
+    #title {
+      margin: 0;
+      font-family: 'Michroma', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 20px;
+      letter-spacing: .08em;
+      color: var(--poppy-red);
+      text-shadow: 0 0 10px rgba(255,20,71,.7), 0 0 22px rgba(255,20,71,.4);
+      opacity: 0;
+      transform: translateY(-8px);
+      animation: fadeDown 700ms ease both .25s;
+    }
+
+    /* Right: legend pinned to top-right cell */
+    #hud-right { justify-self: end; }
+
     #legend {
-      position: fixed; top: 14px; left: 14px; z-index: 10;
-      background: rgba(0,0,0,.4);
-      border: 1px solid rgba(255,255,255,.4);
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.35);
       border-radius: 12px;
-      padding: 10px 12px 12px 12px;
+      padding: 10px 14px 14px 14px;
       color: #fff;
-      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      max-width: 33vw; backdrop-filter: blur(4px);
-      pointer-events: auto; user-select: none;
+      font: 16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      max-width: 20vw;
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transform: translateY(-8px);
+      animation: fadeUp 700ms ease both .45s;
+      position: static !important;
+      inset: auto !important;
+      margin: 0 0 0 auto;
+      z-index: 1;
     }
-    #legend header { display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; padding:4px 2px; }
-    #legend h3 { margin:0; font-size:18px; letter-spacing:.02em; opacity:.97; }
-    #legend .toggle {
-      width:26px; height:26px; border-radius:8px;
-      border:1px solid rgba(255,255,255,.25);
-      display:flex; align-items:center; justify-content:center;
-      font-size:16px; line-height:1; opacity:.9;
+    #legend header {
+      display:flex; align-items:center; justify-content:space-between;
     }
+    #legend h3 { margin: 0 0 8px; font-size: 18px; letter-spacing:.02em; opacity:.97; }
     #legend .rows { margin-top:8px; }
     #legend .row { display:flex; align-items:center; gap:12px; margin:8px 0; }
     #legend .swatch { width:18px; height:18px; border-radius:5px; border:1px solid rgba(255,255,255,.28); box-shadow:0 0 12px rgba(255,255,255,.18); }
-    #legend .label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:38vw; opacity:.95; }
-    #legend.collapsed .rows { display:none; }
-    #legend.collapsed .toggle { opacity:.7; }
-    #legend .static-link { margin-top:12px; font-size:14px; opacity:.95; }
+    #legend .label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:.95; }
+    #legend .static-link { font-size:14px; opacity:.95; }
     #legend .static-link a { color:var(--poppy-red); text-decoration:none; border-bottom:1px dashed var(--poppy-red); }
     #legend .static-link a:hover { text-decoration:underline; }
 
-    /* tooltip layout — clearer key/value vibes */
+    /* SHOW MORE replaces old chevron */
+    #show-more {
+      margin-top: 10px;
+      width: 100%;
+      background: var(--poppy-red);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 0;
+      font-family: inherit;
+      font-weight: 600;
+      letter-spacing: .05em;
+      cursor: pointer;
+      transition: background .2s ease, transform .15s ease;
+    }
+    #show-more:hover { background: #ff2e7a; transform: scale(1.02); }
+
+    /* Collapsed legend content */
+    #legend.collapsed .rows { display:none; }
+
+    /* COLLAPSE THE WHOLE HUD (fully off-screen, canvas gets all events) */
+    body.hud-collapsed #hud-bar{
+      transform: translateY(-150%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Floating reveal arrow (only visible when collapsed) */
+    #hud-reveal{
+      position: fixed;
+      top: 12px; left: 12px;
+      z-index: 21;
+      display: none;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,20,71,.5);
+      color: var(--poppy-red);
+      font-size: 20px;
+      line-height: 1;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(255,20,71,.25), 0 0 18px rgba(255,20,71,.25) inset;
+      text-shadow: 0 0 14px rgba(255,20,71,.6);
+    }
+    body.hud-collapsed #hud-reveal{ display: inline-block; }
+
+    /* Tooltip layout */
     .poppy-label .title {
       display:block; font-weight:800; letter-spacing:.01em;
       text-shadow:0 0 12px currentColor, 0 0 28px currentColor;
@@ -78,23 +182,46 @@
       display:block; height:1px; margin:6px 0 4px 0;
       background:linear-gradient(90deg, rgba(255,255,255,.22), rgba(255,255,255,.06) 60%, rgba(255,255,255,0));
     }
+
+    /* Intro fades */
+    @keyframes fadeDown { from {opacity:0;transform:translateY(-10px)} to {opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp   { from {opacity:0;transform:translateY(-6px)}  to {opacity:1;transform:translateY(0)} }
   </style>
 </head>
 <body>
-  <div id="bg"></div>
-  <div id="g"></div>
 
-  <!-- yes, it’s collapsed by default; curiosity optional -->
-  <div id="legend" class="collapsed" hidden>
-    <header id="legend-toggle">
-      <h3>Universe clusters by color key</h3>
-      <div class="toggle" aria-label="Toggle legend" title="Toggle legend">▸</div>
-    </header>
-    <div class="rows" id="legend-rows"></div>
-    <div class="static-link">
-      Prefer a calmer, saner static index? See the <a href="https://inpoppyfields.tumblr.com/map" target="_blank" rel="noopener">Story Map</a>.
+  <!-- Floating reveal arrow (appears only when HUD collapsed) -->
+  <button id="hud-reveal" aria-label="Show HUD" title="Show HUD">▾</button>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div id="hud-bar">
+      <!-- Left: arrow + title (30vw) -->
+      <div id="hud-left">
+        <button id="hud-toggle" aria-expanded="true" aria-controls="hud-bar" title="Hide HUD">▲</button>
+        <h1 id="title">WELCOME TO THE POPPYVERSE</h1>
+      </div>
+      <!-- Middle: spacer (40vw) -->
+      <div id="hud-middle"></div>
+      <!-- Right: legend (rest) -->
+      <div id="hud-right">
+        <div id="legend" class="collapsed">
+          <header id="legend-toggle">
+            <h3>Universe Clusters</h3>
+          </header>
+          <div class="rows" id="legend-rows"></div>
+          <div class="static-link">
+            Prefer a calmer, saner, static table of contents? Visit the
+            <a href="https://inpoppyfields.tumblr.com/map" target="_blank" rel="noopener">Story Map</a>.
+          </div>
+          <button id="show-more">SHOW MORE</button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div id="bg"></div>
+  <div id="g"></div>
 
   <!-- libs -->
   <script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
@@ -331,9 +458,8 @@
           const s = (size / 5);
           core.scale.set(s, s, s);
 
-          // idle glow — ensure minimum pixel size so tiny nodes still pop
           const glow = makeGlowSprite(colorHex);
-          const idleSize = Math.max(18, baseRadius * s * 3); // ⬅ bigger floor for small nodes
+          const idleSize = Math.max(18, baseRadius * s * 3);
           glow.scale.set(idleSize, idleSize, 1);
           glow.material.opacity = 0.55;
           core.add(glow);
@@ -345,7 +471,7 @@
           n.__glow = glow;
           n.__sizeScale = s;
           n.__idleSize = idleSize;
-          n.__idleOpacity = 0.35; // a touch brighter idle
+          n.__idleOpacity = 0.35;
 
           return core;
         })
@@ -371,59 +497,52 @@
         .linkWidth(l => l.width || 0.9)
         .linkOpacity(0.75);
 
-      // Transparent renderer so CSS bg shows through
-      // --- Transparent renderer that actually renders :)
-const w = window.innerWidth;
-const h = window.innerHeight;
+      // --- Transparent renderer that actually shows CSS bg ---
+      const W = window.innerWidth;
+      const H = window.innerHeight;
 
-const transparentRenderer = new THREE.WebGLRenderer({
-  antialias: true,
-  alpha: true,
-  powerPreference: 'high-performance',
-  preserveDrawingBuffer: false
-});
-transparentRenderer.setPixelRatio(window.devicePixelRatio || 1);
-transparentRenderer.setSize(w, h);
-transparentRenderer.setClearColor(0x000000, 0);
-transparentRenderer.setClearAlpha(0);
-transparentRenderer.outputColorSpace = THREE.SRGBColorSpace;
-transparentRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-transparentRenderer.toneMappingExposure = 1.05;
+      const transparentRenderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
+        preserveDrawingBuffer: false
+      });
+      transparentRenderer.setPixelRatio(window.devicePixelRatio || 1);
+      transparentRenderer.setSize(W, H);
+      transparentRenderer.setClearColor(0x000000, 0);
+      transparentRenderer.setClearAlpha(0);
+      transparentRenderer.outputColorSpace = THREE.SRGBColorSpace;
+      transparentRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+      transparentRenderer.toneMappingExposure = 1.05;
 
-// hand to the graph BEFORE we query scene/camera
-Graph.renderer(transparentRenderer);
+      Graph.renderer(transparentRenderer);
+      if (!transparentRenderer.domElement.parentNode) {
+        elem.appendChild(transparentRenderer.domElement);
+      }
+      Graph.width(W).height(H);
+      Graph.backgroundColor('rgba(0,0,0,0)');
 
-// make sure the canvas is in the DOM (FG usually does this, we ensure it)
-if (!transparentRenderer.domElement.parentNode) {
-  elem.appendChild(transparentRenderer.domElement);
-}
+      const scene = Graph.scene();
+      scene.background = null;
 
-// force graph to know its width/height (critical with custom renderer)
-Graph.width(w).height(h);
+      // Lighting
+      scene.add(new THREE.AmbientLight(0xffffff, 0.38));
+      const dir = new THREE.DirectionalLight(0xffffff, 0.7);
+      dir.position.set(60, 80, 40);
+      scene.add(dir);
 
-// fully transparent background (don’t pass null)
-Graph.backgroundColor('rgba(0,0,0,0)');
+      // Unified resize handler
+      window.addEventListener('resize', () => {
+        const w = window.innerWidth, h = window.innerHeight;
+        transparentRenderer.setSize(w, h);
+        const cam = Graph.camera();
+        cam.aspect = w / h;
+        cam.updateProjectionMatrix();
+        Graph.width(w).height(h);
+        Graph.refresh();
+      });
 
-// now safe to tweak scene
-const scene = Graph.scene();
-scene.background = null;
-
-// keep everything sized correctly on resize
-window.addEventListener('resize', () => {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-
-  transparentRenderer.setSize(W, H);
-  const cam = Graph.camera();
-  cam.aspect = W / H;
-  cam.updateProjectionMatrix();
-
-  Graph.width(W).height(H);
-  Graph.refresh(); // ensure a redraw
-});
-      
-
-      // controls
+      // Controls
       const controls = Graph.controls();
       controls.enableRotate = true;
       controls.enablePan = true;
@@ -432,13 +551,7 @@ window.addEventListener('resize', () => {
       controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
       controls.update();
 
-      // keep renderer sized
-      window.addEventListener('resize', () => {
-        const w = elem.clientWidth, h = elem.clientHeight;
-        transparentRenderer.setSize(w, h);
-      });
-
-      // hover pulse — slightly larger swing so small nodes are obvious
+      // Hover pulse
       function pulse() {
         if (!hoveredNode || !hoveredNode.__glow || !hoveredNode.__core) {
           pulseRAF = requestAnimationFrame(pulse);
@@ -451,7 +564,7 @@ window.addEventListener('resize', () => {
         const b = hoveredNode.__sizeScale;
         hoveredNode.__core.scale.set(b * 1.045, b * 1.045, b * 1.045);
 
-        const big = Math.max(hoveredNode.__idleSize * 1.35, 28); // ⬅ ensure visible size
+        const big = Math.max(hoveredNode.__idleSize * 1.35, 28);
         hoveredNode.__glow.scale.set(big * amp, big * amp, 1);
         hoveredNode.__glow.material.opacity = opacity;
 
@@ -491,7 +604,6 @@ window.addEventListener('resize', () => {
           if (n.x > maxX) maxX = n.x; if (n.y > maxY) maxY = n.y; if (n.z > maxZ) maxZ = n.z;
         }
 
-        // axes with positive-only span (origin at minima)
         const ox=minX, oy=minY, oz=minZ;
         const spanX = maxX - minX, spanY = maxY - minY, spanZ = maxZ - minZ;
         const span = Math.max(spanX, spanY, spanZ);
@@ -509,34 +621,27 @@ window.addEventListener('resize', () => {
         );
 
         addAxesPositive(scene, { x: ox, y: oy, z: oz }, { x: spanX, y: spanY, z: spanZ });
-
-        // add absolute origin marker at (0,0,0) independent of the dataset bounds
-        addOriginMarker(scene, { x:0, y:0, z:0 });
+        addOriginMarker(scene, { x:ox, y:oy, z:oz });
       }
       //#endregion
 
       //#region legend
       const legendEl = document.getElementById('legend');
       const rowsEl   = document.getElementById('legend-rows');
-      const toggleEl = document.getElementById('legend-toggle');
 
       rowsEl.innerHTML = '';
       clusterOrder.forEach(tag => {
         const color = clusterColor[tag];
         const row = document.createElement('div'); row.className='row';
-        const sw = document.createElement('div'); sw.className='swatch'; sw.style.background=color; sw.style.boxShadow=`0 0 12px ${color}`;
+        const sw = document.createElement('div'); sw.className='swatch';
+        sw.style.background=color; sw.style.boxShadow=`0 0 12px ${color}`;
         const la = document.createElement('div'); la.className='label'; la.textContent=tag;
         row.appendChild(sw); row.appendChild(la); rowsEl.appendChild(row);
       });
       legendEl.hidden = false;
-      toggleEl.addEventListener('click', () => {
-        legendEl.classList.toggle('collapsed');
-        const chevron = legendEl.querySelector('.toggle');
-        chevron.textContent = legendEl.classList.contains('collapsed') ? '▸' : '▾';
-      });
       //#endregion
 
-      // finally, fade in the wallpaper behind our now-transparent canvas
+      // Fade in the wallpaper behind our transparent canvas
       fadeInGalaxyBackground('https://images.unsplash.com/photo-1648563643923-2091f9c0c12f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2831');
     })
     .catch(err => {
@@ -611,7 +716,6 @@ window.addEventListener('resize', () => {
     const old = scene.getObjectByName('originMarker'); if (old) scene.remove(old);
     const g = new THREE.Group(); g.name='originMarker'; g.raycast=()=>null;
 
-    // tiny trihedra at (0,0,0)
     const len = 18;
     const mat = new THREE.LineBasicMaterial({ color: AXES_COLOR, transparent:true, opacity:0.9 });
     const gx = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x+len, origin.y, origin.z) ]);
@@ -619,7 +723,6 @@ window.addEventListener('resize', () => {
     const gz = new THREE.BufferGeometry().setFromPoints([ new THREE.Vector3(origin.x, origin.y, origin.z), new THREE.Vector3(origin.x, origin.y, origin.z+len) ]);
     g.add(new THREE.Line(gx, mat), new THREE.Line(gy, mat), new THREE.Line(gz, mat));
 
-    // little glowing core at origin
     const core = new THREE.Mesh(
       new THREE.SphereGeometry(1.6, 20, 20),
       new THREE.MeshStandardMaterial({ color: AXES_COLOR_STRING, metalness: 0.1, roughness: 0.25, emissive: 0x882222, emissiveIntensity: 0.8 })
@@ -629,7 +732,6 @@ window.addEventListener('resize', () => {
     core.add(glow);
     g.add(core);
 
-    // label
     const label = makeTextSprite('Origin (0, 0, 0)', AXES_COLOR_STRING);
     label.position.set(origin.x + 2, origin.y + 2, origin.z);
     g.add(label);
@@ -659,6 +761,59 @@ window.addEventListener('resize', () => {
   }
   function roundRect(ctx,x,y,w,h,r){ const rr=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+rr,y); ctx.arcTo(x+w,y, x+w,y+h, rr); ctx.arcTo(x+w,y+h, x,y+h, rr); ctx.arcTo(x,y+h, x,y, rr); ctx.arcTo(x,y, x+w,y, rr); ctx.closePath(); }
   //#endregion
+
+  // HUD interactions
+// HUD interactions
+const hudToggle  = document.getElementById('hud-toggle');
+const hudReveal  = document.getElementById('hud-reveal');
+const legend     = document.getElementById('legend');
+const showMoreBtn= document.getElementById('show-more');
+
+function updateArrows() {
+  const collapsed = document.body.classList.contains('hud-collapsed');
+  // When HUD is visible, inline arrow points UP
+  // When HUD is hidden, floating reveal arrow points DOWN
+  if (collapsed) {
+    // HUD hidden
+    hudToggle.textContent = '▼';            // not visible, but keep consistent
+    hudToggle.title = 'Show HUD';
+    hudToggle.setAttribute('aria-label', 'Show HUD');
+    hudToggle.setAttribute('aria-expanded', 'false');
+
+    hudReveal.textContent = '▼';            // the visible one
+    hudReveal.title = 'Show HUD';
+    hudReveal.setAttribute('aria-label', 'Show HUD');
+  } else {
+    // HUD visible
+    hudToggle.textContent = '▲';            // the visible one
+    hudToggle.title = 'Hide HUD';
+    hudToggle.setAttribute('aria-label', 'Hide HUD');
+    hudToggle.setAttribute('aria-expanded', 'true');
+
+    hudReveal.textContent = '▼';            // hidden, but set anyway
+    hudReveal.title = 'Show HUD';
+    hudReveal.setAttribute('aria-label', 'Show HUD');
+  }
+}
+
+function setHudCollapsed(collapsed){
+  document.body.classList.toggle('hud-collapsed', collapsed);
+  updateArrows();
+}
+
+hudToggle.addEventListener('click', () =>
+  setHudCollapsed(!document.body.classList.contains('hud-collapsed'))
+);
+hudReveal.addEventListener('click', () => setHudCollapsed(false));
+
+// initialize UI state once
+updateArrows();
+
+  // Legend: SHOW MORE / SHOW LESS
+  showMoreBtn.addEventListener('click', () => {
+    legend.classList.toggle('collapsed');
+    showMoreBtn.textContent = legend.classList.contains('collapsed') ? 'SHOW MORE' : 'SHOW LESS';
+  });
   </script>
 </body>
 </html>
