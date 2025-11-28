@@ -267,11 +267,10 @@
       border-bottom: 1px solid rgba(255,255,255,.16);
     }
     #node-tooltip-title {
-      font-size: 15px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: .03em;
       text-transform: uppercase;
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -297,18 +296,21 @@
       margin: 2px 0 8px 0;
       border-radius: 10px;
       overflow: hidden;
+
+       display: flex;
+  align-items: center; /* Centers items vertically */
+  justify-content: center; /* Centers items horizontally (optional) */
+  max-height: 150px; 
     }
+
     .node-cover img {
-      display: block;
-      width: 100%;
-      height: auto;
+      max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
       border-radius: 10px;
     }
 
     .node-meta {
-      font-size: 12px;
-      opacity: .9;
-      margin-bottom: 4px;
     }
     .node-meta-axes {
       margin-top: 6px;
@@ -1338,13 +1340,23 @@
         const cluster = String(r[col.tags] ?? '').trim() || '(unclustered)';
         if (!id || !cluster) return null;
 
-        const url = ((r[col.url] ?? '') + '').trim() || null;
+        // Content URL (where the story actually lives)
+        let contentUrl = '';
+        if (col.url) {
+        contentUrl = String(r[col.url] ?? '').trim();
+        }
+        if (!contentUrl) contentUrl = null;
+
+        // Cover image URL (purely visual)
+        let coverUrl = '';
+        if (col.cover) {
+        coverUrl = String(r[col.cover] ?? '').trim();
+        }
+        if (!coverUrl) coverUrl = null;
+
         const size = toSize(r[col.size]);
         const featured = toBool(col.featured ? r[col.featured] : null);
-
         const characters = col.characters ? parseList(r[col.characters]) : [];
-        let coverUrl = col.cover ? String(r[col.cover] ?? '').trim() : '';
-        if (!coverUrl) coverUrl = null;
 
         const xv = axisXCol ? parseParenNumber(r[axisXCol], 0) : 0;
         const yv = axisYCol ? parseParenNumber(r[axisYCol], 0) : 0;
@@ -1384,24 +1396,24 @@
         const z = TZ + dz;
 
         return {
-          id,
-          label,
-          cluster,
-          url,
-          val: size,
-          featured,
-          characters,
-          coverUrl,
-          x,y,z,
-          fx:x,fy:y,fz:z,
-          tx:x,ty:y,tz:z,
-          color: null,
-          _axes: { xv, yv, zv },
-          _q: {
-            depth: qDepth,
-            relativity: qRelativity,
-            relatability: qRelatability
-          }
+            id,
+            label,
+            cluster,
+            url: contentUrl,      // <-- content URL ONLY
+            val: size,
+            featured,
+            characters,
+            coverUrl,             // <-- for the image only
+            x,y,z,
+            fx:x,fy:y,fz:z,
+            tx:x,ty:y,tz:z,
+            color: null,
+            _axes: { xv, yv, zv },
+            _q: {
+                depth: qDepth,
+                relativity: qRelativity,
+                relatability: qRelatability
+            }
         };
       }).filter(Boolean);
 
