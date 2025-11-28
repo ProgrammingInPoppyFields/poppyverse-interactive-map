@@ -20,6 +20,7 @@
     }
     :root {
       --poppy-red: #FF1447;
+      --tooltip-accent: #FF1447;
       --chart-color: #fff;
     }
 
@@ -164,11 +165,15 @@
       color: #fff;
       font: 13px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       max-width: 20vw;
+      max-height: 60vh;
       backdrop-filter: blur(3px);
       opacity: 0;
       transform: translateY(-8px);
       animation: fadeUp 700ms ease both .45s;
       margin: 0 0 0 auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     #legend h3, #axis-overlay-inner h3 {
       margin: 0 0 6px;
@@ -178,6 +183,26 @@
     }
     #legend .rows {
       margin-top: 6px;
+      overflow-y: auto;
+      max-height: 38vh;
+      padding-right: 4px; /* keep scrollbar off text */
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.55) rgba(255,255,255,.08);
+    }
+    #legend .rows::-webkit-scrollbar {
+      width: 10px;
+    }
+    #legend .rows::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.08);
+      border-radius: 12px;
+    }
+    #legend .rows::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.35));
+      border-radius: 12px;
+      border: 2px solid rgba(0,0,0,.25);
+    }
+    #legend .rows::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.55));
     }
     #legend .row {
       display: flex;
@@ -273,11 +298,12 @@
       text-transform: uppercase;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--tooltip-accent);
     }
     #node-tooltip-close {
       background: none;
       border: none;
-      color: #fff;
+      color: var(--tooltip-accent);
       font-size: 16px;
       cursor: pointer;
       opacity: .8;
@@ -371,8 +397,8 @@
       gap: 6px;
       padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid var(--poppy-red);
-      color: var(--poppy-red);
+      border: 1px solid var(--tooltip-accent);
+      color: var(--tooltip-accent);
       background: transparent;
       font-size: 12px;
       font-weight: 600;
@@ -387,7 +413,7 @@
       cursor: default;
     }
     .node-link-btn:hover:not(.na) {
-      background: rgba(255,20,71,.1);
+      background: color-mix(in srgb, var(--tooltip-accent) 18%, transparent);
     }
 
     /* ---------- axis overlay (HTML, bottom-left) ---------- */
@@ -673,7 +699,7 @@
 
     collision: ['collision','collisions','collide','also to'],
 
-    url:       ['url','link','href','permalink'],
+    url:       ['content url','url','link','href','permalink'],
     featured:  ['featured','is featured','star','⭐','highlight'],
 
     characters: ['characters','character','cast','who'],
@@ -854,18 +880,19 @@
 
   // ---------- sprites / textures ----------
 
+  // NOTE: Style indiv node glow here
   const glowTexCache = {};
   function makeGlowTexture(hex){
     if (glowTexCache[hex]) return glowTexCache[hex];
     const {r,g,b} = hexToRgb(hex);
-    const size = 256;
+    const size = 300;
     const canvas = document.createElement('canvas');
     canvas.width = size; canvas.height = size;
     const ctx = canvas.getContext('2d');
-    const grd = ctx.createRadialGradient(size/2,size/2,size*0.05, size/2,size/2,size*0.42);
-    grd.addColorStop(0.06, 'rgba(255,255,255,0.9)');
-    grd.addColorStop(0.32, `rgba(${r},${g},${b},0.45)`);
-    grd.addColorStop(0.62, `rgba(${r},${g},${b},0.16)`);
+    const grd = ctx.createRadialGradient(size/2,size/2,size*0.05, size/2,size/2,size*0.62);
+    grd.addColorStop(0.0,  `rgba(${r},${g},${b},0.95)`);
+    grd.addColorStop(0.22, `rgba(${r},${g},${b},0.8)`);
+    grd.addColorStop(0.48, `rgba(${r},${g},${b},0.2)`);
     grd.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = grd;
     ctx.fillRect(0,0,size,size);
@@ -889,6 +916,137 @@
     spr.raycast = () => null;
     return spr;
   }
+
+  // ----- soft nebula texture -----
+const nebulaTexCache = {};
+function makeNebulaTexture(hex) {
+  if (nebulaTexCache[hex]) return nebulaTexCache[hex];
+
+  const { r, g, b } = hexToRgb(hex);
+  const size = 900;     // MUCH larger than node glow
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  const cx = size / 2;
+  const cy = size / 2;
+
+  // a super-soft radial falloff that fades over a huge distance
+  const grd = ctx.createRadialGradient(
+    cx, cy, size * 0.1,      // tiny solid center
+    cx, cy, size * 0.50       // extremely extended fade
+  );
+
+  grd.addColorStop(0.00, `rgba(${r},${g},${b},0.80)`);
+  grd.addColorStop(0.15, `rgba(${r},${g},${b},0.7)`);
+  grd.addColorStop(0.40, `rgba(${r},${g},${b},0.0)`);
+  grd.addColorStop(0.70, `rgba(${r},${g},${b},0.00)`);
+  grd.addColorStop(1.00, `rgba(${r},${g},${b},0.00)`);
+
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, size, size);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.minFilter = THREE.LinearFilter;
+  tex.needsUpdate = true;
+
+  nebulaTexCache[hex] = tex;
+  return tex;
+}
+
+function makeNebulaSprite(hex) {
+  const map = makeNebulaTexture(hex);
+  return new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      opacity: 0.65  // can tune
+    })
+  );
+}
+
+  // ---------- cluster nebulas (per-cluster clouds) ----------
+
+function createClusterNebulas(nodes, clusterOrder, clusterColor, scene) {
+  // Remove previous nebulas if re-created for any reason
+  const old = scene.getObjectByName('clusterNebulas');
+  if (old) scene.remove(old);
+
+  const group = new THREE.Group();
+  group.name = 'clusterNebulas';
+  group.raycast = () => null;
+
+  clusterOrder.forEach(tag => {
+    const color = clusterColor[tag];
+    if (!color) return;
+
+    const clusterNodes = nodes.filter(n => n.cluster === tag);
+    if (clusterNodes.length < 2) return; // skip lonely nodes
+
+    // --- centroid & radius of cluster ---
+    let cx = 0, cy = 0, cz = 0;
+    clusterNodes.forEach(n => {
+      cx += n.x; cy += n.y; cz += n.z;
+    });
+    cx /= clusterNodes.length;
+    cy /= clusterNodes.length;
+    cz /= clusterNodes.length;
+
+    let maxDist = 0;
+    clusterNodes.forEach(n => {
+      const dx = n.x - cx;
+      const dy = n.y - cy;
+      const dz = n.z - cz;
+      const d = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      if (d > maxDist) maxDist = d;
+    });
+
+    // Nebula radius padded so it softly wraps the cluster
+    const baseRadius = maxDist + 80;
+
+    const seed = hash32(tag);
+    // More nodes → more cloud “blobs”
+    const blobs = Math.min(6, 2 + Math.floor(clusterNodes.length / 6));
+
+    for (let i = 0; i < blobs; i++) {
+      const r1 = rand(seed + i * 11);
+      const r2 = rand(seed + i * 13);
+      const r3 = rand(seed + i * 17);
+
+      // Random-ish direction on a sphere
+      const theta = r1 * Math.PI * 2;     // azimuth
+      const phi   = r2 * Math.PI;         // polar
+      const dist  = baseRadius * (0.45 + 0.55 * r3);
+
+      const ox = Math.cos(theta) * Math.sin(phi) * dist;
+      const oy = Math.sin(theta) * Math.sin(phi) * dist;
+      const oz = Math.cos(phi) * dist;
+
+      const sprite = makeNebulaSprite(color);
+      const scale = baseRadius * (1.4 + r3 * 0.8); // different sized blobs
+      sprite.scale.set(scale, scale, 1);
+      // Pull offsets in a bit so blobs overlap around the centroid
+      sprite.position.set(
+        cx + ox * 0.28,
+        cy + oy * 0.28,
+        cz + oz * 0.28
+      );
+
+      sprite.material.opacity = 0.1; // soft cloud
+      sprite.material.blending = THREE.AdditiveBlending;
+      sprite.material.depthWrite = false;
+      sprite.renderOrder = -10; // render behind node glows
+      sprite.raycast = () => null;
+
+      group.add(sprite);
+    }
+  });
+
+  scene.add(group);
+}
 
   function makeTextSprite(text, color='#FFFFFF'){
     // NOTE: Style axis labels here
@@ -1113,8 +1271,13 @@
 
   function showNodeTooltip(node){
     if (!node) return;
+    if (selectedNode && selectedNode !== node) {
+      resetNodeVisual(selectedNode);
+    }
     selectedNode = node;
     setHighlightedNode(node);
+    const accent = node.color || '#FF1447';
+    nodeTooltip.style.setProperty('--tooltip-accent', accent);
 
     nodeTooltipTitle.textContent = node.label || node.id;
     const cluster = node.cluster || '(unclustered)';
@@ -1377,7 +1540,7 @@
         const seed = hash32(id + '|' + bucketKey);
         const r1 = rand(seed), r2 = rand(seed+1), r3 = rand(seed+2), r4 = rand(seed+3);
 
-        const PHI = 2.399963229728653;
+        const PHI = 2.4;
         const baseRadius = CLUSTER_BASE + CLUSTER_STEP * Math.sqrt(idx);
         const radius = baseRadius + (r1 - 0.5) * 2 * RANDOM_RADIAL;
         const angle  = idx * PHI + r2 * Math.PI * 2;
@@ -1579,18 +1742,20 @@
           core.scale.set(s, s, s);
 
           const glow = makeGlowSprite(colorHex);
-          const idleSize = Math.max(14, baseRadius * s * 2.4);
-          glow.scale.set(idleSize, idleSize, 1);
-          glow.material.opacity = .48;
-          core.add(glow);
 
-          core.raycast = THREE.Mesh.prototype.raycast;
-          n.__core = core;
-          n.__glow = glow;
-          n.__colorHex = colorHex;
-          n.__sizeScale = s;
-          n.__idleSize = idleSize;
-          n.__idleOpacity = 0.33;
+// Slightly bigger + brighter idle glow so clusters “read” as brighter knots
+const idleSize = Math.max(42, baseRadius * s * 5.4);
+glow.scale.set(idleSize, idleSize, 1);
+glow.material.opacity = .30;
+core.add(glow);
+
+core.raycast = THREE.Mesh.prototype.raycast;
+n.__core = core;
+n.__glow = glow;
+n.__colorHex = colorHex;
+n.__sizeScale = s;
+n.__idleSize = idleSize;
+n.__idleOpacity = 0.30;
 
           return core;
         })
@@ -1689,21 +1854,24 @@
       }
       fitCameraAndAxes(nodes);
 
-      // hover highlight: only if nothing is selected
+       // NEW: cluster-level cloudy nebulas
+      createClusterNebulas(nodes, clusterOrder, clusterColor, scene);
+
+      // hover highlight: pulse on hover and reset idle glows when not hovered
       Graph.onNodeHover((node, prev) => {
-        if (selectedNode) {
-          // ignore hover when something is selected
-          return;
-        }
         if (prev && prev !== selectedNode) {
           resetNodeVisual(prev);
         }
-        if (node) {
-          highlightedNode = node;
-          if (!pulseRAF) pulseRAF = requestAnimationFrame(pulseHighlight);
-        } else {
-          highlightedNode = null;
+        if (!node) {
+          if (!selectedNode) {
+            nodes.forEach(n => resetNodeVisual(n));
+          } else {
+            // keep selected node pulsing when nothing hovered
+            setHighlightedNode(selectedNode);
+          }
+          return;
         }
+        setHighlightedNode(node);
       });
 
       Graph.onNodeClick(n => {
