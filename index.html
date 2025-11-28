@@ -61,7 +61,7 @@
 
     #hud-bar {
       display: grid;
-      grid-template-columns: 30vw 36vw 30vw;
+      grid-template-columns: 40vw 20vw 37.5vw;
       align-items: start;
       gap: 0;
       padding: 10px 18px;
@@ -92,7 +92,7 @@
       user-select: none;
       padding: 0 6px 0 0;
       color: var(--poppy-red);
-      font-size: 26px;
+      font-size: 20px;
       line-height: 1;
       text-shadow: 0 0 12px rgba(255,20,71,.6);
       transition: transform .25s ease, opacity .25s ease;
@@ -165,7 +165,6 @@
       color: #fff;
       font: 13px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       max-width: 20vw;
-      max-height: 60vh;
       backdrop-filter: blur(3px);
       opacity: 0;
       transform: translateY(-8px);
@@ -263,8 +262,9 @@
       font-size: 12px;
     }
     #show-more:hover {
-      background: #ff2e7a;
-      transform: scale(1.02);
+      background: none;
+      border: 2px solid var(--poppy-red);
+      color: var(--poppy-red);
     }
 
     /* ---------- node info panel (click tooltip) ---------- */
@@ -467,6 +467,9 @@
     }
     .axis-info-btn:hover {
       background: rgba(255,255,255,.12);
+       background: none;
+      border: 2px solid var(--poppy-red);
+      color: var(--poppy-red);
     }
 
     #axis-tooltip {
@@ -923,7 +926,7 @@ function makeNebulaTexture(hex) {
   if (nebulaTexCache[hex]) return nebulaTexCache[hex];
 
   const { r, g, b } = hexToRgb(hex);
-  const size = 900;     // MUCH larger than node glow
+  const size = 400;     // MUCH larger than node glow
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
@@ -935,12 +938,12 @@ function makeNebulaTexture(hex) {
   // a super-soft radial falloff that fades over a huge distance
   const grd = ctx.createRadialGradient(
     cx, cy, size * 0.1,      // tiny solid center
-    cx, cy, size * 0.50       // extremely extended fade
+    cx, cy, size * 0.3       // extremely extended fade
   );
 
-  grd.addColorStop(0.00, `rgba(${r},${g},${b},0.80)`);
+  grd.addColorStop(0.00, `rgba(${r},${g},${b},0.9)`);
   grd.addColorStop(0.15, `rgba(${r},${g},${b},0.7)`);
-  grd.addColorStop(0.40, `rgba(${r},${g},${b},0.0)`);
+  grd.addColorStop(0.40, `rgba(${r},${g},${b},0.05)`);
   grd.addColorStop(0.70, `rgba(${r},${g},${b},0.00)`);
   grd.addColorStop(1.00, `rgba(${r},${g},${b},0.00)`);
 
@@ -963,7 +966,7 @@ function makeNebulaSprite(hex) {
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
-      opacity: 0.65  // can tune
+      opacity: 0.7  // can tune
     })
   );
 }
