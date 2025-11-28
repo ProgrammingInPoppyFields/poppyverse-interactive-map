@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-# build_tag_list.py
+# build_html_toc.py
 #
 # Reads `table.csv` in the same folder and outputs `tags_list.html`
-# with a plain nested bullet list: Tag -> [Names], linking Names if URL present.
+# with a plain HTML table-of-contents: one table per cluster, rows show
+# Name, Characters, and Link (if present).
 
 from __future__ import annotations
 import csv
@@ -40,59 +41,73 @@ def read_rows(csv_path: Path):
 
         # Resolve columns (case-insensitive)
         name_col = find_col(rdr.fieldnames, ["name", "title", "label"])
-        tag_col  = find_col(rdr.fieldnames, ["tag", "tags", "category"])
-        url_col  = find_col(rdr.fieldnames, ["url", "link", "href", "permalink"])
+        tag_col  = find_col(rdr.fieldnames, ["tag", "tags", "category", "cluster"])
+        url_col  = find_col(rdr.fieldnames, ["content url", "url", "link", "href", "permalink"])
+        chars_col = find_col(rdr.fieldnames, ["characters", "character", "cast", "who"])
 
         if not name_col or not tag_col:
             raise SystemExit(
                 f"Missing required columns. Found: {rdr.fieldnames}\n"
-                "Need at least NAME and TAG (case-insensitive). URL is optional."
+                "Need at least NAME and TAG/CLUSTER (case-insensitive). URL is optional."
             )
 
-        # Ordered mapping: tag -> list of (name, url), preserving CSV order
-        by_tag: OrderedDict[str, list[tuple[str, str | None]]] = OrderedDict()
+        # Ordered mapping: cluster -> list of rows, preserving CSV order
+        by_cluster: OrderedDict[str, list[dict[str, str | list[str] | None]]] = OrderedDict()
 
         for row in rdr:
             raw_name = (row.get(name_col) or "").strip()
-            raw_tag  = (row.get(tag_col)  or "").strip()
+            raw_cluster  = (row.get(tag_col)  or "").strip()
             raw_url  = (row.get(url_col)  or "").strip() if url_col else ""
+            raw_chars = (row.get(chars_col) or "").strip() if chars_col else ""
 
-            if not raw_name or not raw_tag:
+            if not raw_name or not raw_cluster:
                 # Skip rows missing essential fields
                 continue
 
-            # Do NOT split tags — tags may contain spaces/slashes/commas by design.
-            if raw_tag not in by_tag:
-                by_tag[raw_tag] = []
+            if raw_cluster not in by_cluster:
+                by_cluster[raw_cluster] = []
 
             url = raw_url if raw_url else None
-            by_tag[raw_tag].append((raw_name, url))
+            chars_list = [
+                c.strip() for c in raw_chars.split(",") if c.strip()
+            ] if raw_chars else []
 
-        return by_tag
+            by_cluster[raw_cluster].append(
+                {"name": raw_name, "url": url, "chars": chars_list}
+            )
 
-def build_html(by_tag: OrderedDict[str, list[tuple[str, str | None]]]) -> str:
-    # Minimal, Tumblr-safe HTML (no external CSS/JS, just nested <ul>)
-    parts = []
-    parts.append("<div>")
-    parts.append("<h1>Index by Tag</h1>")
-    parts.append("<ul>")
+        return by_cluster
 
-    for tag, items in by_tag.items():
-        parts.append(f"  <li><strong>{escape(tag)}</strong>")
-        parts.append("    <ul>")
-        for name, url in items:
+def build_html(by_cluster: OrderedDict[str, list[dict[str, str | list[str] | None]]]) -> str:
+    # Minimal HTML: one table per cluster with Name, Characters, Link
+    parts: list[str] = []
+    parts.append('<h2>We try to keep this static story map in sync with the <a href="https://programminginpoppyfields.github.io/poppyverse-interactive-map/index.html">chaotic 3D one.</a> Emphasis on try. Reality is subjective and version control is a myth.</h2>')
+    parts.append("<h1>Table of Contents</h1>")
+
+    for cluster, items in by_cluster.items():
+        parts.append(f"<h2>{escape(cluster)}</h2>")
+        parts.append('<table border="0" cellspacing="0" cellpadding="6" style="border-collapse:collapse;">')
+        parts.append('<thead><tr><th style="padding:6px 10px; text-align:left;">Name</th><th style="padding:6px 10px; text-align:left;">Characters</th><th style="padding:6px 10px; text-align:left;">Link</th></tr></thead>')
+        parts.append("<tbody>")
+        for entry in items:
+            name = escape(entry["name"])  # type: ignore[index]
+            chars = entry["chars"] or []  # type: ignore[index]
+            chars_txt = ", ".join(escape(c) for c in chars) if chars else "—"
+            url = entry["url"]  # type: ignore[index]
             if url:
                 safe_url = escape(url, quote=True)
-                parts.append(
-                    f'      <li><a href="{safe_url}" target="_blank" rel="noopener">{escape(name)}</a></li>'
-                )
+                link_cell = f'<a href="{safe_url}" target="_blank" rel="noopener">Content available</a>'
             else:
-                parts.append(f"      <li>{escape(name)}</li>")
-        parts.append("    </ul>")
-        parts.append("  </li>")
+                link_cell = "—"
+            parts.append(
+                "<tr>"
+                f'<td style="padding:6px 10px; font-weight:700; color:#fff;">{name}</td>'
+                f'<td style="padding:6px 10px; font-weight:400; color:#b5b5b5;">{chars_txt}</td>'
+                f'<td style="padding:6px 10px;">{link_cell}</td>'
+                "</tr>"
+            )
+        parts.append("</tbody></table>")
 
-    parts.append("</ul>")
-    parts.append("</div>")
     return "\n".join(parts)
 
 def main():
@@ -102,15 +117,15 @@ def main():
         print(f"Cannot find {INPUT_NAME} in {here}", file=sys.stderr)
         sys.exit(1)
 
-    by_tag = read_rows(csv_path)
-    if not by_tag:
-        print("No valid rows found (need NAME and TAG).", file=sys.stderr)
+    by_cluster = read_rows(csv_path)
+    if not by_cluster:
+        print("No valid rows found (need NAME and TAG/CLUSTER).", file=sys.stderr)
         sys.exit(1)
 
-    html = build_html(by_tag)
+    html = build_html(by_cluster)
     out_path = here / OUTPUT_NAME
     out_path.write_text(html, encoding="utf-8")
-    print(f"Wrote {out_path.name} with {sum(len(v) for v in by_tag.values())} items across {len(by_tag)} tags.")
+    print(f"Wrote {out_path.name} with {sum(len(v) for v in by_cluster.values())} items across {len(by_cluster)} clusters.")
 
 if __name__ == "__main__":
     main()
