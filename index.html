@@ -227,14 +227,12 @@
   bottom: 18px;
   z-index: 24;
 
-  font-family: 'Michroma', sans-serif;
+  font-family: sans-serif;
   font-size: 10px;
   line-height: 1.45;
   letter-spacing: .8px;
 
-  color: var(--poppy-red);
-
-  opacity: .72;
+  color: white;
   text-align: right;
 
   pointer-events: none;
@@ -398,7 +396,7 @@ function setHighlightedNode(node) {
     </h2>
     <div class="cluster-tag">${node.cluster}</div>
     <div class="characters" style="margin-top:2px;">
-      <strong>DEPTH:</strong> ${depthVal} &nbsp; <strong>RELATIVITY:</strong> ${relVal}
+      <strong>EMOTIONAL GRAVITY:</strong> ${depthVal} &nbsp; <strong>QUANTUM ENTANGLEMENT:</strong> ${relVal}
     </div>
     ${node._description ? `<div class="description">${node._description}</div>` : ''}
     ${node.characters && node.characters.length
@@ -502,30 +500,54 @@ function showHoverTip(node) {
   scene.add(origin);
 
   // Text sprite helper (white labels)
-  function label(text, x, y, scale = 120) {
-    const c = document.createElement('canvas');
-    c.width = 512; c.height = 256;
-    const ctx = c.getContext('2d');
-    ctx.clearRect(0, 0, c.width, c.height);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 96px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(String(text), c.width / 2, c.height / 2);
+  // Text sprite helper (white labels) — auto-fits long strings
+function label(text, x, y, scale = 120) {
+  const c = document.createElement('canvas');
 
-    const tex = new THREE.CanvasTexture(c);
-    tex.needsUpdate = true;
+  // Give long titles more horizontal room
+  c.width = 1024;
+  c.height = 256;
 
-    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
-    spr.scale.set(scale, scale * 0.25, 1);
-    spr.position.set(x, y, AXIS_Z);
-    scene.add(spr);
-    return spr;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+
+  const str = String(text);
+
+  // Auto-fit font size to canvas width
+  let fontSize = 96;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#ffffff';
+
+  // Reduce font size until it fits (with padding)
+  const pad = 40;
+  while (fontSize > 24) {
+    ctx.font = `bold ${fontSize}px Arial`;
+    const w = ctx.measureText(str).width;
+    if (w <= (c.width - pad * 2)) break;
+    fontSize -= 4;
   }
 
-  // Axis titles
-  label('RELATIVITY', x1 + 70, -6, 140);
-    label('DEPTH', -8, y1 + 70, 140);
+  ctx.font = `bold ${fontSize}px Arial`;
+  ctx.fillText(str, c.width / 2, c.height / 2);
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.needsUpdate = true;
+
+  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+  spr.scale.set(scale, scale * 0.25, 1);
+  spr.position.set(x, y, AXIS_Z);
+  scene.add(spr);
+  return spr;
+}
+
+  // axis lengths
+const xMid = (x0 + x1) / 2;
+const yMid = (y0 + y1) / 2;
+
+// titles centered on axes
+label('QUANTUM ENTANGLEMENT', xMid, y0 - 28, 300);
+label('EMOTIONAL GRAVITY', x0 - 32, yMid, 300);
 
   // Ticks: REL 0..10, DEP 0..-10
   for (let i = 0; i <= 10; i++) {
@@ -805,9 +827,16 @@ const clusterColor = {};
           const color = new THREE.Color(colorHex);
           const core = new THREE.Mesh(new THREE.SphereGeometry(5, 24, 24),
             new THREE.MeshStandardMaterial({ color, metalness: .12, roughness: .38 }));
-          const size = Math.max(5, Math.min(30, n.val || 5));
-          const s = size / 5;
-          core.scale.set(s, s, s);
+          
+            let sizeVal = Number(n.val);
+if (!Number.isFinite(sizeVal) || sizeVal <= 0) sizeVal = 1;
+
+// base visual scale factor
+const s = 0.6 + sizeVal * 0.09;
+
+// apply
+core.scale.set(s, s, s);
+
           const glow = makeGlowSprite(colorHex);
           // Make glow visual-only (prevents "sticky" hover when sprites overlap)
           glow.raycast = () => {};
@@ -870,24 +899,25 @@ const spanY = cubeInfo.maxY - cubeInfo.minY;
 const spanZ = cubeInfo.maxZ - cubeInfo.minZ;
 const faceDist = Math.max(spanX, spanY, spanZ) * 1.2;
 
-// Ultra-dramatic high-angle multiverse overview (axes side)
+// Clean cinematic 3/4 view (balanced, less skew)
+// (Tweaked so nodes are readable and the cube feels centered)
 controls.target.set(cx, cy, cz);
 
 const diag = Math.max(spanX, spanY, spanZ);
 
-// stronger cinematic tilt + height
-const camX = cx - diag * 1.9;
-const camY = cy + diag * 1.1;
-const camZ = cz - diag * 1.9;
+// balanced framing values
+const camX = cx - diag * 1.15;   // side angle
+const camY = cy + diag * 0.55;   // height
+const camZ = cz + diag * 1.35;   // distance (front)
+
+console.log('[Poppyverse] camera preset: cinematic-3-4', { camX, camY, camZ, cx, cy, cz });
 
 Graph.cameraPosition(
   { x: camX, y: camY, z: camZ },
   { x: cx,   y: cy,   z: cz },
-  0
+  1200
 );
-
-
-       // --- COLLISION CONNECTION LINES ---
+// --- COLLISION CONNECTION LINES ---
 const lineMat = new THREE.LineBasicMaterial({
   color: 0xffffff,
   transparent: true,
@@ -980,15 +1010,15 @@ renderer.setAnimationLoop(() => {
   </script>
 
   <div id="axis-explainer">
-  <div class="axis-title">GRAPH AXIS SYSTEM</div>
+  <div class="axis-title"><strong>MULTIVERSE POSITIONING SYSTEM</strong></div>
 
   <div class="axis-row">
-    <span class="axis-name">RELATIVITY:</span>
+    <span class="axis-name"><strong>QUANTUM ENTANGLEMENT:</strong></span>
     <span class="axis-scale">contained → meta bleed</span>
   </div>
 
   <div class="axis-row">
-    <span class="axis-name">DEPTH:</span>
+    <span class="axis-name"><strong>EMOTIONAL GRAVITY:</strong></span>
     <span class="axis-scale">light ↓ heavy</span>
   </div>
 </div>
