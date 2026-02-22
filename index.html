@@ -114,6 +114,10 @@
 }
 #tooltip.visible { opacity: 1; visibility: visible; pointer-events: auto; }
 
+#tooltip img {
+    max-width: 375px;
+}
+
 #tooltip .cluster-tag {
   display: inline-block;
   background: var(--accent);
@@ -277,16 +281,31 @@
   };
   const CLUSTER_SPREAD = 150, DEPTH_SCALE = 35, NODE_SCATTER = 50;
   let selectedNode = null;
+  let hoveredNode = null;
+  let lastHovered = null;
 
   function pick(map, candidates) {
     for (const c of candidates) if (map[c]) return map[c];
     return null;
   }
-  function parseParenNumber(val, fallback = 0) {
-    if (val == null || val === '') return fallback;
-    const match = String(val).trim().match(/\(([^)]+)\)/);
-    return match ? parseFloat(match[1]) : fallback;
-  }
+  
+  function parseAxisNumber(val, fallback = 0) {
+        if (val == null) return fallback;
+        const s = String(val).trim();
+        if (s === '') return fallback;
+
+        // Accept "(7)" style
+        const paren = s.match(/\(([^)]+)\)/);
+        if (paren) {
+            const n = parseFloat(paren[1]);
+            return Number.isFinite(n) ? n : fallback;
+        }
+
+        // Accept plain "7" style
+        const n = parseFloat(s);
+        return Number.isFinite(n) ? n : fallback;
+    }
+
   function toSize(val) {
     const num = parseFloat(val);
     return Number.isFinite(num) ? Math.max(1, num) : 5;
@@ -314,16 +333,23 @@
     return new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
   }
   function resetNodeVisual(node) {
-    if (!node.__glow) return;
-    node.__glow.scale.set(node.__idleSize, node.__idleSize, 1);
-    node.__glow.material.opacity = node.__idleOpacity;
-  }
-  function setHighlightedNode(node) {
-    if (!node.__glow) return;
-    const pulseSize = node.__idleSize * 1.4;
-    node.__glow.scale.set(pulseSize, pulseSize, 1);
-    node.__glow.material.opacity = 0.2;
-  }
+  if (!node || !node.__glow) return;
+  node.__hovered = false;
+
+  // Slightly brighter idle glow
+  const s = node.__idleSize * 0.98;
+  node.__glow.scale.set(s, s, 1);
+  node.__glow.material.opacity = 0.32;
+}
+
+function setHighlightedNode(node) {
+  if (!node || !node.__glow) return;
+  node.__hovered = true;
+
+  // Hover radius hard cap (keeps hovering easy)
+  const r = Math.min(node.__idleSize, 20);
+  node.__glow.scale.set(r, r, 1);
+}
 
   function showNodeTooltip(node) {
   selectedNode = node;
@@ -345,6 +371,24 @@
   const urlBtn = node.url
     ? `<a class="tooltip-link" href="${node.url}" target="_blank" rel="noopener">READ MORE</a>`
     : `<span class="tooltip-link disabled">CONTENT NOT READY</span>`;
+  // Resolve collision targets to names for tooltip
+  const collisions = Array.isArray(node._collisions) ? node._collisions : [];
+  const _byId = window.__nodeById;
+  const _byNum = window.__nodeByNum;
+  const collisionNames = collisions.map(raw => {
+    const s = String(raw).trim();
+    if (!s) return null;
+    const num = Number(s);
+    let tgt = null;
+    if (_byNum && Number.isFinite(num)) tgt = _byNum.get(num);
+    if (!tgt && _byId) tgt = _byId.get(s);
+    return tgt ? (tgt.label || tgt.id) : null;
+  }).filter(Boolean);
+
+  const collisionsHtml = collisionNames.length
+    ? `<div class="characters" style="margin-top:6px;"><strong>Collisions:</strong> ${collisionNames.join(', ')}</div>`
+    : '';
+;
 
   const html = `
     <div class="tooltip-close" onclick="window.hideTooltip();">✕</div>
@@ -361,6 +405,7 @@
       ? `<div class="characters"><strong>Characters:</strong> ${node.characters.join(', ')}</div>`
       : ''
     }
+    ${collisionsHtml}
     <div class="tooltip-link-wrapper">
       ${urlBtn}
     </div>
@@ -385,34 +430,30 @@ let lastMouse = { x: 0, y: 0 };
 
 function hideHoverTip() {
   hoverTipEl.classList.remove('visible');
+  hoverTipEl.textContent = '';
 }
 
 function showHoverTip(node) {
-  if (!node) return hideHoverTip();
-  if (selectedNode) return hideHoverTip(); // don't hover-tip while a click tooltip is open
+  if (!node || selectedNode) return hideHoverTip();
 
-  hoverTipEl.innerHTML = `<div class="hover-title">${node.label || node.id}</div>`;
+  // Always overwrite; never append.
+  hoverTipEl.textContent = (node.label || node.id || '');
+
+  hoverTipEl.style.color = node.color || '#FF1447';
   hoverTipEl.classList.add('visible');
 
-  const pad = 14;
-  const rect = hoverTipEl.getBoundingClientRect();
-  let left = lastMouse.x + pad;
-  let top = lastMouse.y + pad;
-
-  // keep on-screen
-  left = Math.min(left, window.innerWidth - rect.width - 10);
-  top  = Math.min(top,  window.innerHeight - rect.height - 10);
-
-  hoverTipEl.style.left = left + 'px';
-  hoverTipEl.style.top  = top + 'px';
+  // Anchor bottom-left (don’t chase mouse)
+  hoverTipEl.style.left = '18px';
+  hoverTipEl.style.bottom = '72px';
+  hoverTipEl.style.top = '';
 }
 
   function addLabeledAxes(scene, nodes, clusterCentroids) {
   // We only care about the semantic axes:
   //   RELATIVITY: 0..10
-  //   DEPTH:      0..-10  (NEGATIVE)
-  const minRel = 0,  maxRel = 10;
-  const minDep = -10, maxDep = 0;
+    //   DEPTH:      0..10  (rendered downward in -Y)
+    const minRel = 0, maxRel = 10;
+    const minDep = 0, maxDep = 10;
 
   // Keep axes behind everything, but DO NOT change node Z clustering.
   let minZ = Infinity;
@@ -423,7 +464,7 @@ function showHoverTip(node) {
 
   // Map semantic values -> world coords (match your node placement scale)
   const relToX = (v) => v * 40;
-  const depToY = (v) => v * DEPTH_SCALE;
+  const depToY = (v) => -v * DEPTH_SCALE;
 
   const axisMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.75 });
   const tickMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55 });
@@ -501,17 +542,17 @@ function showHoverTip(node) {
     label(i, rx, -34, 70);
   }
 
-  for (let d = 0; d >= -10; d--) {
-    const dy = depToY(d);
-    scene.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, dy, AXIS_Z),
-        new THREE.Vector3(-10, dy, AXIS_Z)
-      ]),
-      tickMat
-    ));
-    label(d, -55, dy, 70);
-  }
+  for (let d = 0; d <= 10; d++) {
+  const dy = depToY(d);
+  scene.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, dy, AXIS_Z),
+      new THREE.Vector3(-10, dy, AXIS_Z)
+    ]),
+    tickMat
+  ));
+  label(d, -55, dy, 70);
+}
 
   // return axis plane so camera can face it
   return { axisZ: AXIS_Z };
@@ -631,8 +672,8 @@ legendToggle.addEventListener('click', () => {
         const cluster = String(r[col.tags] ?? '').trim() || '(unclustered)';
         if (!id || !cluster) return null;
 
-        const xv = axisXCol ? parseParenNumber(r[axisXCol], 0) : 0;
-        const yv = axisYCol ? parseParenNumber(r[axisYCol], 0) : 0;
+        const xv = axisXCol ? parseAxisNumber(r[axisXCol], 0) : 0;
+        const yv = axisYCol ? parseAxisNumber(r[axisYCol], 0) : 0;
 
         return {
           id, label, cluster,
@@ -643,6 +684,12 @@ legendToggle.addEventListener('click', () => {
           characters: col.characters ? parseList(r[col.characters]) : [],
           _description: col.description ? String(r[col.description] ?? '').trim() : '',
           _collisionStr: col.collision ? String(r[col.collision] ?? '').trim() : '',
+_collisions: col.collision
+  ? String(r[col.collision] ?? '')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean)
+  : [],
           _axes: { xv, yv }
         };
       }).filter(Boolean);
@@ -685,7 +732,11 @@ legendToggle.addEventListener('click', () => {
         if (Number.isFinite(num)) nodeByNum.set(num, n);
       });
 
-      const clusterColor = {};
+      // expose lookups for tooltip collision-name resolution
+      window.__nodeById = nodeById;
+      window.__nodeByNum = nodeByNum;
+
+const clusterColor = {};
       clusterOrder.forEach(cname => {
         const info = clusterInfo[cname];
         let hexColor = '#FF1447';
@@ -703,7 +754,7 @@ legendToggle.addEventListener('click', () => {
         const key = `${srcId}:${tgtId}`, keyRev = `${tgtId}:${srcId}`;
         if (addedLinks.has(key) || addedLinks.has(keyRev)) return;
         addedLinks.add(key);
-        links.push({ source: srcId, target: tgtId, color: '#FFFFFF', width: 0.9 });
+        links.push({ source: srcId, target: tgtId, color: '#FFFFFF', width: 1.6 });
       }
 
       nodes.forEach(n => {
@@ -758,17 +809,22 @@ legendToggle.addEventListener('click', () => {
           const s = size / 5;
           core.scale.set(s, s, s);
           const glow = makeGlowSprite(colorHex);
+          // Make glow visual-only (prevents "sticky" hover when sprites overlap)
+          glow.raycast = () => {};
+          glow.material.depthTest = false;
+          glow.renderOrder = 10;
+
           const idleSize = Math.max(42, 5 * s * 5.4);
-          glow.scale.set(idleSize, idleSize, 1);
-          glow.material.opacity = .30;
+          glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
+          glow.material.opacity = 0.32;
           core.add(glow);
-          n.__core = core; n.__glow = glow; n.__idleSize = idleSize; n.__idleOpacity = 0.30;
+          n.__core = core; n.__glow = glow; n.__idleSize = idleSize; n.__idleOpacity = 0.32;
           return core;
         })
         .nodeLabel(() => '')
         .linkColor(l => l.color || '#FFFFFF')
-        .linkWidth(l => l.width || 0.9)
-        .linkOpacity(0.75);
+        .linkWidth(l => l.width || 1.6)
+        .linkOpacity(0.65);
 
       const w = window.innerWidth, h = window.innerHeight;
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -830,37 +886,64 @@ Graph.cameraPosition(
   0
 );
 
+
+       // --- COLLISION CONNECTION LINES ---
+const lineMat = new THREE.LineBasicMaterial({
+  color: 0xffffff,
+  transparent: true,
+  opacity: 0.35
+});
+
+nodes.forEach(n => {
+  if (!n._collisions || !n._collisions.length) return;
+
+  n._collisions.forEach(id => {
+    const target = nodeById.get(String(id)) || nodeByNum.get(Number(id));
+    if (!target) return;
+
+    // avoid duplicate lines (A→B and B→A)
+    if (n.id > target.id) return;
+
+    const geom = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(n.x, n.y, n.z),
+      new THREE.Vector3(target.x, target.y, target.z)
+    ]);
+
+    const line = new THREE.Line(geom, lineMat);
+    scene.add(line);
+  });
+});
+
       const hoverTipEl = document.getElementById('hover-tip');
 
-function hideHoverTip() {
-  hoverTipEl.classList.remove('visible');
-  hoverTipEl.textContent = '';
-}
-
-function showHoverTip(node) {
-  if (!node) return hideHoverTip();
-  hoverTipEl.textContent = node.label || node.id || '';
-  hoverTipEl.style.color = node.color || '#FF1447'; // cluster universe color
-  hoverTipEl.classList.add('visible');
-}
-
 Graph.onNodeHover((node, prev) => {
-  if (prev && prev !== selectedNode) resetNodeVisual(prev);
+  // Only one hovered node at a time (ForceGraph picks the frontmost).
+  // IMPORTANT: glow sprites are non-raycastable, so hover won't "stick".
 
-  if (!node) {
-    // hide hover text
+  // If ForceGraph didn't provide prev (can happen), fall back to our lastHovered.
+  const prevNode = prev || lastHovered;
+
+  if (prevNode && prevNode !== node && prevNode !== selectedNode) {
+    resetNodeVisual(prevNode);
+  }
+
+  hoveredNode = node || null;
+  lastHovered = hoveredNode;
+
+  if (!hoveredNode) {
     hideHoverTip();
 
+    // Ensure NO lingering pulse / bright opacity
     if (!selectedNode) nodes.forEach(n => resetNodeVisual(n));
-    else setHighlightedNode(selectedNode);
+    else {
+      // keep selected steady; reset everything else
+      nodes.forEach(n => { if (n !== selectedNode) resetNodeVisual(n); });
+    }
     return;
   }
 
-  // show hover text (big, bottom-left, cluster-colored)
-  showHoverTip(node);
-
-  // glow highlight
-  setHighlightedNode(node);
+  showHoverTip(hoveredNode);
+  setHighlightedNode(hoveredNode);
 });
 
       Graph.onNodeClick(n => {
@@ -869,7 +952,23 @@ Graph.onNodeHover((node, prev) => {
 });
 
 
-      renderer.setAnimationLoop(() => {
+     
+renderer.setAnimationLoop(() => {
+  // Pulse ONLY the currently hovered node (no radius growth; radius is capped in setHighlightedNode)
+  const t = performance.now() * 0.012;
+  const pulse = 0.70 + 0.30 * (0.5 + 0.5 * Math.sin(t)); // 0.70..1.00
+
+  if (hoveredNode && hoveredNode.__glow && hoveredNode !== selectedNode) {
+    hoveredNode.__glow.material.opacity = pulse; // intense pulse
+  }
+
+  // Keep selected node steady while tooltip is open
+  if (selectedNode && selectedNode.__glow) {
+    selectedNode.__glow.material.opacity = 0.62;
+    const r = Math.min(selectedNode.__idleSize, 20);
+    selectedNode.__glow.scale.set(r, r, 1);
+  }
+
   renderer.render(scene, Graph.camera());
 });
 
