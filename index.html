@@ -628,7 +628,7 @@ function addBoundingCube(scene, nodes) {
     `url('https://images.unsplash.com/photo-1648563643923-2091f9c0c12f?ixlib=rb-4.1.0&q=80&w=2831&auto=format&fit=crop')`;
   setTimeout(() => document.getElementById('bg').classList.add('show'), 100);
 
-  fetch('the_poppy_board_v7.csv', { cache: 'no-cache' })
+  fetch('the_poppy_board.csv', { cache: 'no-cache' })
     .then(r => r.text())
     .then(txt => new Promise(resolve => Papa.parse(txt, { header: true, skipEmptyLines: true, complete: resolve })))
     .then(async result => {
