@@ -83,8 +83,10 @@ Produces `toc.html` — a more readable table of contents. This is the "I just w
 
 **3D version:**
 ```
-# open index.html in a browser
+cd path/to/repo
+python3 -m http.server 8080
 ```
+Then open `http://localhost:8080/index.html` in a browser.
 
 **2D version:**
 ```
