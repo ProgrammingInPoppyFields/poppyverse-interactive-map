@@ -1,0 +1,370 @@
+#!/usr/bin/env python3
+"""
+build_home.py
+
+Generate the GitHub Pages splash/home page for Into the Poppyverse.
+
+Output:
+- index.html
+"""
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+OUTPUT_HTML = "index.html"
+POPPY_RED = "#FF1447"
+BACKGROUND_IMAGE = "https://images.unsplash.com/photo-1569470451072-68314f596aec?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+TUMBLR_ARCHIVE_URL = "https://inpoppyfields.tumblr.com/"
+HOME_HREF = "index.html"
+TWO_D_MAP_HREF = "2d_map.html"
+THREE_D_MAP_HREF = "3d_map.html"
+
+
+def common_nav_css() -> str:
+    return """
+    .poppy-nav {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(8, 8, 14, 0.66);
+      box-shadow: 0 16px 42px rgba(0,0,0,.32), 0 0 22px rgba(255,20,71,.10);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .poppy-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 13px;
+      border-radius: 999px;
+      color: rgba(255,255,255,.82);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: .35px;
+      border: 1px solid transparent;
+      transition: background .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease;
+      white-space: nowrap;
+    }
+
+    .poppy-nav a:hover {
+      color: #fff;
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .poppy-nav a.active {
+      color: #fff;
+      background: var(--poppy-red, #ff1447);
+      border-color: color-mix(in srgb, var(--poppy-red, #ff1447) 72%, white);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--poppy-red, #ff1447) 44%, transparent);
+    }
+
+    @media (max-width: 560px) {
+      .poppy-nav {
+        top: 10px;
+        width: calc(100vw - 20px);
+        justify-content: center;
+        overflow-x: auto;
+        border-radius: 18px;
+      }
+
+      .poppy-nav a {
+        padding: 0 10px;
+        font-size: 11px;
+      }
+    }
+    """
+
+
+def common_nav_html(active: str = "home") -> str:
+    home_class = ' class="active" aria-current="page"' if active == "home" else ""
+    two_d_class = ' class="active" aria-current="page"' if active == "2d" else ""
+    three_d_class = ' class="active" aria-current="page"' if active == "3d" else ""
+    return (
+        '<nav class="poppy-nav" aria-label="Poppyverse map navigation">\n'
+        f'    <a href="{HOME_HREF}"{home_class}>Home</a>\n'
+        f'    <a href="{TWO_D_MAP_HREF}"{two_d_class}>2D Map</a>\n'
+        f'    <a href="{THREE_D_MAP_HREF}"{three_d_class}>3D Map</a>\n'
+        f'    <a href="{TUMBLR_ARCHIVE_URL}" target="_blank" rel="noopener">Tumblr Archive</a>\n'
+        '  </nav>'
+    )
+
+
+INTRO_HTML = """
+<h1>Welcome to the Poppyverse</h1>
+<p>A collection of stories set across a quantum multiverse framework, characterized primarily by narrative inconsistency, emotional damage, and a complete disregard for traditional storytelling structure.</p>
+<p><strong>Disclaimer:</strong> Table of Content titles won&rsquo;t always match post titles. This is a work in progress. Confusion is part of the experience.</p>
+<hr />
+<h1>Suggested Reading Logic</h1>
+<p><em>A non-binding attempt at structural clarity</em></p>
+<h2>p# &rarr; Progressive Thread</h2>
+<p>Indicates chronological sequence. Used when a story pretends to follow linear causality. Read in order. Pretend it matters.</p>
+<ul>
+<li><strong>p1</strong> &rarr; the mech sneezes</li>
+<li><strong>p2</strong> &rarr; the mech then dies heroically in a sandwich fire</li>
+</ul>
+<h2>v# &rarr; Narrative Variant</h2>
+<p>Alternate versions of the same key event. May differ by perspective, tone, emotional damage, or ethical collapse. Choose your fighter.</p>
+<ul>
+<li><strong>v1</strong> &rarr; everyone survives but hates each other</li>
+<li><strong>v2</strong> &rarr; everyone dies but hugs first</li>
+</ul>
+<h2>(no prefix) &rarr; Wildcard Unit</h2>
+<p>Independent entry. Possibly self-contained. Possibly entangled with eight other entries via an anomalous IKEA desk and one very specific trauma response.</p>
+<ul>
+<li>postmortem dog walk</li>
+<li>emotional tax fraud</li>
+</ul>
+<p>All timelines are canon.<br /> Even the ones that mutually invalidate each other.<br /> Especially those.</p>
+<hr />
+<h1>Extra: Story Music (Optional, but Highly Recommended)</h1>
+<p>Some stories include a YouTube track. Totally optional. But if you want a vibe assist:</p>
+<ul>
+<li>Click the link.</li>
+<li>Let the music play for a few seconds.</li>
+<li>Read on with the soundtrack running.</li>
+</ul>
+<p>We&rsquo;re not saying it&rsquo;ll change your life. But it might hit harder with a haunting piano or a slow-burn synth humming in your ears. Consider it mood lighting for your soul.</p>
+<hr />
+<h1>Final Notes</h1>
+<p>Confused? Good. You&rsquo;re supposed to be. That&rsquo;s how you know it&rsquo;s working.</p>
+<p>Please enjoy your descent. And remember: it&rsquo;s not a contradiction, it&rsquo;s a multiverse.</p>
+""".strip()
+
+
+def build_html() -> str:
+    nav_css = common_nav_css()
+    nav_html = common_nav_html("home")
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Welcome to the Poppyverse</title>
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="50%" x="50%" dominant-baseline="middle" text-anchor="middle" font-size="52">🌷</text></svg>'>
+  <style>
+    :root {{ --poppy-red: {POPPY_RED}; }}
+
+    * {{ box-sizing: border-box; }}
+
+    html, body {{
+      margin: 0;
+      min-height: 100%;
+      background: #05050a;
+      color: #fff;
+      font-family: "Proxima Nova", Proxima, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }}
+
+    body {{
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        linear-gradient(120deg, rgba(0,0,0,.82), rgba(0,0,0,.34) 46%, rgba(0,0,0,.78)),
+        radial-gradient(circle at 50% 45%, rgba(255,20,71,.18), transparent 38%),
+        url('{BACKGROUND_IMAGE}');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }}
+
+    body::before {{
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 22%, rgba(255,20,71,.16), transparent 26%),
+        linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,.72));
+      z-index: 0;
+    }}
+
+{nav_css}
+
+    main {{
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 104px 24px 56px;
+      text-align: center;
+    }}
+
+    .hero {{
+      width: min(1100px, 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }}
+
+    .title {{
+      margin: 0;
+      color: var(--poppy-red);
+      font-family: "Proxima Nova", Proxima, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: clamp(52px, 10vw, 132px);
+      font-weight: 950;
+      line-height: .86;
+      letter-spacing: -.06em;
+      text-transform: uppercase;
+      text-wrap: balance;
+      text-shadow:
+        0 0 18px rgba(255,20,71,.64),
+        0 10px 42px rgba(0,0,0,.78);
+    }}
+
+    .subtitle {{
+      margin: 0;
+      max-width: 780px;
+      color: rgba(255,255,255,.82);
+      font-size: clamp(15px, 1.8vw, 20px);
+      line-height: 1.5;
+      text-shadow: 0 4px 22px rgba(0,0,0,.8);
+    }}
+
+    .intro-shell {{
+      width: min(860px, 100%);
+      margin-top: 10px;
+    }}
+
+    .intro-button {{
+      appearance: none;
+      border: 1px solid color-mix(in srgb, var(--poppy-red) 54%, white);
+      background: rgba(255,20,71,.92);
+      color: #fff;
+      border-radius: 999px;
+      padding: 13px 22px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 26px rgba(255,20,71,.38), 0 18px 44px rgba(0,0,0,.42);
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }}
+
+    .intro-button:hover {{
+      transform: translateY(-1px);
+      background: var(--poppy-red);
+      box-shadow: 0 0 34px rgba(255,20,71,.52), 0 20px 48px rgba(0,0,0,.48);
+    }}
+
+    .intro-panel {{
+      display: none;
+      margin: 18px auto 0;
+      max-height: min(62vh, 760px);
+      overflow-y: auto;
+      text-align: left;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 24px;
+      background: rgba(6, 6, 12, .72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.52), 0 0 24px rgba(255,20,71,.10);
+    }}
+
+    .intro-panel.open {{ display: block; }}
+
+    .intro-panel h1 {{
+      margin: 0 0 10px;
+      color: var(--poppy-red);
+      font-size: 24px;
+      line-height: 1.15;
+    }}
+
+    .intro-panel h1:not(:first-child) {{ margin-top: 18px; }}
+
+    .intro-panel h2 {{
+      margin: 18px 0 8px;
+      color: rgba(255,255,255,.96);
+      font-size: 17px;
+    }}
+
+    .intro-panel p, .intro-panel li {{
+      color: rgba(255,255,255,.84);
+      font-size: 15px;
+      line-height: 1.62;
+    }}
+
+    .intro-panel p {{ margin: 8px 0; }}
+    .intro-panel ul {{ margin: 8px 0 12px 22px; padding: 0; }}
+    .intro-panel hr {{
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.16);
+      margin: 22px 0;
+    }}
+
+    @media (max-width: 680px) {{
+      main {{ padding: 96px 16px 36px; }}
+      .title {{ letter-spacing: -.045em; }}
+      .intro-panel {{ padding: 18px; border-radius: 18px; }}
+    }}
+  </style>
+</head>
+<body>
+  {nav_html}
+
+  <main>
+    <section class="hero" aria-labelledby="welcome-title">
+      <h1 id="welcome-title" class="title">Welcome to the Poppyverse</h1>
+      <p class="subtitle">A quantum multiverse story archive, organized just enough to look intentional. Please enjoy the emotional weather event.</p>
+
+      <div class="intro-shell">
+        <button class="intro-button" id="intro-toggle" type="button" aria-expanded="false" aria-controls="intro-panel">Intro ▾</button>
+        <div class="intro-panel" id="intro-panel">
+          {INTRO_HTML}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const button = document.getElementById('intro-toggle');
+    const panel = document.getElementById('intro-panel');
+
+    button.addEventListener('click', () => {{
+      const isOpen = panel.classList.toggle('open');
+      button.setAttribute('aria-expanded', String(isOpen));
+      button.textContent = isOpen ? 'Intro ▴' : 'Intro ▾';
+    }});
+  </script>
+</body>
+</html>
+"""
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Build the Poppyverse splash page.")
+    parser.add_argument("--output", "--out", default=OUTPUT_HTML, help=f"Output HTML path. Default: {OUTPUT_HTML}")
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    script_dir = Path(__file__).resolve().parent
+    output = Path(args.output)
+    if not output.is_absolute():
+      output = script_dir / output
+    output.write_text(build_html(), encoding="utf-8")
+    print(f"Wrote {output}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

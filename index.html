@@ -1,1027 +1,305 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Into the Poppyverse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Welcome to the Poppyverse</title>
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="50%" x="50%" dominant-baseline="middle" text-anchor="middle" font-size="52">🌷</text></svg>'>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
   <style>
-    html, body { margin: 0; height: 100%; background: #0b0b12; overflow: hidden;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
     :root { --poppy-red: #FF1447; }
-    #bg{ position: fixed; inset: 0; z-index: 0; background-position: center; background-size: cover;
-      opacity: 0; transition: opacity 1200ms ease; filter: saturate(1.05) contrast(1.06) brightness(.92); }
-    #bg.show{ opacity: 1; }
-    #g { position: relative; z-index: 1; width: 100vw; height: 100vh; }
-    #hud { position: fixed; top: 0; left: 0; width: 100%; z-index: 20; pointer-events: none; }
-    #hud-bar { display: grid; grid-template-columns: 40vw 20vw 37.5vw; align-items: start; padding: 10px 18px;
-      background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,0)); }
-    #hud-left { pointer-events: auto; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; }
-    #title { margin: 0; font-family: 'Michroma', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--poppy-red);
-      text-shadow: 0 0 10px rgba(255,20,71,.7); animation: fadeDown 700ms ease both .25s; }
-    #legend { pointer-events: auto; justify-self: end; background: rgba(0,0,0,.42); border: 1px solid rgba(255,255,255,.28);
-      border-radius: 10px; padding: 5px 15px 3px 15px; color: #fff; font: 13px/1.35 sans-serif; max-width: 20vw; animation: fadeUp 700ms ease both .45s; }
 
-      /* collapsed legend state */
-    #legend.collapsed .rows {
-    display: none;
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #05050a;
+      color: #fff;
+      font-family: "Proxima Nova", Proxima, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    #legend-toggle {
-    cursor: pointer;
-    user-select: none;
-    font-weight: 600;
-    letter-spacing: .5px;
-    opacity: .9;
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        linear-gradient(120deg, rgba(0,0,0,.82), rgba(0,0,0,.34) 46%, rgba(0,0,0,.78)),
+        radial-gradient(circle at 50% 45%, rgba(255,20,71,.18), transparent 38%),
+        url('https://images.unsplash.com/photo-1569470451072-68314f596aec?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
 
-    #legend-toggle:hover {
-    opacity: 1;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 22%, rgba(255,20,71,.16), transparent 26%),
+        linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,.72));
+      z-index: 0;
+    }
+
+
+    .poppy-nav {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(8, 8, 14, 0.66);
+      box-shadow: 0 16px 42px rgba(0,0,0,.32), 0 0 22px rgba(255,20,71,.10);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .poppy-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 13px;
+      border-radius: 999px;
+      color: rgba(255,255,255,.82);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: .35px;
+      border: 1px solid transparent;
+      transition: background .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease;
+      white-space: nowrap;
+    }
+
+    .poppy-nav a:hover {
+      color: #fff;
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .poppy-nav a.active {
+      color: #fff;
+      background: var(--poppy-red, #ff1447);
+      border-color: color-mix(in srgb, var(--poppy-red, #ff1447) 72%, white);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--poppy-red, #ff1447) 44%, transparent);
+    }
+
+    @media (max-width: 560px) {
+      .poppy-nav {
+        top: 10px;
+        width: calc(100vw - 20px);
+        justify-content: center;
+        overflow-x: auto;
+        border-radius: 18px;
+      }
+
+      .poppy-nav a {
+        padding: 0 10px;
+        font-size: 11px;
+      }
     }
     
-    #legend h3 { margin: 0 0 6px; font-size: 14px; opacity: .95; }
-    #legend .rows { margin-top: 6px; overflow-y: auto; max-height: 80vh; scrollbar-width: thin; }
-    #legend .row { display: flex; align-items: flex-start; gap: 8px; margin: 6px 0; }
-    #legend .swatch { width: 12px; height: 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,.25);
-      box-shadow: 0 0 8px rgba(255,255,255,.16); margin-top: 2px; flex-shrink: 0; }
-    #legend .label { opacity: .92; }
-    #legend .cluster-desc { font-size: 11px; opacity: .8; margin-top: 2px; }
-    .featured-label { position: absolute; pointer-events: none; font-family: 'Michroma', sans-serif; font-size: 11px;
-      letter-spacing: 1.5px; text-transform: uppercase; color: var(--poppy-red);
-      text-shadow: 0 0 8px rgba(255,20,71,.8); white-space: nowrap; transform: translate(-50%, 20px); }
-    
-#hover-tip {
-  position: fixed;
-  left: 18px;
-  bottom: 72px; /* sits above #static-link-bar (which is bottom:18px) */
-  z-index: 26;
 
-  pointer-events: none;
-
-  font-family: 'Michroma', sans-serif;
-  font-size: 22px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .12s ease, transform .12s ease;
-
-  text-shadow: 0 0 14px rgba(0,0,0,.9);
-  white-space: nowrap;
-}
-
-#hover-tip.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-#hover-tip .hover-title {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: .2px;
-  line-height: 1.15;
-}
-    
-      #tooltip {
-  --accent: var(--poppy-red);
-
-  position: fixed;
-  z-index: 30;
-  background: rgba(10,10,16,.95);
-  border: 2px solid var(--accent);
-  border-radius: 12px;
-
-  /* make room for the X button */
-  padding: 14px 16px 16px;
-
-  color: #fff;
-  box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 55%, transparent);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity .2s ease;
-  font-size: 13.5px;
-  max-width: 420px;
-
-  /* scroll */
-  max-height: 80vh;
-  overflow-y: auto;
-
-  pointer-events: none;
-}
-#tooltip.visible { opacity: 1; visibility: visible; pointer-events: auto; }
-
-#tooltip img {
-    max-width: 375px;
-}
-
-#tooltip .cluster-tag {
-  display: inline-block;
-  background: var(--accent);
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 5px;
-  font-size: 11px;
-  margin-bottom: 10px;
-  font-weight: 700;
-}
-
-#tooltip .tooltip-link-wrapper { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
-
-#tooltip .tooltip-link {
-  display: inline-block;
-  background: var(--accent);
-  color: #fff;
-  text-decoration: none;
-  padding: 7px 12px;
-  border-radius: 8px;
-  font-weight: 800;
-  font-size: 12px;
-  letter-spacing: .4px;
-  transition: background .15s ease, border .15s ease, opacity .15s ease;
-  cursor: pointer;
-  border: 2px solid transparent;
-}
-
-#tooltip .tooltip-link:hover {
-  background: transparent;
-  border: 2px solid var(--accent);
-}
-
-#tooltip .tooltip-link.disabled {
-  opacity: .55;
-  cursor: default;
-  pointer-events: none;
-  background: rgba(255,255,255,.10);
-  border: 2px solid rgba(255,255,255,.18);
-  color: rgba(255,255,255,.85);
-}
-
-#tooltip .tooltip-close {
-  position: absolute;
-  top: 16px;
-  right: 20px;
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,.20);
-  background: rgba(255,255,255,.08);
-  color: #fff;
-  font-weight: 900;
-  font-size: 16px;
-  line-height: 28px;
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-}
-
-#tooltip .tooltip-close:hover {
-  border-color: color-mix(in srgb, var(--accent) 70%, rgba(255,255,255,.25));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent);
-}
-   
-    #tooltip h2 { margin: 0 0 6px; font-size: 17px; font-weight: 600; }
-    #tooltip .description { margin: 0 0 10px; opacity: .95; }
-    #tooltip .characters { margin: 6px 0 0; opacity: .9; font-size: 12.5px; }
-    #tooltip .tooltip-link-wrapper { margin-top: 10px; display: flex; gap: 10px; }
-
-    @keyframes fadeDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    #static-link-bar {
-        position: fixed;
-        bottom: 18px;
-        left: 18px;
-        z-index: 25;
-
-        pointer-events: auto;        /* overrides #hud pointer-events:none */
-
-        padding: 9px 12px;
-        border-radius: 12px;
-
-        background: rgba(0,0,0,.55);
-        border: 1px solid rgba(255,255,255,.25);
-
-        color: #fff;
-        font: 13px/1.35 sans-serif;
-
-        backdrop-filter: blur(6px);
-        box-shadow: 0 0 18px rgba(0,0,0,.45);
-
-        max-width: 420px;
+    main {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 104px 24px 56px;
+      text-align: center;
     }
 
-    #static-link-bar a {
-        color: var(--poppy-red);
-        text-decoration: underline;
-        text-decoration-color: rgba(255,255,255,.40);
-        font-weight: 700;
+    .hero {
+      width: min(1100px, 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
     }
 
-    #axis-explainer{
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 24;
+    .title {
+      margin: 0;
+      color: var(--poppy-red);
+      font-family: "Proxima Nova", Proxima, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: clamp(52px, 10vw, 132px);
+      font-weight: 950;
+      line-height: .86;
+      letter-spacing: -.06em;
+      text-transform: uppercase;
+      text-wrap: balance;
+      text-shadow:
+        0 0 18px rgba(255,20,71,.64),
+        0 10px 42px rgba(0,0,0,.78);
+    }
 
-  font-family: sans-serif;
-  font-size: 10px;
-  line-height: 1.45;
-  letter-spacing: .8px;
+    .subtitle {
+      margin: 0;
+      max-width: 780px;
+      color: rgba(255,255,255,.82);
+      font-size: clamp(15px, 1.8vw, 20px);
+      line-height: 1.5;
+      text-shadow: 0 4px 22px rgba(0,0,0,.8);
+    }
 
-  color: white;
-  text-align: right;
+    .intro-shell {
+      width: min(860px, 100%);
+      margin-top: 10px;
+    }
 
-  pointer-events: none;
-  user-select: none;
+    .intro-button {
+      appearance: none;
+      border: 1px solid color-mix(in srgb, var(--poppy-red) 54%, white);
+      background: rgba(255,20,71,.92);
+      color: #fff;
+      border-radius: 999px;
+      padding: 13px 22px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 26px rgba(255,20,71,.38), 0 18px 44px rgba(0,0,0,.42);
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
 
-  text-shadow: 0 0 10px rgba(0,0,0,.9);
-}
+    .intro-button:hover {
+      transform: translateY(-1px);
+      background: var(--poppy-red);
+      box-shadow: 0 0 34px rgba(255,20,71,.52), 0 20px 48px rgba(0,0,0,.48);
+    }
 
+    .intro-panel {
+      display: none;
+      margin: 18px auto 0;
+      max-height: min(62vh, 760px);
+      overflow-y: auto;
+      text-align: left;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 24px;
+      background: rgba(6, 6, 12, .72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.52), 0 0 24px rgba(255,20,71,.10);
+    }
+
+    .intro-panel.open { display: block; }
+
+    .intro-panel h1 {
+      margin: 0 0 10px;
+      color: var(--poppy-red);
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .intro-panel h1:not(:first-child) { margin-top: 18px; }
+
+    .intro-panel h2 {
+      margin: 18px 0 8px;
+      color: rgba(255,255,255,.96);
+      font-size: 17px;
+    }
+
+    .intro-panel p, .intro-panel li {
+      color: rgba(255,255,255,.84);
+      font-size: 15px;
+      line-height: 1.62;
+    }
+
+    .intro-panel p { margin: 8px 0; }
+    .intro-panel ul { margin: 8px 0 12px 22px; padding: 0; }
+    .intro-panel hr {
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.16);
+      margin: 22px 0;
+    }
+
+    @media (max-width: 680px) {
+      main { padding: 96px 16px 36px; }
+      .title { letter-spacing: -.045em; }
+      .intro-panel { padding: 18px; border-radius: 18px; }
+    }
   </style>
 </head>
 <body>
-  <div id="bg"></div>
-    <div id="hud">
-        <div id="hud-bar">
-            <div id="hud-left"><h1 id="title">INTO THE POPPYVERSE</h1></div>
-            <div></div>
-            <div id="legend" class="collapsed">
-                <h3 id="legend-toggle">Multiverse Color Legend ▸</h3>
-                <div class="rows"></div>
-            </div>
+  <nav class="poppy-nav" aria-label="Poppyverse map navigation">
+    <a href="index.html" class="active" aria-current="page">Home</a>
+    <a href="about.html">About</a>
+    <a href="2d_map.html">2D Map</a>
+    <a href="3d_map.html">3D Map</a>
+    <a href="https://inpoppyfields.tumblr.com/" target="_blank" rel="noopener">Tumblr Archive</a>
+  </nav>
+
+  <main>
+    <section class="hero" aria-labelledby="welcome-title">
+      <h1 id="welcome-title" class="title">Welcome to the Poppyverse</h1>
+      <p class="subtitle">A quantum multiverse story archive, organized just enough to look intentional. Please enjoy the emotional weather event.</p>
+
+      <div class="intro-shell">
+        <button class="intro-button" id="intro-toggle" type="button" aria-expanded="false" aria-controls="intro-panel">Intro ▾</button>
+        <div class="intro-panel" id="intro-panel">
+          <h1>Welcome to the Poppyverse</h1>
+<p>A collection of stories set across a quantum multiverse framework, characterized primarily by narrative inconsistency, emotional damage, and a complete disregard for traditional storytelling structure.</p>
+<p><strong>Disclaimer:</strong> Table of Content titles won&rsquo;t always match post titles. This is a work in progress. Confusion is part of the experience.</p>
+<hr />
+<h1>Suggested Reading Logic</h1>
+<p><em>A non-binding attempt at structural clarity</em></p>
+<h2>p# &rarr; Progressive Thread</h2>
+<p>Indicates chronological sequence. Used when a story pretends to follow linear causality. Read in order. Pretend it matters.</p>
+<ul>
+<li><strong>p1</strong> &rarr; the mech sneezes</li>
+<li><strong>p2</strong> &rarr; the mech then dies heroically in a sandwich fire</li>
+</ul>
+<h2>v# &rarr; Narrative Variant</h2>
+<p>Alternate versions of the same key event. May differ by perspective, tone, emotional damage, or ethical collapse. Choose your fighter.</p>
+<ul>
+<li><strong>v1</strong> &rarr; everyone survives but hates each other</li>
+<li><strong>v2</strong> &rarr; everyone dies but hugs first</li>
+</ul>
+<h2>(no prefix) &rarr; Wildcard Unit</h2>
+<p>Independent entry. Possibly self-contained. Possibly entangled with eight other entries via an anomalous IKEA desk and one very specific trauma response.</p>
+<ul>
+<li>postmortem dog walk</li>
+<li>emotional tax fraud</li>
+</ul>
+<p>All timelines are canon.<br /> Even the ones that mutually invalidate each other.<br /> Especially those.</p>
+<hr />
+<h1>Extra: Story Music (Optional, but Highly Recommended)</h1>
+<p>Some stories include a YouTube track. Totally optional. But if you want a vibe assist:</p>
+<ul>
+<li>Click the link.</li>
+<li>Let the music play for a few seconds.</li>
+<li>Read on with the soundtrack running.</li>
+</ul>
+<p>We&rsquo;re not saying it&rsquo;ll change your life. But it might hit harder with a haunting piano or a slow-burn synth humming in your ears. Consider it mood lighting for your soul.</p>
+<hr />
+<h1>Final Notes</h1>
+<p>Confused? Good. You&rsquo;re supposed to be. That&rsquo;s how you know it&rsquo;s working.</p>
+<p>Please enjoy your descent. And remember: it&rsquo;s not a contradiction, it&rsquo;s a multiverse.</p>
         </div>
-
-        <div id="static-link-bar" class="static-link">
-            Prefer a calmer, saner, static table of contents? Visit the
-            <a href="https://inpoppyfields.tumblr.com/map" target="_blank" rel="noopener">2D Story Map</a>.
-        </div>
-    </div>
-
-  <div id="g"></div>
-<div id="hover-tip"></div>
-<div id="tooltip"></div>
-
-  <script src="https://unpkg.com/three@0.148.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.148.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://unpkg.com/3d-force-graph@1.72.0/dist/3d-force-graph.min.js"></script>
-  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+      </div>
+    </section>
+  </main>
 
   <script>
-  'use strict';
-  const COLNAMES = {
-    id: ['id', 'name'], name: ['name', 'title'], tags: ['cluster', 'tags'], size: ['size', 'value'],
-    collision: ['collision', 'collisions'], url: ['content url', 'url'], featured: ['featured'],
-    characters: ['characters'], cover: ['cover url', 'cover']
-  };
-  const CLUSTER_SPREAD = 150, DEPTH_SCALE = 35, NODE_SCATTER = 50;
-  let selectedNode = null;
-  let hoveredNode = null;
-  let lastHovered = null;
-
-  function pick(map, candidates) {
-    for (const c of candidates) if (map[c]) return map[c];
-    return null;
-  }
-  
-  function parseAxisNumber(val, fallback = 0) {
-        if (val == null) return fallback;
-        const s = String(val).trim();
-        if (s === '') return fallback;
-
-        // Accept "(7)" style
-        const paren = s.match(/\(([^)]+)\)/);
-        if (paren) {
-            const n = parseFloat(paren[1]);
-            return Number.isFinite(n) ? n : fallback;
-        }
-
-        // Accept plain "7" style
-        const n = parseFloat(s);
-        return Number.isFinite(n) ? n : fallback;
-    }
-
-  function toSize(val) {
-    const num = parseFloat(val);
-    return Number.isFinite(num) ? Math.max(1, num) : 5;
-  }
-  function toBool(val) {
-    const s = String(val).toLowerCase().trim();
-    return s === 'yes' || s === 'true' || s === '1';
-  }
-  function parseList(val) {
-    return val ? String(val).split(',').map(x => x.trim()).filter(Boolean) : [];
-  }
-  function hash32(str) {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
-    return Math.abs(h);
-  }
-  function rand(seed) { const x = Math.sin(seed++) * 10000; return x - Math.floor(x); }
-  function makeGlowSprite(colorHex) {
-    const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128;
-    const ctx = canvas.getContext('2d');
-    const grad = ctx.createRadialGradient(64,64,0, 64,64,64);
-    grad.addColorStop(0, colorHex); grad.addColorStop(.5, colorHex + '80'); grad.addColorStop(1, colorHex + '00');
-    ctx.fillStyle = grad; ctx.fillRect(0,0,128,128);
-    const tex = new THREE.CanvasTexture(canvas);
-    return new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
-  }
-  function resetNodeVisual(node) {
-  if (!node || !node.__glow) return;
-  node.__hovered = false;
-
-  // Slightly brighter idle glow
-  const s = node.__idleSize * 0.98;
-  node.__glow.scale.set(s, s, 1);
-  node.__glow.material.opacity = 0.32;
-}
-
-function setHighlightedNode(node) {
-  if (!node || !node.__glow) return;
-  node.__hovered = true;
-
-  // Hover radius hard cap (keeps hovering easy)
-  const r = Math.min(node.__idleSize, 20);
-  node.__glow.scale.set(r, r, 1);
-}
-
-  function showNodeTooltip(node) {
-  selectedNode = node;
-  setHighlightedNode(node);
-
-  const tooltipEl = document.getElementById('tooltip');
-
-  // Theme tooltip using the node's universe/cluster color
-  const accent = node.color || '#FF1447';
-  tooltipEl.style.setProperty('--accent', accent);
-
-  const depthVal = node._axes?.yv ?? 0;
-  const relVal = node._axes?.xv ?? 0;
-
-  const coverImageHtml = node.coverUrl
-    ? `<img src="${node.coverUrl}" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">`
-    : '';
-
-  const urlBtn = node.url
-    ? `<a class="tooltip-link" href="${node.url}" target="_blank" rel="noopener">READ MORE</a>`
-    : `<span class="tooltip-link disabled">CONTENT NOT READY</span>`;
-  // Resolve collision targets to names for tooltip
-  const collisions = Array.isArray(node._collisions) ? node._collisions : [];
-  const _byId = window.__nodeById;
-  const _byNum = window.__nodeByNum;
-  const collisionNames = collisions.map(raw => {
-    const s = String(raw).trim();
-    if (!s) return null;
-    const num = Number(s);
-    let tgt = null;
-    if (_byNum && Number.isFinite(num)) tgt = _byNum.get(num);
-    if (!tgt && _byId) tgt = _byId.get(s);
-    return tgt ? (tgt.label || tgt.id) : null;
-  }).filter(Boolean);
-
-  const collisionsHtml = collisionNames.length
-    ? `<div class="characters" style="margin-top:6px;"><strong>Collisions:</strong> ${collisionNames.join(', ')}</div>`
-    : '';
-;
-
-  const html = `
-    <div class="tooltip-close" onclick="window.hideTooltip();">✕</div>
-    ${coverImageHtml}
-    <h2 style="margin-top:0; color: ${accent}; text-shadow: 0 0 10px rgba(0,0,0,.55);">
-      ${node.label || node.id}
-    </h2>
-    <div class="cluster-tag">${node.cluster}</div>
-    <div class="characters" style="margin-top:2px;">
-      <strong>EMOTIONAL GRAVITY:</strong> ${depthVal} &nbsp; <strong>QUANTUM ENTANGLEMENT:</strong> ${relVal}
-    </div>
-    ${node._description ? `<div class="description">${node._description}</div>` : ''}
-    ${node.characters && node.characters.length
-      ? `<div class="characters"><strong>Characters:</strong> ${node.characters.join(', ')}</div>`
-      : ''
-    }
-    ${collisionsHtml}
-    <div class="tooltip-link-wrapper">
-      ${urlBtn}
-    </div>
-  `;
-
-  tooltipEl.innerHTML = html;
-  tooltipEl.classList.add('visible');
-
-  const rect = document.body.getBoundingClientRect();
-  tooltipEl.style.left = (rect.width / 2 - tooltipEl.offsetWidth / 2) + 'px';
-  tooltipEl.style.top = '50px';
-}
-  
-  window.hideTooltip = function() {
-  hideHoverTip();
-  document.getElementById('tooltip').classList.remove('visible');
-  if (selectedNode) { resetNodeVisual(selectedNode); selectedNode = null; }
-}
-
-  const hoverTipEl = document.getElementById('hover-tip');
-let lastMouse = { x: 0, y: 0 };
-
-function hideHoverTip() {
-  hoverTipEl.classList.remove('visible');
-  hoverTipEl.textContent = '';
-}
-
-function showHoverTip(node) {
-  if (!node || selectedNode) return hideHoverTip();
-
-  // Always overwrite; never append.
-  hoverTipEl.textContent = (node.label || node.id || '');
-
-  hoverTipEl.style.color = node.color || '#FF1447';
-  hoverTipEl.classList.add('visible');
-
-  // Anchor bottom-left (don’t chase mouse)
-  hoverTipEl.style.left = '18px';
-  hoverTipEl.style.bottom = '72px';
-  hoverTipEl.style.top = '';
-}
-
-  function addLabeledAxes(scene, nodes, clusterCentroids) {
-  // We only care about the semantic axes:
-  //   RELATIVITY: 0..10
-    //   DEPTH:      0..10  (rendered downward in -Y)
-    const minRel = 0, maxRel = 10;
-    const minDep = 0, maxDep = 10;
-
-  // Keep axes behind everything, but DO NOT change node Z clustering.
-  let minZ = Infinity;
-  nodes.forEach(n => { if (n.z < minZ) minZ = n.z; });
-  if (!Number.isFinite(minZ)) minZ = 0;
-
-  const AXIS_Z = minZ - 120;
-
-  // Map semantic values -> world coords (match your node placement scale)
-  const relToX = (v) => v * 40;
-  const depToY = (v) => -v * DEPTH_SCALE;
-
-  const axisMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.75 });
-  const tickMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55 });
-
-  // Bounds of drawn axes (a little padding past endpoints)
-  const x0 = relToX(minRel) - 40;
-  const x1 = relToX(maxRel) + 40;
-  const y0 = depToY(minDep) - 40;
-  const y1 = depToY(maxDep) + 40;
-
-  // X axis (RELATIVITY)
-  scene.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(x0, 0, AXIS_Z),
-      new THREE.Vector3(x1, 0, AXIS_Z)
-    ]),
-    axisMat
-  ));
-
-  // Y axis (DEPTH)
-  scene.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(0, y0, AXIS_Z),
-      new THREE.Vector3(0, y1, AXIS_Z)
-    ]),
-    axisMat
-  ));
-
-  // Origin marker
-  const origin = new THREE.Mesh(
-    new THREE.SphereGeometry(3.5, 12, 12),
-    new THREE.MeshBasicMaterial({ color: 0xffffff })
-  );
-  origin.position.set(0, 0, AXIS_Z);
-  scene.add(origin);
-
-  // Text sprite helper (white labels)
-  // Text sprite helper (white labels) — auto-fits long strings
-function label(text, x, y, scale = 120) {
-  const c = document.createElement('canvas');
-
-  // Give long titles more horizontal room
-  c.width = 1024;
-  c.height = 256;
-
-  const ctx = c.getContext('2d');
-  ctx.clearRect(0, 0, c.width, c.height);
-
-  const str = String(text);
-
-  // Auto-fit font size to canvas width
-  let fontSize = 96;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#ffffff';
-
-  // Reduce font size until it fits (with padding)
-  const pad = 40;
-  while (fontSize > 24) {
-    ctx.font = `bold ${fontSize}px Arial`;
-    const w = ctx.measureText(str).width;
-    if (w <= (c.width - pad * 2)) break;
-    fontSize -= 4;
-  }
-
-  ctx.font = `bold ${fontSize}px Arial`;
-  ctx.fillText(str, c.width / 2, c.height / 2);
-
-  const tex = new THREE.CanvasTexture(c);
-  tex.needsUpdate = true;
-
-  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
-  spr.scale.set(scale, scale * 0.25, 1);
-  spr.position.set(x, y, AXIS_Z);
-  scene.add(spr);
-  return spr;
-}
-
-  // axis lengths
-const xMid = (x0 + x1) / 2;
-const yMid = (y0 + y1) / 2;
-
-// titles centered on axes
-label('QUANTUM ENTANGLEMENT', xMid, y0 - 28, 300);
-label('EMOTIONAL GRAVITY', x0 - 32, yMid, 300);
-
-  // Ticks: REL 0..10, DEP 0..-10
-  for (let i = 0; i <= 10; i++) {
-    const rx = relToX(i);
-    // tick mark
-    scene.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(rx, 0, AXIS_Z),
-        new THREE.Vector3(rx, -10, AXIS_Z)
-      ]),
-      tickMat
-    ));
-    // tick label
-    label(i, rx, -34, 70);
-  }
-
-  for (let d = 0; d <= 10; d++) {
-  const dy = depToY(d);
-  scene.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(0, dy, AXIS_Z),
-      new THREE.Vector3(-10, dy, AXIS_Z)
-    ]),
-    tickMat
-  ));
-  label(d, -55, dy, 70);
-}
-
-  // return axis plane so camera can face it
-  return { axisZ: AXIS_Z };
-}
-
-function addBoundingCube(scene, nodes) {
-  let minX = Infinity, minY = Infinity, minZ = Infinity;
-  let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
-
-  nodes.forEach(n => {
-    if (n.x < minX) minX = n.x; if (n.x > maxX) maxX = n.x;
-    if (n.y < minY) minY = n.y; if (n.y > maxY) maxY = n.y;
-    if (n.z < minZ) minZ = n.z; if (n.z > maxZ) maxZ = n.z;
-  });
-
-  // padding so dots don't sit on the walls
-  const pad = 45;
-  minX -= pad; minY -= pad; minZ -= pad;
-  maxX += pad; maxY += pad; maxZ += pad;
-
-  const p000 = new THREE.Vector3(minX, minY, minZ);
-  const p100 = new THREE.Vector3(maxX, minY, minZ);
-  const p010 = new THREE.Vector3(minX, maxY, minZ);
-  const p110 = new THREE.Vector3(maxX, maxY, minZ);
-
-  const p001 = new THREE.Vector3(minX, minY, maxZ);
-  const p101 = new THREE.Vector3(maxX, minY, maxZ);
-  const p011 = new THREE.Vector3(minX, maxY, maxZ);
-  const p111 = new THREE.Vector3(maxX, maxY, maxZ);
-
-  // 12 edges
-  const pts = [
-    // bottom rectangle (z=minZ)
-    p000,p100, p100,p110, p110,p010, p010,p000,
-    // top rectangle (z=maxZ)
-    p001,p101, p101,p111, p111,p011, p011,p001,
-    // verticals
-    p000,p001, p100,p101, p110,p111, p010,p011
-  ];
-
-  const geom = new THREE.BufferGeometry().setFromPoints(pts);
-  const mat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.28 });
-  const cube = new THREE.LineSegments(geom, mat);
-  scene.add(cube);
-
-  // useful for camera targeting if you want it
-  return { minX, minY, minZ, maxX, maxY, maxZ, cx: (minX+maxX)/2, cy: (minY+maxY)/2, cz: (minZ+maxZ)/2 };
-}
-
-  document.getElementById('bg').style.backgroundImage = 
-    `url('https://images.unsplash.com/photo-1648563643923-2091f9c0c12f?ixlib=rb-4.1.0&q=80&w=2831&auto=format&fit=crop')`;
-  setTimeout(() => document.getElementById('bg').classList.add('show'), 100);
-
-  fetch('the_poppy_board.csv', { cache: 'no-cache' })
-    .then(r => r.text())
-    .then(txt => new Promise(resolve => Papa.parse(txt, { header: true, skipEmptyLines: true, complete: resolve })))
-    .then(async result => {
-        const legend = document.getElementById('legend');
-const legendToggle = document.getElementById('legend-toggle');
-
-legendToggle.addEventListener('click', () => {
-  legend.classList.toggle('collapsed');
-  legendToggle.textContent =
-    legend.classList.contains('collapsed')
-      ? 'Multiverse Color Legend ▸'
-      : 'Multiverse Color Legend ▾';
-});
-
-      const rows = result.data || [];
-      const fields = result.meta.fields || Object.keys(rows[0] || {});
-      const headers = {};
-      fields.forEach(f => headers[String(f || '').toLowerCase().trim()] = f);
-
-      const clusterInfo = {};
-      try {
-        const resCluster = await fetch('cluster_table.csv', { cache: 'no-cache' });
-        if (resCluster.ok) {
-          const clusterText = await resCluster.text();
-          const clusterParsed = await new Promise(res => Papa.parse(clusterText, { header: true, skipEmptyLines: true, complete: res }));
-          const cRows = clusterParsed.data || [];
-          const cFields = clusterParsed.meta.fields || Object.keys(cRows[0] || {});
-          const cHeaderMap = {};
-          cFields.forEach(f => cHeaderMap[String(f || '').trim().toLowerCase()] = f);
-          const cNameCol = cHeaderMap['name'] || cHeaderMap['cluster'] || cFields[0];
-          const cColorCol = cHeaderMap['hex code color'] || cHeaderMap['color'] || cFields[1];
-          const cDescCol = cHeaderMap['description'] || cHeaderMap['desc'] || cFields[2];
-          cRows.forEach(r => {
-            const name = String(r[cNameCol] ?? '').trim();
-            if (!name) return;
-            clusterInfo[name] = { color: cColorCol ? String(r[cColorCol] ?? '').trim() : '',
-              desc: cDescCol ? String(r[cDescCol] ?? '').trim() : '' };
-          });
-        }
-      } catch (e) {}
-
-      const axisCols = { x: null, y: null, z: null };
-      fields.forEach(raw => {
-        const low = String(raw || '').toLowerCase();
-        if (!axisCols.x && low.includes('(x')) axisCols.x = raw;
-        if (!axisCols.y && low.includes('(y')) axisCols.y = raw;
-        if (!axisCols.z && low.includes('(z')) axisCols.z = raw;
-      });
-
-      const col = {
-        id: pick(headers, COLNAMES.id), name: pick(headers, COLNAMES.name), tags: pick(headers, COLNAMES.tags),
-        size: pick(headers, COLNAMES.size), description: pick(headers, ['description', 'desc']),
-        collision: pick(headers, COLNAMES.collision), url: pick(headers, COLNAMES.url),
-        featured: pick(headers, COLNAMES.featured), characters: pick(headers, COLNAMES.characters),
-        cover: pick(headers, COLNAMES.cover)
-      };
-
-      const axisXCol = axisCols.x, axisYCol = axisCols.z; // Y should be DEPTH from (Z) Depth
-      const clusterGroups = {};
-      const nodes = rows.map(r => {
-        const id = String(r[col.id] ?? '').trim();
-        const label = String(r[col.name] ?? id).trim() || id;
-        const cluster = String(r[col.tags] ?? '').trim() || '(unclustered)';
-        if (!id || !cluster) return null;
-
-        const xv = axisXCol ? parseAxisNumber(r[axisXCol], 0) : 0;
-        const yv = axisYCol ? parseAxisNumber(r[axisYCol], 0) : 0;
-
-        return {
-          id, label, cluster,
-          url: col.url ? String(r[col.url] ?? '').trim() || null : null,
-          coverUrl: col.cover ? String(r[col.cover] ?? '').trim() || null : null,
-          val: toSize(r[col.size]),
-          featured: toBool(col.featured ? r[col.featured] : null),
-          characters: col.characters ? parseList(r[col.characters]) : [],
-          _description: col.description ? String(r[col.description] ?? '').trim() : '',
-          _collisionStr: col.collision ? String(r[col.collision] ?? '').trim() : '',
-_collisions: col.collision
-  ? String(r[col.collision] ?? '')
-      .split(',')
-      .map(s => s.trim())
-      .filter(Boolean)
-  : [],
-          _axes: { xv, yv }
-        };
-      }).filter(Boolean);
-
-      nodes.forEach(n => {
-        if (!clusterGroups[n.cluster]) clusterGroups[n.cluster] = [];
-        clusterGroups[n.cluster].push(n);
-      });
-
-      const clusterOrder = Object.keys(clusterGroups);
-      const clusterCentroids = {};
-      const gridCols = Math.ceil(Math.sqrt(clusterOrder.length));
-      clusterOrder.forEach((cname, idx) => {
-        const row = Math.floor(idx / gridCols);
-        const col = idx % gridCols;
-        clusterCentroids[cname] = { cx: 0, cz: idx * CLUSTER_SPREAD };
-      });
-
-      nodes.forEach(n => {
-        const depth = n._axes.yv;
-        const relativity = n._axes.xv;
-        const y = -depth * DEPTH_SCALE;  // invert so depth 0..10 becomes 0..-10
-        const x = relativity * 40;
-        
-        const centroid = clusterCentroids[n.cluster] || { cx: 0, cz: 0 };
-        const seed = hash32(n.id + '|' + n.cluster);
-        const angle = rand(seed) * Math.PI * 2;
-        const radius = rand(seed + 1) * NODE_SCATTER + 20;
-        
-        n.x = x + Math.cos(angle) * radius;
-        n.y = y;
-        n.z = centroid.cz + Math.sin(angle) * radius;
-        n.fx = n.x; n.fy = n.y; n.fz = n.z;
-      });
-
-      const nodeById = new Map(), nodeByNum = new Map();
-      nodes.forEach(n => {
-        nodeById.set(String(n.id), n);
-        const num = Number(n.id);
-        if (Number.isFinite(num)) nodeByNum.set(num, n);
-      });
-
-      // expose lookups for tooltip collision-name resolution
-      window.__nodeById = nodeById;
-      window.__nodeByNum = nodeByNum;
-
-const clusterColor = {};
-      clusterOrder.forEach(cname => {
-        const info = clusterInfo[cname];
-        let hexColor = '#FF1447';
-        if (info && info.color) {
-          const c = String(info.color).trim();
-          hexColor = c.startsWith('#') ? c : '#' + c;
-        }
-        clusterColor[cname] = hexColor;
-      });
-
-      nodes.forEach(n => n.color = clusterColor[n.cluster] || '#FF1447');
-
-      const links = [], addedLinks = new Set();
-      function addLinkByIds(srcId, tgtId) {
-        const key = `${srcId}:${tgtId}`, keyRev = `${tgtId}:${srcId}`;
-        if (addedLinks.has(key) || addedLinks.has(keyRev)) return;
-        addedLinks.add(key);
-        links.push({ source: srcId, target: tgtId, color: '#FFFFFF', width: 1.6 });
-      }
-
-      nodes.forEach(n => {
-        const raw = n._collisionStr;
-        if (!raw) return;
-        const targets = raw.split(',').map(x => x.trim()).filter(Boolean).map(p => {
-          const num = Number(p);
-          return Number.isFinite(num) ? num : p;
-        });
-        targets.forEach(num => {
-          if (num === 0) return;
-          const tgtNode = nodeByNum.get(num) || nodeById.get(String(num));
-          if (tgtNode) addLinkByIds(n.id, tgtNode.id);
-        });
-      });
-
-      const legendRowsEl = document.querySelector('#legend .rows');
-      clusterOrder.forEach(tag => {
-        const color = clusterColor[tag];
-        const info = clusterInfo[tag];
-        const row = document.createElement('div'); row.className = 'row';
-        const sw = document.createElement('div'); sw.className = 'swatch';
-        sw.style.background = color; sw.style.boxShadow = `0 0 8px ${color}`;
-        const labelWrap = document.createElement('div');
-        const la = document.createElement('div'); la.className = 'label';
-        la.textContent = tag; la.style.color = color;
-        labelWrap.appendChild(la);
-        if (info && info.desc) {
-          const descEl = document.createElement('div'); descEl.className = 'cluster-desc';
-          descEl.textContent = info.desc;
-          labelWrap.appendChild(descEl);
-        }
-        row.appendChild(sw); row.appendChild(labelWrap);
-        legendRowsEl.appendChild(row);
-      });
-
-      const elem = document.getElementById('g');
-      const Graph = ForceGraph3D()(elem)
-        .enablePointerInteraction(true)
-        .graphData({ nodes, links })
-        .showNavInfo(false)
-        .d3Force('link', null)
-        .d3Force('charge', null)
-        .enableNodeDrag(false)
-        .cooldownTicks(0)
-        .nodeThreeObject(n => {
-          const colorHex = n.color || '#FF1447';
-          const color = new THREE.Color(colorHex);
-          const core = new THREE.Mesh(new THREE.SphereGeometry(5, 24, 24),
-            new THREE.MeshStandardMaterial({ color, metalness: .12, roughness: .38 }));
-          
-            let sizeVal = Number(n.val);
-if (!Number.isFinite(sizeVal) || sizeVal <= 0) sizeVal = 1;
-
-// base visual scale factor
-const s = 0.6 + sizeVal * 0.09;
-
-// apply
-core.scale.set(s, s, s);
-
-          const glow = makeGlowSprite(colorHex);
-          // Make glow visual-only (prevents "sticky" hover when sprites overlap)
-          glow.raycast = () => {};
-          glow.material.depthTest = false;
-          glow.renderOrder = 10;
-
-          const idleSize = Math.max(42, 5 * s * 5.4);
-          glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
-          glow.material.opacity = 0.32;
-          core.add(glow);
-          n.__core = core; n.__glow = glow; n.__idleSize = idleSize; n.__idleOpacity = 0.32;
-          return core;
-        })
-        .nodeLabel(() => '')
-        .linkColor(l => l.color || '#FFFFFF')
-        .linkWidth(l => l.width || 1.6)
-        .linkOpacity(0.65);
-
-      const w = window.innerWidth, h = window.innerHeight;
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setPixelRatio(window.devicePixelRatio || 1);
-      renderer.setSize(w, h);
-      renderer.setClearColor(0x000000, 0);
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.05;
-      renderer.domElement.addEventListener('mousemove', (e) => {
-        lastMouse.x = e.clientX;
-        lastMouse.y = e.clientY;
-        });
-
-      Graph.renderer(renderer);
-      if (!renderer.domElement.parentNode) elem.appendChild(renderer.domElement);
-      Graph.width(w).height(h);
-      Graph.backgroundColor('rgba(0,0,0,0)');
-
-      const scene = Graph.scene();
-      scene.background = null;
-      scene.add(new THREE.AmbientLight(0xffffff, .36));
-      const dir = new THREE.DirectionalLight(0xffffff, .7);
-      dir.position.set(60,80,40);
-      scene.add(dir);
-
-      const controls = Graph.controls();
-      controls.enableRotate = true;
-      controls.enablePan = true;
-      controls.minDistance = 20;
-      controls.maxDistance = 1200;
-      controls.update();
-
-      const axisInfo = addLabeledAxes(scene, nodes, clusterCentroids);
-      const cubeInfo = addBoundingCube(scene, nodes);
-
-        // Face the rectangular prism head-on (camera straight in +Z, looking at cube center)
-const cx = cubeInfo.cx, cy = cubeInfo.cy, cz = cubeInfo.cz;
-
-// distance to fit the front face comfortably
-const spanX = cubeInfo.maxX - cubeInfo.minX;
-const spanY = cubeInfo.maxY - cubeInfo.minY;
-const spanZ = cubeInfo.maxZ - cubeInfo.minZ;
-const faceDist = Math.max(spanX, spanY, spanZ) * 1.2;
-
-// Clean cinematic 3/4 view (balanced, less skew)
-// (Tweaked so nodes are readable and the cube feels centered)
-controls.target.set(cx, cy, cz);
-
-const diag = Math.max(spanX, spanY, spanZ);
-
-// balanced framing values
-const camX = cx - diag * 1.15;   // side angle
-const camY = cy + diag * 0.55;   // height
-const camZ = cz + diag * 1.35;   // distance (front)
-
-console.log('[Poppyverse] camera preset: cinematic-3-4', { camX, camY, camZ, cx, cy, cz });
-
-Graph.cameraPosition(
-  { x: camX, y: camY, z: camZ },
-  { x: cx,   y: cy,   z: cz },
-  1200
-);
-// --- COLLISION CONNECTION LINES ---
-const lineMat = new THREE.LineBasicMaterial({
-  color: 0xffffff,
-  transparent: true,
-  opacity: 0.35
-});
-
-nodes.forEach(n => {
-  if (!n._collisions || !n._collisions.length) return;
-
-  n._collisions.forEach(id => {
-    const target = nodeById.get(String(id)) || nodeByNum.get(Number(id));
-    if (!target) return;
-
-    // avoid duplicate lines (A→B and B→A)
-    if (n.id > target.id) return;
-
-    const geom = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(n.x, n.y, n.z),
-      new THREE.Vector3(target.x, target.y, target.z)
-    ]);
-
-    const line = new THREE.Line(geom, lineMat);
-    scene.add(line);
-  });
-});
-
-      const hoverTipEl = document.getElementById('hover-tip');
-
-Graph.onNodeHover((node, prev) => {
-  // Only one hovered node at a time (ForceGraph picks the frontmost).
-  // IMPORTANT: glow sprites are non-raycastable, so hover won't "stick".
-
-  // If ForceGraph didn't provide prev (can happen), fall back to our lastHovered.
-  const prevNode = prev || lastHovered;
-
-  if (prevNode && prevNode !== node && prevNode !== selectedNode) {
-    resetNodeVisual(prevNode);
-  }
-
-  hoveredNode = node || null;
-  lastHovered = hoveredNode;
-
-  if (!hoveredNode) {
-    hideHoverTip();
-
-    // Ensure NO lingering pulse / bright opacity
-    if (!selectedNode) nodes.forEach(n => resetNodeVisual(n));
-    else {
-      // keep selected steady; reset everything else
-      nodes.forEach(n => { if (n !== selectedNode) resetNodeVisual(n); });
-    }
-    return;
-  }
-
-  showHoverTip(hoveredNode);
-  setHighlightedNode(hoveredNode);
-});
-
-      Graph.onNodeClick(n => {
-  hideHoverTip();
-  showNodeTooltip(n);
-});
-
-
-     
-renderer.setAnimationLoop(() => {
-  // Pulse ONLY the currently hovered node (no radius growth; radius is capped in setHighlightedNode)
-  const t = performance.now() * 0.012;
-  const pulse = 0.70 + 0.30 * (0.5 + 0.5 * Math.sin(t)); // 0.70..1.00
-
-  if (hoveredNode && hoveredNode.__glow && hoveredNode !== selectedNode) {
-    hoveredNode.__glow.material.opacity = pulse; // intense pulse
-  }
-
-  // Keep selected node steady while tooltip is open
-  if (selectedNode && selectedNode.__glow) {
-    selectedNode.__glow.material.opacity = 0.62;
-    const r = Math.min(selectedNode.__idleSize, 20);
-    selectedNode.__glow.scale.set(r, r, 1);
-  }
-
-  renderer.render(scene, Graph.camera());
-});
-
-    })
-    .catch(err => {
-      document.body.innerHTML = '<pre style="color:#fff; padding:16px">' + String(err) + '</pre>';
-      console.error(err);
+    const button = document.getElementById('intro-toggle');
+    const panel = document.getElementById('intro-panel');
+
+    button.addEventListener('click', () => {
+      const isOpen = panel.classList.toggle('open');
+      button.setAttribute('aria-expanded', String(isOpen));
+      button.textContent = isOpen ? 'Intro ▴' : 'Intro ▾';
     });
   </script>
-
-  <div id="axis-explainer">
-  <div class="axis-title"><strong>MULTIVERSE POSITIONING SYSTEM</strong></div>
-
-  <div class="axis-row">
-    <span class="axis-name"><strong>QUANTUM ENTANGLEMENT:</strong></span>
-    <span class="axis-scale">contained → meta bleed</span>
-  </div>
-
-  <div class="axis-row">
-    <span class="axis-name"><strong>EMOTIONAL GRAVITY:</strong></span>
-    <span class="axis-scale">light ↓ heavy</span>
-  </div>
-</div>
-
 </body>
 </html>
