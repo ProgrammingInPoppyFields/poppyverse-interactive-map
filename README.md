@@ -4,95 +4,143 @@
 
 ![poppyverse preview](/screenshots/1.png)
 
-building a 3D representation of a multiverse that doesn't fit in 3D — trying anyway
+A small static site for navigating the Poppyverse: part story map, part multiverse directory, part emotionally unstable control panel.
 
 ---
 
 ## what is this
 
-A questionable attempt to turn the Poppyverse into something spatially navigable.
+This repo generates a tiny GitHub Pages site from two CSV source-of-truth files.
 
-It mostly works.  
-Sometimes.
+The site currently includes:
 
----
+- `index.html` — splash / home page
+- `about.html` — author / GenAI / lucid generation page
+- `2d_map.html` — calmer cluster-first story map
+- `3d_map.html` — dramatic 3D graph map, because apparently sanity was optional
 
-## how this works
+All pages share the same top navigation bar:
 
-Everything starts from:
-
-- `the_poppy_board.csv` — the main source of truth (entities, relationships, chaos)
-
-From there, the project splits into two paths:
-
----
-
-### 1) 3D path (chaos mode)
-
-```
-the_poppy_board.csv + cluster_table.csv
-                │
-                ▼
-           index.html
-                │
-                ▼
-           3D website
-```
-
-`index.html` consumes:
-- `the_poppy_board.csv`
-- `cluster_table.csv`
-
-Produces an interactive 3D graph. This is the cinematic version. This is also the version most likely to break your brain.
+- Home
+- About
+- 2D Map
+- 3D Map
+- Tumblr Archive
 
 ---
 
-### 2) 2D path (sanity mode)
+## source of truth files
 
-```
-the_poppy_board.csv
-        │
-        ▼
-   build_toc.py
-        │
-        ▼
-     toc.html
-```
+Before rebuilding, make sure these are updated and ready to go:
 
-`build_toc.py` consumes:
-- `the_poppy_board.csv`
+| File | What it controls |
+|---|---|
+| `SRC_clusters.csv` | Cluster names, descriptions, colors, and optional cluster cover images |
+| `SRC_toc.csv` | Main table of contents / story entries / relationships / metadata |
 
-Produces `toc.html` — a more readable table of contents. This is the "I just want to read things like a normal person" version.
+These two files are the real source of truth. The HTML files are generated outputs.
 
 ---
 
-## files
+## how to rebuild the site
+
+From the repo root, run:
+
+```bash
+python build_all.py
+```
+
+That should be it. Good to go.
+
+`build_all.py` regenerates:
+
+```text
+index.html
+about.html
+2d_map.html
+3d_map.html
+```
+
+So the normal update flow is:
+
+1. Update `SRC_clusters.csv`.
+2. Update `SRC_toc.csv`.
+3. Run `python build_all.py`.
+4. Commit the updated CSVs, generator scripts, and generated HTML files.
+5. Let GitHub Pages do its thing.
+
+---
+
+## generated pages
 
 | File | What it is |
 |---|---|
-| `the_poppy_board.csv` | Main lore / data graph (source of truth) |
-| `cluster_table.csv` | Cluster/grouping metadata (used by 3D view) |
-| `index.html` | Renders the 3D graph |
-| `build_toc.py` | Generates the 2D table of contents |
-| `toc.html` | Readable output of the 2D view |
-| `/screenshots/` | Preview images |
+| `index.html` | Splash page / site entrance |
+| `about.html` | About page explaining H.A.H, GenAI usage, and lucid generation |
+| `2d_map.html` | Cluster-card dashboard; click a cluster to open its table of contents |
+| `3d_map.html` | Interactive 3D graph using Three.js / 3d-force-graph |
 
 ---
 
-## running
+## build scripts
 
-**3D version:**
+| File | What it does |
+|---|---|
+| `build_all.py` | Runs the full site build |
+| `build_home.py` | Generates `index.html` |
+| `build_about.py` | Generates `about.html` |
+| `build_2d_map.py` | Generates `2d_map.html` from `SRC_clusters.csv` + `SRC_toc.csv` |
+| `build_3d_map_with_nav.py` | Generates `3d_map.html` from `SRC_clusters.csv` + `SRC_toc.csv` |
+
+You usually only need to run `build_all.py`.
+
+---
+
+## optional build shortcuts
+
+If you only want part of the site rebuilt:
+
+```bash
+python build_all.py --skip-3d
+python build_all.py --skip-2d
+python build_all.py --skip-home
+python build_all.py --skip-about
 ```
-cd path/to/repo
+
+Useful when the cursed glowing space cube does not need to be awakened.
+
+---
+
+## local preview
+
+After building, you can preview the site locally:
+
+```bash
 python3 -m http.server 8080
 ```
-Then open `http://localhost:8080/index.html` in a browser.
 
-**2D version:**
+Then open:
+
+```text
+http://localhost:8080/index.html
 ```
-python build_toc.py
-# then open toc.html
+
+---
+
+## deployment notes
+
+For GitHub Pages, `index.html` is the homepage.
+
+The map pages live next to it:
+
+```text
+/index.html
+/about.html
+/2d_map.html
+/3d_map.html
 ```
+
+Do not hand-edit the generated HTML unless you enjoy losing changes the next time `build_all.py` runs. Update the source CSVs or generator scripts instead.
 
 ---
 
@@ -100,4 +148,5 @@ python build_toc.py
 
 3D space is a suggestion.  
 Canon is unstable.  
-Coherence is temporary.
+Coherence is temporary.  
+The build script is load-bearing emotional infrastructure.
