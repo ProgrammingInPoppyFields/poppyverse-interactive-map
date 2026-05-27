@@ -1,164 +1,164 @@
-﻿ID,Name,Cluster,Description,Characters,Size,(X) Relativity,(Y) Relatability,(Z) Depth,Collisions,Content URL
-107,found files,welcome to the poppyverse,Supplementary material. Read this before asking dumb questions.,,5,10,,0,,https://inpoppyfields.tumblr.com/archive/tagged/found%20files
-64,pilot postings,welcome to the poppyverse,PILOT discovers the internet. The internet is not ready.,PILOT,1,0,2,0,,https://inpoppyfields.tumblr.com/archive/tagged/pilot%20postings
-60,mechanized messaging,welcome to the poppyverse,"Slack but sentient and enormous. The read receipts are haunting. So is everything else.
-","UNIT, Various other units",1,0,2,0,61,https://inpoppyfields.tumblr.com/archive/tagged/mechanized%20messaging
-61,internal comms,welcome to the poppyverse,"Slack but orbital. The out-of-office replies are written in four languages and none of them are helpful.
-","PILOT, Various other fleet personnel",5,0,2,0,,https://inpoppyfields.tumblr.com/archive/tagged/internal%20comms
-49,the beginning,welcome to the poppyverse,"Start here. One universe, out of many more to come. One mech unit, one pilot, one donor (donor of what, you’ll find out soon).","DONOR, PILOT, UNIT",20,0,2,0,,https://inpoppyfields.tumblr.com/archive/tagged/beginnings
-42,area fifty-DONE,welcome to the poppyverse,What happens at Area Fifty-Done stays at Area Fifty-Done. Allegedly.,"PILOT the civilian test pilot, REYES",40,10,1,1,,https://inpoppyfields.tumblr.com/tagged/area%20fifty%20done/chrono
+﻿ID,Name,Cluster,Description,Characters,Content URL,Size,(X) Relativity,(Y) Relatability,(Z) Depth,Collisions
+107,found files,welcome to the poppyverse,Supplementary material. Read this before asking dumb questions.,,https://inpoppyfields.tumblr.com/archive/tagged/found%20files,5,10,,0,
+49,the beginning,welcome to the poppyverse,"Start here. One universe, out of many more to come. One mech unit, one pilot, one donor (donor of what, you’ll find out soon).","DONOR, PILOT, UNIT",https://inpoppyfields.tumblr.com/archive/tagged/beginnings,20,0,2,0,
+64,pilot postings,welcome to the poppyverse,PILOT discovers the internet. The internet is not ready.,PILOT,https://inpoppyfields.tumblr.com/archive/tagged/pilot%20postings,1,0,2,0,
 30,automated absurdity,welcome to the poppyverse,"Yes, it's absurd. No, there will be no further explanation. UNIT is involved.
-","UNIT, Various other units",5,0,2,0,"5, 60",https://inpoppyfields.tumblr.com/archive/tagged/automated%20absurdity
-24,unit by unit,welcome to the poppyverse,"Turns out UNIT isn't the only unit. There are others. This is not as comforting as it sounds.
-","UNIT, Various other units",10,0,1,1,,https://inpoppyfields.tumblr.com/archive/tagged/character%20spotlight
-17,holomatter matters,welcome to the poppyverse,"Units. Units. Robots in disguise. Units. Units. More than meets the eye… because underneath the chassis and the horns and the several tons of metal is, if you look closely enough, something that learned to be human before it ever had the chance to be anything else.
-","UNIT, Various other units",30,0,2,2,,https://inpoppyfields.tumblr.com/archive/tagged/holomatter%20matters
+","UNIT, Various other units",https://inpoppyfields.tumblr.com/archive/tagged/automated%20absurdity,5,0,2,0,"5, 60"
 21,gentle giant,welcome to the poppyverse,"”Be strong enough to be gentle.”
-","PILOT, UNIT",10,0,2,1,,https://inpoppyfields.tumblr.com/archive/tagged/gentle%20giant
-9,"post-piloting ",welcome to the poppyverse,"Post-everything, sort of. PILOT is retired — functionally, if not emotionally.
-",PILOT the retired pilot,1,5,5,3,"49, 107, 21, 11, 5, 24",https://inpoppyfields.tumblr.com/archive/tagged/post%20piloting
+","PILOT, UNIT",https://inpoppyfields.tumblr.com/archive/tagged/gentle%20giant,10,0,2,1,
+5,machine learnings,welcome to the poppyverse,UNIT is a machine learning things. The distinction matters. Whether what it's learning is reassuring or terrifying depends.,"UNIT, Various other units",https://inpoppyfields.tumblr.com/archive/tagged/machine%20learnings,10,0,2,2,
+24,unit by unit,welcome to the poppyverse,"Turns out UNIT isn't the only unit. There are others. This is not as comforting as it sounds.
+","UNIT, Various other units",https://inpoppyfields.tumblr.com/archive/tagged/character%20spotlight,10,0,1,1,
+17,holomatter matters,welcome to the poppyverse,"Units. Units. Robots in disguise. Units. Units. More than meets the eye… because underneath the chassis and the horns and the several tons of metal is, if you look closely enough, something that learned to be human before it ever had the chance to be anything else.
+","UNIT, Various other units",https://inpoppyfields.tumblr.com/archive/tagged/holomatter%20matters,30,0,2,2,
 11,skin and steel,welcome to the poppyverse,"What strength actually looks like.  Flesh and metal, soft and sharp. All are strong. None are simple.
-","PILOT, UNIT",5,0,2,1,,https://inpoppyfields.tumblr.com/archive/tagged/skin and steel
-5,machine learnings,welcome to the poppyverse,UNIT is a machine learning things. The distinction matters. Whether what it's learning is reassuring or terrifying depends.,"UNIT, Various other units",10,0,2,2,,https://inpoppyfields.tumblr.com/archive/tagged/machine%20learnings
+","PILOT, UNIT",https://inpoppyfields.tumblr.com/archive/tagged/skin and steel,5,0,2,1,
+61,internal comms,welcome to the poppyverse,"Slack but orbital. The out-of-office replies are written in four languages and none of them are helpful.
+","PILOT, Various other fleet personnel",https://inpoppyfields.tumblr.com/archive/tagged/internal%20comms,5,0,2,0,
+60,mechanized messaging,welcome to the poppyverse,"Slack but sentient and enormous. The read receipts are haunting. So is everything else.
+","UNIT, Various other units",https://inpoppyfields.tumblr.com/archive/tagged/mechanized%20messaging,1,0,2,0,61
+9,"post-piloting ",welcome to the poppyverse,"Post-everything, sort of. PILOT is retired — functionally, if not emotionally.
+",PILOT the retired pilot,https://inpoppyfields.tumblr.com/archive/tagged/post%20piloting,1,5,5,3,"49, 107, 21, 11, 5, 24"
+42,area fifty-DONE,welcome to the poppyverse,What happens at Area Fifty-Done stays at Area Fifty-Done. Allegedly.,"PILOT the civilian test pilot, REYES",https://inpoppyfields.tumblr.com/tagged/area%20fifty%20done/chrono,40,10,1,1,
 56,rest and rust,deeper into the poppyverse,"A million ways to die. None of them restful. All of them rusty.
-","PILOT, UNIT",10,0,1,5,49,https://inpoppyfields.tumblr.com/archive/tagged/rest%20and%20rust
-51,commander UNIT,deeper into the poppyverse,UNIT takes command. PILOT is dead. The universe reconsiders its choices.,Commander UNIT,5,0,1,4,,https://inpoppyfields.tumblr.com/archive/tagged/commander unit
-33,"mechanical mortality ",deeper into the poppyverse,Units can die. Let that sink in.,"UNIT, Various other units",5,0,1,5,"5, 49",https://inpoppyfields.tumblr.com/archive/tagged/mechanical%20mortality
-22,sisterhood in skin and steel,deeper into the poppyverse,"UNIT and AUTOPILOT, wholesome holomatter siblings… and then the sad part happens.
-","AUTOPILOT, UNIT",1,0,1,8,17,https://inpoppyfields.tumblr.com/tagged/sisterhood%20in%20steel%20and%20skin/chrono
-29,mergence,deeper into the poppyverse,PILOT and UNIT become one entity. Permanently. This is not a metaphor.,"PILOT, UNIT",5,5,1,3,,https://inpoppyfields.tumblr.com/archive/tagged/mergence
+","PILOT, UNIT",https://inpoppyfields.tumblr.com/archive/tagged/rest%20and%20rust,10,0,1,5,49
+33,"mechanical mortality ",deeper into the poppyverse,Units can die. Let that sink in.,"UNIT, Various other units",https://inpoppyfields.tumblr.com/archive/tagged/mechanical%20mortality,5,0,1,5,"5, 49"
 3,ghost stories,deeper into the poppyverse,"Literal ghosts. Some of them are irritated about it.
-","PILOT, UNIT",10,0,1,5,49,https://inpoppyfields.tumblr.com/archive/tagged/ghost%20stories
+","PILOT, UNIT",https://inpoppyfields.tumblr.com/archive/tagged/ghost%20stories,10,0,1,5,49
+22,sisterhood in skin and steel,deeper into the poppyverse,"UNIT and AUTOPILOT, wholesome holomatter siblings… and then the sad part happens.
+","AUTOPILOT, UNIT",https://inpoppyfields.tumblr.com/tagged/sisterhood%20in%20steel%20and%20skin/chrono,1,0,1,8,17
+51,commander UNIT,deeper into the poppyverse,UNIT takes command. PILOT is dead. The universe reconsiders its choices.,Commander UNIT,https://inpoppyfields.tumblr.com/archive/tagged/commander unit,5,0,1,4,
 4,commander PILOT,deeper into the poppyverse,"PILOT takes command. UNIT is dead. The universe holds its breath.
-",Commander PILOT,5,0,1,4,51,https://inpoppyfields.tumblr.com/archive/tagged/commander%20pilot
-190,dress in layers,the red poppyverse,Dress for the weather and emergency triage.,SANTOS the medic,2,0,,8,,
-189,the civilian,the red poppyverse,She's just here to observe. Totally just observing.,DONOR,15,0,,9,28,
-188,the sideliner,the red poppyverse,Benchwarmers have the best view of the game.,PILOT,20,0,,9,70,
-187,beyond death and recognition,the red poppyverse,"DONOR's used to patients who don't talk back. These ones won't shut up, and that’s beautiful.",Mortician DONOR,15,0,,5,,
+",Commander PILOT,https://inpoppyfields.tumblr.com/archive/tagged/commander%20pilot,5,0,1,4,51
+29,mergence,deeper into the poppyverse,PILOT and UNIT become one entity. Permanently. This is not a metaphor.,"PILOT, UNIT",https://inpoppyfields.tumblr.com/archive/tagged/mergence,5,5,1,3,
+190,dress in layers,the red poppyverse,Dress for the weather and emergency triage.,SANTOS the medic,,2,0,,8,
+189,the civilian,the red poppyverse,She's just here to observe. Totally just observing.,DONOR,,15,0,,9,28
+188,the sideliner,the red poppyverse,Benchwarmers have the best view of the game.,PILOT,,20,0,,9,70
+187,beyond death and recognition,the red poppyverse,"DONOR's used to patients who don't talk back. These ones won't shut up, and that’s beautiful.",Mortician DONOR,,15,0,,5,
 86,the piloting,the red poppyverse,"The haunting, but make it specifically PILOT.
-",PILOT,1,0,1,3,,
-85,economy class is a pain in the ass,the red poppyverse,The legroom is genuinely terrible. This is the least of everyone's problems.,PILOT,1,5,1,8,84,
-83,houston we are so screwed,the red poppyverse,"If you thought the previous crew had a massive problem, this new crew has escalated it.","PILOT, Various other fleet personnel",1,0,1,5,"79, 53",
-81,it was almost your turn,the red poppyverse,Congratulations. You were almost selected.,PILOT,1,0,1,8,70,
+",PILOT,,1,0,1,3,
+85,economy class is a pain in the ass,the red poppyverse,The legroom is genuinely terrible. This is the least of everyone's problems.,PILOT,,1,5,1,8,84
 80,unhinged lids and minds,the red poppyverse,"The lids in question will be explained. The minds in question will not.
-",Rusted PILOT,1,1,1,10,,
-79,houston we’ve got a massive problem,the red poppyverse,"Yes you do. Yes it is massive. Houston cannot help.
-","PILOT, Various other fleet personnel",1,0,1,5,53,
+",Rusted PILOT,,1,1,1,10,
+79,houston we’ve got a big problem,the red poppyverse,"Yes you do. Yes it is massive. Houston cannot help.
+","PILOT, Various other fleet personnel",,1,0,1,5,53
+83,houston we’ve got a bigger problem,the red poppyverse,"If you thought the previous crew had it bad, this new crew has escalated it.","PILOT, Various other fleet personnel",,1,0,1,5,"79, 53"
 74,you get an f for effort,the red poppyverse,"The F stands for failure.
-",PILOT the civilian test pilot,1,0,1,10,,
+",PILOT the civilian test pilot,,1,0,1,10,
 70,it’s your turn,the red poppyverse,"Congratulations. You've been selected.
-",PILOT,40,0,1,10,"81, 90, 14, 191, 14, 43",
-63,flirting after death,the red poppyverse,"Death hasn't stopped anyone's game. If anything, it's improved it.
-",Various other fleet personnel,5,0,1,3,,
+",PILOT,,40,0,1,10,"81, 90, 14, 191, 14, 43"
+81,it was almost your turn,the red poppyverse,Congratulations. You were almost selected.,PILOT,,1,0,1,8,70
 57,you get a gold star,the red poppyverse,"Congratulations. That is all.
-",PILOT,10,10,1,10,,
+",PILOT,,10,10,1,10,
 58,counting stars,the red poppyverse,"Everyone is counting stars. Way, way too many stars. No one is stopping.
-",PILOT,15,10,1,9,,
+",PILOT,,15,10,1,9,
 45,six feet long and under,the red poppyverse,"Human-length. Human-width. The math on this one is deliberately uncomfortable.
-","PILOT, SANTOS the medic",10,1,1,10,,
-39,dreams of death,the red poppyverse,PILOT dreams. They are not good dreams.,PILOT,10,0,1,10,,
-32,"contracted envy ",the red poppyverse,"DONOR works in the morgue. The dead don't complain. The living do. She prefers the dead, sometimes.",Mortician DONOR,50,1,1,10,,
+","PILOT, SANTOS the medic",,10,1,1,10,
+32,"contracted envy ",the red poppyverse,"DONOR works in the morgue. The dead don't complain. The living do. She prefers the dead, sometimes.",Mortician DONOR,,50,1,1,10,
+39,dreams of death,the red poppyverse,PILOT dreams. They are not good dreams.,PILOT,,10,0,1,10,
 23,flirting with death,the red poppyverse,"Not metaphorically. Literally circling the drain and making eye contact with it.
-","Mortician DONOR, Various other fleet personnel",10,0,1,3,"32, 187",
+","Mortician DONOR, Various other fleet personnel",,10,0,1,3,"32, 187"
+63,flirting after death,the red poppyverse,"Death hasn't stopped anyone's game. If anything, it's improved it.
+",Various other fleet personnel,,5,0,1,3,
 27,stars on a wall,the red poppyverse,"PILOT counts stars. There are still too many. She also keeps going.
-",PILOT,10,0,1,10,,
+",PILOT,,10,0,1,10,
 28,stars on a canvas,the red poppyverse,"DONOR counts stars. There are too many. She keeps going anyway.
-",DONOR,10,0,1,9,27,
+",DONOR,,10,0,1,9,27
 20,"pre-piloting ",the red poppyverse,"Before PILOT was PILOT, she was something else.
-",PILOT,5,1,1,10,,
-191,in serif vs in source sans,the orange poppyverse,The gap between what got written down and what actually happened . It’s a canyon.,"Techie PILOT, Various Bay Area housemates",10,5,,5,106,
-186,merry christmas now who stickerbombed the house,the orange poppyverse,The house has been stickerbombed. The house did not consent to being stickerbombed. Merry Christmas.,"Techie PILOT, Various Bay Area housemates",1,0,1,1,106,
+",PILOT,,5,1,1,10,
 106,by the bay,the orange poppyverse,"Bay Area. Gray Area. Everyone here is a tired techie quietly screaming into their third cold brew.
-","Techie PILOT, Various Bay Area housemates",50,0,,1,,
-103,walk your pet rock,the orange poppyverse,"Please clean up after your pet. Your pet is a rock. Your rock is more than a rock.
-","Linguist PILOT, The clinger, Various DC housemates",1,10,3,4,67,
-102,genre glitches and panelized panic,the orange poppyverse,"The Poppyverse becomes a manga. It doesn't even last till lunch. The fourth wall was not designed to handle this art style.
-","PILOT, Techie PILOT, Various Bay Area housemates, Various other fleet personnel",1,8,5,0,106,https://inpoppyfields.tumblr.com/tagged/genre%20glitches%20and%20panelized%20panic/chrono
-101,happy thanksgiving and why is the sky pink,the orange poppyverse,"The pink sky is not the emergency. The pink sky is just atmosphere. Everything else is the emergency.
-","Captain PILOT, Enlisted PILOT, Techie PILOT",15,10,1,5,85,
-90,section 94,the orange poppyverse,"That is a large section number. Someone has been busy.
-","Techie PILOT, Various Bay Area housemates",1,1,5,1,106,
-88,you wore the same outfit twice,the orange poppyverse,"The audacity. The nerve. The repeat.
-","Techie PILOT, Various Bay Area housemates",1,1,5,1,106,
-87,"level up, level down, or just level sideways?",the orange poppyverse,"Progress is relative. So is direction. So, honestly, is the floor.
-","Techie PILOT, Various Bay Area housemates",1,0,5,5,106,
-84,economy class sass,the orange poppyverse,"Complimentary snacks will not be served. Neither will sympathy.
-","Techie PILOT, Various Bay Area housemates",1,0,4,0,10,
-69,assman omelet,the orange poppyverse,"The fridge is haunting the kitchen. The kitchen is letting it.
-","AUTOPILOT is a fridge, Techie DONOR, Techie PILOT, UNIT is a stove, Various Bay Area housemates",10,0,5,0,"10, 26",
+","Techie PILOT, Various Bay Area housemates",,50,0,,1,
+191,in serif vs in source sans,the orange poppyverse,The gap between what got written down and what actually happened . It’s a canyon.,"Techie PILOT, Various Bay Area housemates",,10,5,,5,106
+186,merry christmas now who stickerbombed the house,the orange poppyverse,The house has been stickerbombed. The house did not consent to being stickerbombed. Merry Christmas.,"Techie PILOT, Various Bay Area housemates",,1,0,1,1,106
 67,things to do in washington dc,the orange poppyverse,"There's a lot to do in DC. None of it is enough to outrun being yourself.
-","Linguist PILOT, Various DC housemates",40,1,5,1,8,https://inpoppyfields.tumblr.com/archive/tagged/things%20to%20do%20in%20dc
+","Linguist PILOT, Various DC housemates",https://inpoppyfields.tumblr.com/archive/tagged/things%20to%20do%20in%20dc,40,1,5,1,8
+103,walk your pet rock,the orange poppyverse,"Please clean up after your pet. Your pet is a rock. Your rock is more than a rock.
+","Linguist PILOT, The clinger, Various DC housemates",https://inpoppyfields.tumblr.com/archive/tagged/the%20unauthorized%20pet%20rock,1,10,3,4,67
+102,genre glitches and panelized panic,the orange poppyverse,"The Poppyverse becomes a manga. It doesn't even last till lunch. The fourth wall was not designed to handle this art style.
+","PILOT, Techie PILOT, Various Bay Area housemates, Various other fleet personnel",https://inpoppyfields.tumblr.com/tagged/genre%20glitches%20and%20panelized%20panic/chrono,1,8,5,0,106
+101,happy thanksgiving and why is the sky pink,the orange poppyverse,"The pink sky is not the emergency. The pink sky is just atmosphere. Everything else is the emergency.
+","Captain PILOT, Enlisted PILOT, Techie PILOT",,15,10,1,5,85
+90,section 94,the orange poppyverse,"That is a large section number. Someone has been busy.
+","Techie PILOT, Various Bay Area housemates",,1,1,5,1,106
+88,you wore the same outfit twice,the orange poppyverse,"The audacity. The nerve. The repeat.
+","Techie PILOT, Various Bay Area housemates",,1,1,5,1,106
+87,"level up, level down, or just level sideways?",the orange poppyverse,"Progress is relative. So is direction. So, honestly, is the floor.
+","Techie PILOT, Various Bay Area housemates",,1,0,5,5,106
+84,economy class sass,the orange poppyverse,"Complimentary snacks will not be served. Neither will sympathy.
+","Techie PILOT, Various Bay Area housemates",,1,0,4,0,10
+69,assman omelet,the orange poppyverse,"The fridge is haunting the kitchen. The kitchen is letting it.
+","AUTOPILOT is a fridge, Techie DONOR, Techie PILOT, UNIT is a stove, Various Bay Area housemates",,10,0,5,0,"10, 26"
 53,"houston, houston, i am the problem",the orange poppyverse,"PILOT is the director of NASA. UNIT is a cat. DONOR may or may not be an extraterrestrial ghost simply messing around.
-","DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",1,1,5,0,,https://inpoppyfields.tumblr.com/tagged/houston houston i'm the problem/chrono
-50,apple-y ever after,the orange poppyverse,Your software will update tonight.,"Techie DONOR, Techie PILOT, Various Bay Area housemates",1,1,5,0,,
+","DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",https://inpoppyfields.tumblr.com/tagged/houston houston i'm the problem/chrono,1,1,5,0,
+50,apple-y ever after,the orange poppyverse,Your software will update tonight.,"Techie DONOR, Techie PILOT, Various Bay Area housemates",,1,1,5,0,
 40,sheep milk latte,the orange poppyverse,"Retired, coastal, vaguely cursed. The séance was not on the schedule.
-","Old retired DONOR, Old retired PILOT, UNIT the paranormal entity",1,0,4,0,,https://inpoppyfields.tumblr.com/tagged/sheep%20milk%20latte/chrono
+","Old retired DONOR, Old retired PILOT, UNIT the paranormal entity",https://inpoppyfields.tumblr.com/tagged/sheep%20milk%20latte/chrono,1,0,4,0,
 43,do you think they felt like heroes? / do you feel like a hero?,the orange poppyverse,"A question posed quietly. No pressure. Really.
-","Techie DONOR, Techie PILOT, Various Bay Area housemates",1,0,4,1,"42, 89",
+","Techie DONOR, Techie PILOT, Various Bay Area housemates",,1,0,4,1,"42, 89"
 31,the house breathes / something in the walls watch,the orange poppyverse,"Not creepy at all. Totally normal house. Definitely not watching you.
-","Techie DONOR, Techie PILOT, Various Bay Area housemates",5,0,4,4,106,
+","Techie DONOR, Techie PILOT, Various Bay Area housemates",,5,0,4,4,106
 25,four steps to nowhere,the orange poppyverse,"Watch your step. The destination is not a place.
-","Techie DONOR, Techie PILOT",1,0,5,1,,
+","Techie DONOR, Techie PILOT",,1,0,5,1,
 26,happy memorial day,the orange poppyverse,"A long weekend of trauma. The grill is not involved.
-","Techie DONOR, Techie PILOT, Various Bay Area housemates",5,0,5,1,,
+","Techie DONOR, Techie PILOT, Various Bay Area housemates",,5,0,5,1,
 8,lost in translation,the orange poppyverse,"Hopelessly, utterly, irretrievably lost. And that's just the vocabulary.
-","Linguist PILOT, Various expat PILOTs",1,10,4,0,67,
+","Linguist PILOT, Various expat PILOTs",,1,10,4,0,67
 10,happy fourth of july,the orange poppyverse,"A single night. A lifetime of damage.
-","Techie DONOR, Techie PILOT, Various Bay Area housemates",5,0,5,1,69,
+","Techie DONOR, Techie PILOT, Various Bay Area housemates",,5,0,5,1,69
 14,in plaque vs in person,the orange poppyverse,"The gap between the monument and the person. It's a canyon.
-","Techie DONOR, Techie PILOT, Various Bay Area housemates",10,6,5,5,"13, 106",
-104,scribing for the world house party ever,the desert roseverse,"Someone has to document this. That someone is you.
-","PILOT, Various other fleet personnel",1,0,1,5,75,
-76,i just saw beyonce,the desert roseverse,She saw BEYONCÉ. Actually.,"PILOT, Various other fleet personnel",1,1,1,9,75,
+","Techie DONOR, Techie PILOT, Various Bay Area housemates",,10,6,5,5,"13, 106"
 75,designated driver for the worst house party ever,the desert roseverse,"You didn't want to be designated driver. And yet.
-","PILOT, Various other fleet personnel",2,1,1,5,,
-46,stained sands,the desert roseverse,"It's ketchup. Relax. It's fine. It's definitely ketchup.
-","PILOT, Various other fleet personnel",10,0,1,10,36,
+","PILOT, Various other fleet personnel",,2,1,1,5,
+104,scribing for the world house party ever,the desert roseverse,"Someone has to document this. That someone is you.
+","PILOT, Various other fleet personnel",,1,0,1,5,75
+76,i just saw beyonce,the desert roseverse,She saw BEYONCÉ. Actually.,"PILOT, Various other fleet personnel",,1,1,1,9,75
 47,sand & siblings,the desert roseverse,"It's all fun and games until it isn't.
-","LIANG, PILOT",10,10,3,0,36,
-36,ant sized angels,the desert roseverse,"From 10,000 feet, everyone looks like ants. At least ants have their lives together.
-","LIANG, PILOT",3,10,3,0,47,https://inpoppyfields.tumblr.com/tagged/ant%20sized%20angels/chrono
+","LIANG, PILOT",,10,10,3,0,36
 1,sand & siblings & adult supervision,the desert roseverse,"Mom and dad showed up. This changes everything.
-","LIANG, Older LIANG the special forces soldier, Older PILOT the CIA operator, PILOT",10,10,3,3,"54, 36, 47, 68",
-65,a spark in the dark,the lilyverse,The light reaches the darkest corners of the solar system. PILOT makes sure of it.,"Commander DONOR, Lily PILOT is a ghost",5,0,1,6,37,
-59,lily pond ripples,the lilyverse,"In the dark, lilies bloom. Everything else is negotiable.
-","AUTOPILOT, Commander DONOR",5,0,1,5,37,https://inpoppyfields.tumblr.com/archive/tagged/lily%20ponderings
-48,anomalies in pink,the lilyverse,The universe turns pink. Things get strange.,"AUTOPILOT, Commander DONOR, Lily PILOT is a ghost, UNIT",15,10,1,4,"4, 27, 51",https://inpoppyfields.tumblr.com/archive/tagged/anomalies%20in%20pink
+","LIANG, Older LIANG the special forces soldier, Older PILOT the CIA operator, PILOT",,10,10,3,3,"54, 36, 47, 68"
+46,stained sands,the desert roseverse,"It's ketchup. Relax. It's fine. It's definitely ketchup.
+","PILOT, Various other fleet personnel",,10,0,1,10,36
+36,ant sized angels,the desert roseverse,"From 10,000 feet, everyone looks like ants. At least ants have their lives together.
+","LIANG, PILOT",https://inpoppyfields.tumblr.com/tagged/ant%20sized%20angels/chrono,3,10,3,0,47
 37,lilium candidium,the lilyverse,"The dark alternate timeline: DONOR commands alone, PILOT is dead from the start, and AUTOPILOT is unbothered about all of it.
-","AUTOPILOT, Commander DONOR, Lily PILOT",15,0,1,7,,https://inpoppyfields.tumblr.com/archive/tagged/lilium%20candidum
+","AUTOPILOT, Commander DONOR, Lily PILOT",https://inpoppyfields.tumblr.com/archive/tagged/lilium%20candidum,15,0,1,7,
 2,uncanny valley,the lilyverse,"AUTOPILOT just wants its mom. In this universe, that's more complicated than it sounds.
-","AUTOPILOT, Lily PILOT is a ghost",5,0,1,6,48,https://inpoppyfields.tumblr.com/archive/tagged/uncanny%20valley
+","AUTOPILOT, Lily PILOT is a ghost",https://inpoppyfields.tumblr.com/archive/tagged/uncanny%20valley,5,0,1,6,48
+65,a spark in the dark,the lilyverse,The light reaches the darkest corners of the solar system. PILOT makes sure of it.,"Commander DONOR, Lily PILOT is a ghost",,5,0,1,6,37
+59,lily pond ripples,the lilyverse,"In the dark, lilies bloom. Everything else is negotiable.
+","AUTOPILOT, Commander DONOR",https://inpoppyfields.tumblr.com/archive/tagged/lily%20ponderings,5,0,1,5,37
+48,anomalies in pink,the lilyverse,The universe turns pink. Things get strange.,"AUTOPILOT, Commander DONOR, Lily PILOT is a ghost, UNIT",https://inpoppyfields.tumblr.com/archive/tagged/anomalies%20in%20pink,15,10,1,4,"4, 27, 51"
 96,smoldering embers,the spider lilyverse,"After the burn, the slow fade.
-",Rusted PILOT,5,0,1,9,"95, 96, 18",
+",Rusted PILOT,,5,0,1,9,"95, 96, 18"
 95,orders from somewhere high above,the spider lilyverse,"This is above your clearance level. It's also above everyone else's.
-","Commander DONOR, SANTOS the medic",5,3,1,8,,
+","Commander DONOR, SANTOS the medic",,5,3,1,8,
 93,haunting goes both ways,the spider lilyverse,"You can haunt yourself. Your past self can haunt yourself, and so can your future self. The universe has a truly terrible sense of humor.
-","Rusted PILOT, Rusted PILOT as a ghost, Young reincarnated PILOT, Young reincarnated PILOT as a hallucination",5,10,1,6,18,
+","Rusted PILOT, Rusted PILOT as a ghost, Young reincarnated PILOT, Young reincarnated PILOT as a hallucination",,5,10,1,6,18
 52,NULL error,the spider lilyverse,"Meet NULL: a unit with no soul. This should be comforting. It is not.
-",NULL,10,0,1,5,7,
+",NULL,,10,0,1,5,7
 44,hot and cold,the spider lilyverse,"Opposites attract. This is textbook. This does not make it easier.
-","Commander DONOR is also an anomalous entity, Rusted PILOT as a ghost",1,9,2,3,41,
+","Commander DONOR is also an anomalous entity, Rusted PILOT as a ghost",,1,9,2,3,41
 38,santos does not believe in ghosts,the spider lilyverse,"SANTOS does not believe in ghosts. SANTOS is surrounded by ghosts.
-","Commander SANTOS, Rusted PILOT as a ghost",1,5,1,5,7,
+","Commander SANTOS, Rusted PILOT as a ghost",,1,5,1,5,7
 15,kintsugi in gold,the spider lilyverse,"The cracks are filled with gold. That's the whole point.
-","Commander SANTOS, Young reincarnated PILOT",5,0,1,5,"7, 37",
-18,"flecks of gold, rekindled",the spider lilyverse,"Burn back brighter. The universe gave it another shot.
-","Commander SANTOS, Young reincarnated PILOT",5,7,1,7,7,
+","Commander SANTOS, Young reincarnated PILOT",,5,0,1,5,"7, 37"
 7,flecks of gold,the spider lilyverse,"Burn bright. While you can. 
-","Rusted PILOT, Young ensign SANTOS",10,0,1,8,,
-100,now you wanna demand a refund,the ultravioletverse,The experience was not as advertised.,"Older PILOT the CIA operator, Techie PILOT",1,10,5,3,1,
-98,purple is the color of envy,the ultravioletverse,"Green had the monopoly for centuries. Purple is staging a coup.
-","Older PILOT the CIA operator, Techie PILOT",1,10,5,3,1,
-68,found in translation,the ultravioletverse,"Something was lost in translation. Something else was found.
-","Older PILOT the CIA operator, Techie PILOT",3,0,3,4,1,
+","Rusted PILOT, Young ensign SANTOS",,10,0,1,8,
+18,"flecks of gold, rekindled",the spider lilyverse,"Burn back brighter. The universe gave it another shot.
+","Commander SANTOS, Young reincarnated PILOT",,5,7,1,7,7
 54,you wannabe me,the ultravioletverse,"OLDER PILOT looks at MUNDANE PILOT and sees herself. MUNDANE PILOT looks back and has thoughts.
-","Older PILOT the CIA operator, Techie PILOT",2,10,5,4,"25, 1",
+","Older PILOT the CIA operator, Techie PILOT",,2,10,5,4,"25, 1"
+100,now you wanna demand a refund,the ultravioletverse,The experience was not as advertised.,"Older PILOT the CIA operator, Techie PILOT",,1,10,5,3,1
+98,purple is the color of envy,the ultravioletverse,"Green had the monopoly for centuries. Purple is staging a coup.
+","Older PILOT the CIA operator, Techie PILOT",,1,10,5,3,1
+68,found in translation,the ultravioletverse,"Something was lost in translation. Something else was found.
+","Older PILOT the CIA operator, Techie PILOT",,3,0,3,4,1
 6,black opt in or out?,the ultravioletverse,"OLDER PILOT is being asked a question. That question is the entire premise.
-","Older PILOT the CIA operator, Techie PILOT",1,0,3,3,1,
-41,celestial bodies,beyond the poppyverse,"PILOT is a neutron star. DONOR is a black hole. You're doing stellar, ladies.
-","DONOR the black hole, PILOT the neutron star",1,10,2,2,,
-35,make the stars scream,beyond the poppyverse,The stars are screaming. Literally.,"DONOR, PILOT, Various other familiar souls",1,10,2,10,,
+","Older PILOT the CIA operator, Techie PILOT",,1,0,3,3,1
 16,"21 pilots, too many pilots",beyond the poppyverse,"All the PILOTs, from every fork and timeline and universe. No such thing as too many. Probably.
-","All the PILOTs, Techie PILOT",5,10,2,0,,https://inpoppyfields.tumblr.com/tagged/21%20pilots%20too%20many%20pilots/chrono
+","All the PILOTs, Techie PILOT",https://inpoppyfields.tumblr.com/tagged/21%20pilots%20too%20many%20pilots/chrono,5,10,2,0,
 19,you’ve got soul,beyond the poppyverse,"The author hopes you do. Really.
-",,1,10,2,0,,
+",,,1,10,2,0,
+35,make the stars scream,beyond the poppyverse,The stars are screaming. Literally.,"DONOR, PILOT, Various other familiar souls",,1,10,2,10,
+41,celestial bodies,beyond the poppyverse,"PILOT is a neutron star. DONOR is a black hole. You're doing stellar, ladies.
+","DONOR the black hole, PILOT the neutron star",,1,10,2,2,

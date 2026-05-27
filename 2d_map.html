@@ -1,223 +1,253 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Poppyverse Cluster Dashboard</title>
+  <title>Poppyverse 2D Map</title>
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="50%" x="50%" dominant-baseline="middle" text-anchor="middle" font-size="52">🌷</text></svg>'>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --poppy-red: #ff1447;
-      --bg: #0d0d10;
-      --panel: #17171d;
-      --panel-2: #21212b;
-      --text: #f7f1ee;
-      --muted: rgba(247, 241, 238, 0.68);
+      --poppy-pink: #FF1447;
+      --bg: #09090f;
+      --panel: rgba(10, 10, 16, 0.92);
+      --panel-soft: rgba(255, 255, 255, 0.075);
+      --text: rgba(255, 255, 255, 0.94);
+      --muted: rgba(255, 255, 255, 0.68);
       --line: rgba(255, 255, 255, 0.14);
-      --shadow: rgba(0, 0, 0, 0.42);
-      --drawer-width: min(820px, 90vw);
+      --nav-height: 58px;
     }
 
     * {
       box-sizing: border-box;
     }
 
-
-    .poppy-nav {
-      position: fixed;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 100;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      padding: 7px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 999px;
-      background: rgba(8, 8, 14, 0.66);
-      box-shadow: 0 16px 42px rgba(0,0,0,.32), 0 0 22px rgba(255,20,71,.10);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-
-    .poppy-nav a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 34px;
-      padding: 0 13px;
-      border-radius: 999px;
-      color: rgba(255,255,255,.82);
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 850;
-      letter-spacing: .35px;
-      border: 1px solid transparent;
-      transition: background .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease;
-      white-space: nowrap;
-    }
-
-    .poppy-nav a:hover {
-      color: #fff;
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
-    }
-
-    .poppy-nav a.active {
-      color: #fff;
-      background: var(--poppy-red, #ff1447);
-      border-color: color-mix(in srgb, var(--poppy-red, #ff1447) 72%, white);
-      box-shadow: 0 0 18px color-mix(in srgb, var(--poppy-red, #ff1447) 44%, transparent);
-    }
-
-    @media (max-width: 560px) {
-      .poppy-nav {
-        top: 10px;
-        width: calc(100vw - 20px);
-        justify-content: center;
-        overflow-x: auto;
-        border-radius: 18px;
-      }
-
-      .poppy-nav a {
-        padding: 0 10px;
-        font-size: 11px;
-      }
-    }
-    
-
+    html,
     body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 100%;
       background:
-        radial-gradient(circle at 8% 0%, rgba(255, 20, 71, 0.16), transparent 32rem),
-        radial-gradient(circle at 90% 95%, rgba(94, 23, 235, 0.15), transparent 34rem),
-        var(--bg);
+        radial-gradient(circle at 20% 0%, rgba(255, 20, 71, 0.16), transparent 32%),
+        radial-gradient(circle at 80% 20%, rgba(145, 80, 255, 0.12), transparent 35%),
+        linear-gradient(135deg, #050507 0%, #0b0b12 48%, #11111d 100%);
       color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 10px 16px;
+      pointer-events: none;
+    }
+
+    .top-nav-inner {
+      width: max-content;
+      max-width: calc(100vw - 32px);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.58);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
+      pointer-events: auto;
+      overflow-x: auto;
+    }
+
+    .top-nav-link {
+      flex: 0 0 auto;
+      padding: 8px 13px;
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.82);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition:
+        color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .top-nav-link:hover,
+    .top-nav-link.active {
+      color: #fff;
+      background: var(--poppy-pink);
+      box-shadow: 0 0 18px rgba(255, 20, 71, 0.44);
     }
 
     .page {
-      width: min(1440px, calc(100vw - 48px));
-      margin: 0 auto;
-      padding: 88px 0 72px;
+      min-height: 100vh;
+      padding: calc(var(--nav-height) + 38px) 28px 56px;
     }
 
-    header {
-      margin-bottom: 28px;
+    .hero {
+      max-width: 1180px;
+      margin: 0 auto 34px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--poppy-pink);
+      font-family: "Michroma", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      text-shadow: 0 0 14px rgba(255, 20, 71, 0.42);
     }
 
     h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2.25rem, 4.2vw, 4.8rem);
-      line-height: 0.92;
-      letter-spacing: -0.07em;
+      margin: 0;
+      color: #fff;
+      font-family: "Michroma", sans-serif;
+      font-size: clamp(30px, 5vw, 64px);
+      line-height: 1.05;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-shadow: 0 0 28px rgba(255, 20, 71, 0.22);
     }
 
     .subtitle {
       max-width: 760px;
-      margin: 0;
+      margin: 18px auto 0;
       color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.55;
+      font-size: 15px;
+      line-height: 1.65;
     }
 
-    .grid {
+    .cluster-grid {
+      max-width: 1320px;
+      margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(auto-fill, 300px);
-      gap: 18px;
-      align-items: start;
+      grid-template-columns: repeat(auto-fit, 300px);
+      justify-content: center;
+      gap: 22px;
     }
 
     .cluster-card {
       position: relative;
       width: 300px;
       height: 200px;
-      border: 1px solid var(--line);
-      border-radius: 22px;
       overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 22px;
+      background: var(--cluster-color);
+      box-shadow:
+        0 16px 50px rgba(0, 0, 0, 0.42),
+        0 0 26px color-mix(in srgb, var(--cluster-color) 38%, transparent);
       cursor: pointer;
-      padding: 18px;
-      color: white;
-      background-color: var(--cluster-color);
-      box-shadow: 0 18px 44px var(--shadow);
-      text-align: left;
       isolation: isolate;
-      transition: transform 160ms ease, filter 160ms ease, border-color 160ms ease;
+      transform: translateY(0);
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
     }
 
-    .cluster-card:hover,
-    .cluster-card:focus-visible {
-      transform: translateY(-4px);
-      filter: brightness(1.08) saturate(1.08);
-      border-color: rgba(255, 255, 255, 0.36);
-      outline: none;
+    .cluster-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.48);
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.5),
+        0 0 34px color-mix(in srgb, var(--cluster-color) 58%, transparent);
     }
 
-    .cluster-card.has-cover {
-      background-image: var(--cover-url);
-      background-size: cover;
-      background-position: center;
-    }
-
-    .cluster-card::before {
-      content: "";
+    .cluster-bg {
       position: absolute;
       inset: 0;
-      background: var(--cluster-color);
-      opacity: var(--overlay-opacity, 0.94);
-      z-index: -2;
+      background-position: center;
+      background-size: cover;
+      opacity: 0.72;
+      filter: saturate(1.04) contrast(1.05);
+      z-index: -3;
     }
 
-    .cluster-card::after {
-      content: "";
+    .cluster-color {
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(135deg, rgba(255,255,255,0.18), transparent 38%, rgba(0,0,0,0.38)),
-        radial-gradient(circle at 70% 15%, rgba(255,255,255,0.22), transparent 16rem);
+        linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--cluster-color) 88%, black 12%),
+          color-mix(in srgb, var(--cluster-color) 54%, black 46%)
+        );
+      opacity: 0.86;
+      z-index: -2;
+    }
+
+    .cluster-card.has-cover .cluster-color {
+      mix-blend-mode: multiply;
+      opacity: 0.78;
+    }
+
+    .cluster-vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,0.22), transparent 36%),
+        linear-gradient(to bottom, rgba(0,0,0,0.04), rgba(0,0,0,0.72));
       z-index: -1;
     }
 
-    .cluster-count {
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid rgba(255, 255, 255, 0.30);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 0.75rem;
-      font-weight: 850;
-      letter-spacing: 0.045em;
-      text-transform: uppercase;
-      background: rgba(0, 0, 0, 0.18);
-      backdrop-filter: blur(8px);
-      text-shadow: 0 1px 10px rgba(0,0,0,0.35);
+    .cluster-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 18px;
     }
 
     .cluster-name {
-      position: absolute;
-      left: 18px;
-      right: 18px;
-      bottom: 17px;
       margin: 0;
-      font-size: 1.55rem;
-      line-height: 1.02;
-      font-weight: 950;
-      letter-spacing: -0.048em;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.52);
+      font-family: "Michroma", sans-serif;
+      font-size: 18px;
+      line-height: 1.18;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 16px rgba(0, 0, 0, 0.86);
     }
 
-    .backdrop {
+    .cluster-count {
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .drawer-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.52);
+      z-index: 1090;
+      background: rgba(0, 0, 0, 0.48);
       opacity: 0;
       pointer-events: none;
       transition: opacity 180ms ease;
-      z-index: 20;
     }
 
-    .backdrop.open {
+    .drawer-backdrop.open {
       opacity: 1;
       pointer-events: auto;
     }
@@ -226,96 +256,106 @@
       position: fixed;
       top: 0;
       right: 0;
-      width: var(--drawer-width);
+      z-index: 1100;
+      width: min(900px, 94vw);
       height: 100vh;
-      background: linear-gradient(180deg, var(--panel), #101015);
-      border-left: 1px solid var(--line);
-      box-shadow: -28px 0 70px rgba(0,0,0,0.55);
-      transform: translateX(104%);
+      background: #09090f;
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: -24px 0 70px rgba(0, 0, 0, 0.62);
+      transform: translateX(105%);
       transition: transform 220ms ease;
-      z-index: 30;
-      display: flex;
-      flex-direction: column;
+      overflow-y: auto;
     }
 
     .drawer.open {
       transform: translateX(0);
     }
 
-    .drawer-top {
-      padding: 24px 24px 18px;
-      border-bottom: 1px solid var(--line);
+    /*
+      Important spacing behavior:
+      The gradient reaches the literal top of the drawer.
+      The text inside gets padding-top so the fixed top nav does not block it.
+    */
+    .drawer-header {
+      position: relative;
+      padding: calc(var(--nav-height) + 26px) 28px 24px;
       background:
-        linear-gradient(135deg, var(--active-color, #444), rgba(255,255,255,0.035) 62%),
-        var(--panel);
+        radial-gradient(circle at top left, color-mix(in srgb, var(--active-color) 36%, transparent), transparent 38%),
+        linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--active-color) 30%, #09090f 70%),
+          #09090f 68%
+        );
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
     }
 
-    .drawer-kicker {
-      margin: 0 0 8px;
-      color: rgba(255,255,255,0.75);
-      font-size: 0.78rem;
+    .drawer-close {
+      position: absolute;
+      top: calc(var(--nav-height) + 16px);
+      right: 20px;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 20px;
       font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+      cursor: pointer;
+      transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease;
     }
 
-    .drawer-title-row {
-      display: flex;
-      gap: 16px;
-      justify-content: space-between;
-      align-items: flex-start;
+    .drawer-close:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: color-mix(in srgb, var(--active-color) 70%, white 30%);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--active-color) 45%, transparent);
     }
 
     .drawer-title {
+      max-width: calc(100% - 58px);
       margin: 0;
-      font-size: clamp(1.8rem, 3vw, 3.2rem);
-      line-height: 0.96;
-      letter-spacing: -0.065em;
+      color: var(--active-color);
+      font-family: "Michroma", sans-serif;
+      font-size: clamp(22px, 3vw, 36px);
+      line-height: 1.18;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px color-mix(in srgb, var(--active-color) 38%, transparent);
     }
 
-    .close-button {
-      appearance: none;
-      border: 1px solid rgba(255,255,255,0.28);
-      background: rgba(0,0,0,0.2);
-      color: white;
-      border-radius: 999px;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      font-size: 1.35rem;
-      line-height: 1;
-      flex: 0 0 auto;
+    .drawer-description {
+      max-width: 760px;
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 14px;
+      line-height: 1.65;
     }
 
-    .close-button:hover {
-      background: rgba(255,255,255,0.13);
-    }
-
-    .drawer-desc {
-      margin: 14px 0 0;
-      color: rgba(255,255,255,0.84);
-      line-height: 1.55;
-      white-space: pre-wrap;
-      max-width: 68ch;
+    .drawer-body {
+      padding: 24px 28px 44px;
     }
 
     .table-wrap {
-      overflow: auto;
-      padding: 18px 24px 30px;
-      flex: 1;
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.045);
     }
 
     table {
       width: 100%;
+      min-width: 720px;
       border-collapse: collapse;
-      min-width: 1040px;
-      font-size: 0.9rem;
     }
 
     th,
     td {
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding: 10px 12px;
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.105);
       vertical-align: top;
       text-align: left;
     }
@@ -323,221 +363,911 @@
     th {
       position: sticky;
       top: 0;
-      z-index: 1;
-      background: var(--panel-2);
-      color: rgba(255,255,255,0.92);
-      font-size: 0.76rem;
+      z-index: 2;
+      color: #fff;
+      background: color-mix(in srgb, var(--active-color) 22%, #11111d 78%);
+      font-size: 11px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      white-space: nowrap;
     }
 
     td {
-      color: rgba(255,255,255,0.78);
-      line-height: 1.45;
-      white-space: pre-wrap;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 13px;
+      line-height: 1.5;
     }
 
-    tr:hover td {
-      background: rgba(255,255,255,0.045);
+    tr:last-child td {
+      border-bottom: 0;
     }
 
-    a {
+    .empty {
+      color: rgba(255, 255, 255, 0.6);
+      font-style: italic;
+    }
+
+    .content-link {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--active-color);
       color: #fff;
-      font-weight: 850;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
-    .empty-state {
+    .content-link:hover {
+      filter: brightness(1.15);
+    }
+
+    .no-entries {
       margin: 0;
-      color: var(--muted);
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255,255,255,0.04);
+      padding: 18px;
+      color: rgba(255, 255, 255, 0.66);
+      font-style: italic;
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 760px) {
       .page {
-        width: min(100vw - 28px, 360px);
-        padding-top: 28px;
+        padding-left: 16px;
+        padding-right: 16px;
       }
 
-      .grid {
-        grid-template-columns: 1fr;
+      .top-nav {
+        padding-left: 8px;
+        padding-right: 8px;
       }
 
-      .cluster-card {
-        width: 100%;
+      .top-nav-inner {
+        justify-content: flex-start;
       }
 
-      .drawer {
-        width: 100vw;
+      .drawer-header {
+        padding-left: 20px;
+        padding-right: 20px;
       }
 
-      .drawer-top {
-        padding: 20px 18px 16px;
-      }
-
-      .table-wrap {
-        padding: 16px 18px 28px;
+      .drawer-body {
+        padding-left: 20px;
+        padding-right: 20px;
       }
     }
   </style>
 </head>
-<body>
-  <nav class="poppy-nav" aria-label="Poppyverse map navigation">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="2d_map.html" class="active" aria-current="page">2D Map</a>
-    <a href="3d_map.html">3D Map</a>
-    <a href="https://inpoppyfields.tumblr.com/" target="_blank" rel="noopener">Tumblr Archive</a>
-  </nav>
-  <main class="page">
-    <header>
-      <h1>Poppyverse Clusters</h1>
-      <p class="subtitle">A cluster-first control board. Click a rectangle to open the side panel and inspect the matching source-of-truth rows.</p>
-    </header>
 
-    <section id="clusterGrid" class="grid" aria-label="Poppyverse cluster grid"></section>
+<body>
+  <nav class="top-nav" aria-label="Main navigation">
+  <div class="top-nav-inner">
+    <a class="top-nav-link" href="index.html">Home</a><a class="top-nav-link" href="about.html">About</a><a class="top-nav-link active" href="2d_map.html">2D Map</a><a class="top-nav-link" href="3d_map.html">3D Map</a><a class="top-nav-link" href="https://inpoppyfields.tumblr.com/" target="_blank" rel="noopener">Tumblr Archive</a>
+  </div>
+</nav>
+
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">Static Story Map</p>
+      <h1>THE POPPYVERSE</h1>
+      <p class="subtitle">
+        A calmer, saner cluster-first table of contents for a multiverse that remains,
+        despite best efforts, profoundly unserious about linear structure.
+      </p>
+    </section>
+
+    <section id="clusterGrid" class="cluster-grid" aria-label="Poppyverse clusters"></section>
   </main>
 
-  <div id="backdrop" class="backdrop" aria-hidden="true"></div>
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
 
-  <aside id="drawer" class="drawer" aria-hidden="true" aria-label="Cluster contents panel">
-    <div id="drawerTop" class="drawer-top">
-      <p id="drawerKicker" class="drawer-kicker">Cluster</p>
-      <div class="drawer-title-row">
-        <h2 id="drawerTitle" class="drawer-title"></h2>
-        <button id="closeButton" class="close-button" type="button" aria-label="Close panel">×</button>
-      </div>
-      <p id="drawerDesc" class="drawer-desc"></p>
-    </div>
-    <div id="tableWrap" class="table-wrap"></div>
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <header id="drawerHeader" class="drawer-header">
+      <button id="drawerClose" class="drawer-close" type="button" aria-label="Close drawer">×</button>
+      <h2 id="drawerTitle" class="drawer-title"></h2>
+      <p id="drawerDescription" class="drawer-description"></p>
+    </header>
+
+    <div id="drawerBody" class="drawer-body"></div>
   </aside>
 
-  <script id="dashboard-data" type="application/json">{"clusters": [{"name": "welcome to the poppyverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "Where it all begins. Your first step into this mess.", "color": "#ff1447", "count": 13, "rows": [{"ID": "107", "Name": "found files", "Cluster": "welcome to the poppyverse", "Description": "Supplementary material. Read this before asking dumb questions.", "Characters": "", "Size": "5", "(X) Relativity": "10", "(Y) Relatability": "", "(Z) Depth": "0", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/found%20files"}, {"ID": "64", "Name": "pilot postings", "Cluster": "welcome to the poppyverse", "Description": "PILOT discovers the internet. The internet is not ready.", "Characters": "PILOT", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "0", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/pilot%20postings"}, {"ID": "60", "Name": "mechanized messaging", "Cluster": "welcome to the poppyverse", "Description": "Slack but sentient and enormous. The read receipts are haunting. So is everything else.", "Characters": "UNIT, Various other units", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "0", "Collisions": "61", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mechanized%20messaging"}, {"ID": "61", "Name": "internal comms", "Cluster": "welcome to the poppyverse", "Description": "Slack but orbital. The out-of-office replies are written in four languages and none of them are helpful.", "Characters": "PILOT, Various other fleet personnel", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "0", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/internal%20comms"}, {"ID": "49", "Name": "the beginning", "Cluster": "welcome to the poppyverse", "Description": "Start here. One universe, out of many more to come. One mech unit, one pilot, one donor (donor of what, you’ll find out soon).", "Characters": "DONOR, PILOT, UNIT", "Size": "20", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "0", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/beginnings"}, {"ID": "42", "Name": "area fifty-DONE", "Cluster": "welcome to the poppyverse", "Description": "What happens at Area Fifty-Done stays at Area Fifty-Done. Allegedly.", "Characters": "PILOT the civilian test pilot, REYES", "Size": "40", "(X) Relativity": "10", "(Y) Relatability": "1", "(Z) Depth": "1", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/tagged/area%20fifty%20done/chrono"}, {"ID": "30", "Name": "automated absurdity", "Cluster": "welcome to the poppyverse", "Description": "Yes, it's absurd. No, there will be no further explanation. UNIT is involved.", "Characters": "UNIT, Various other units", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "0", "Collisions": "5, 60", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/automated%20absurdity"}, {"ID": "24", "Name": "unit by unit", "Cluster": "welcome to the poppyverse", "Description": "Turns out UNIT isn't the only unit. There are others. This is not as comforting as it sounds.", "Characters": "UNIT, Various other units", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "1", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/character%20spotlight"}, {"ID": "17", "Name": "holomatter matters", "Cluster": "welcome to the poppyverse", "Description": "Units. Units. Robots in disguise. Units. Units. More than meets the eye… because underneath the chassis and the horns and the several tons of metal is, if you look closely enough, something that learned to be human before it ever had the chance to be anything else.", "Characters": "UNIT, Various other units", "Size": "30", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "2", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/holomatter%20matters"}, {"ID": "21", "Name": "gentle giant", "Cluster": "welcome to the poppyverse", "Description": "”Be strong enough to be gentle.”", "Characters": "PILOT, UNIT", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "1", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/gentle%20giant"}, {"ID": "9", "Name": "post-piloting", "Cluster": "welcome to the poppyverse", "Description": "Post-everything, sort of. PILOT is retired — functionally, if not emotionally.", "Characters": "PILOT the retired pilot", "Size": "1", "(X) Relativity": "5", "(Y) Relatability": "5", "(Z) Depth": "3", "Collisions": "49, 107, 21, 11, 5, 24", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/post%20piloting"}, {"ID": "11", "Name": "skin and steel", "Cluster": "welcome to the poppyverse", "Description": "What strength actually looks like.  Flesh and metal, soft and sharp. All are strong. None are simple.", "Characters": "PILOT, UNIT", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "1", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/skin and steel"}, {"ID": "5", "Name": "machine learnings", "Cluster": "welcome to the poppyverse", "Description": "UNIT is a machine learning things. The distinction matters. Whether what it's learning is reassuring or terrifying depends.", "Characters": "UNIT, Various other units", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "2", "(Z) Depth": "2", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/machine%20learnings"}]}, {"name": "deeper into the poppyverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "Same multiverse branch, deeper layers, fewer safety rails.", "color": "#ff00a1", "count": 7, "rows": [{"ID": "56", "Name": "rest and rust", "Cluster": "deeper into the poppyverse", "Description": "A million ways to die. None of them restful. All of them rusty.", "Characters": "PILOT, UNIT", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "49", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/rest%20and%20rust"}, {"ID": "51", "Name": "commander UNIT", "Cluster": "deeper into the poppyverse", "Description": "UNIT takes command. PILOT is dead. The universe reconsiders its choices.", "Characters": "Commander UNIT", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "4", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/commander unit"}, {"ID": "33", "Name": "mechanical mortality", "Cluster": "deeper into the poppyverse", "Description": "Units can die. Let that sink in.", "Characters": "UNIT, Various other units", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "5, 49", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mechanical%20mortality"}, {"ID": "22", "Name": "sisterhood in skin and steel", "Cluster": "deeper into the poppyverse", "Description": "UNIT and AUTOPILOT, wholesome holomatter siblings… and then the sad part happens.", "Characters": "AUTOPILOT, UNIT", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "8", "Collisions": "17", "Content URL": "https://inpoppyfields.tumblr.com/tagged/sisterhood%20in%20steel%20and%20skin/chrono"}, {"ID": "29", "Name": "mergence", "Cluster": "deeper into the poppyverse", "Description": "PILOT and UNIT become one entity. Permanently. This is not a metaphor.", "Characters": "PILOT, UNIT", "Size": "5", "(X) Relativity": "5", "(Y) Relatability": "1", "(Z) Depth": "3", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mergence"}, {"ID": "3", "Name": "ghost stories", "Cluster": "deeper into the poppyverse", "Description": "Literal ghosts. Some of them are irritated about it.", "Characters": "PILOT, UNIT", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "49", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/ghost%20stories"}, {"ID": "4", "Name": "commander PILOT", "Cluster": "deeper into the poppyverse", "Description": "PILOT takes command. UNIT is dead. The universe holds its breath.", "Characters": "Commander PILOT", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "4", "Collisions": "51", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/commander%20pilot"}]}, {"name": "the red poppyverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.", "color": "#c40000", "count": 22, "rows": [{"ID": "190", "Name": "dress in layers", "Cluster": "the red poppyverse", "Description": "Dress for the weather and emergency triage.", "Characters": "SANTOS the medic", "Size": "2", "(X) Relativity": "0", "(Y) Relatability": "", "(Z) Depth": "8", "Collisions": "", "Content URL": ""}, {"ID": "189", "Name": "the civilian", "Cluster": "the red poppyverse", "Description": "She's just here to observe. Totally just observing.", "Characters": "DONOR", "Size": "15", "(X) Relativity": "0", "(Y) Relatability": "", "(Z) Depth": "9", "Collisions": "28", "Content URL": ""}, {"ID": "188", "Name": "the sideliner", "Cluster": "the red poppyverse", "Description": "Benchwarmers have the best view of the game.", "Characters": "PILOT", "Size": "20", "(X) Relativity": "0", "(Y) Relatability": "", "(Z) Depth": "9", "Collisions": "70", "Content URL": ""}, {"ID": "187", "Name": "beyond death and recognition", "Cluster": "the red poppyverse", "Description": "DONOR's used to patients who don't talk back. These ones won't shut up, and that’s beautiful.", "Characters": "Mortician DONOR", "Size": "15", "(X) Relativity": "0", "(Y) Relatability": "", "(Z) Depth": "5", "Collisions": "", "Content URL": ""}, {"ID": "86", "Name": "the piloting", "Cluster": "the red poppyverse", "Description": "The haunting, but make it specifically PILOT.", "Characters": "PILOT", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "3", "Collisions": "", "Content URL": ""}, {"ID": "85", "Name": "economy class is a pain in the ass", "Cluster": "the red poppyverse", "Description": "The legroom is genuinely terrible. This is the least of everyone's problems.", "Characters": "PILOT", "Size": "1", "(X) Relativity": "5", "(Y) Relatability": "1", "(Z) Depth": "8", "Collisions": "84", "Content URL": ""}, {"ID": "83", "Name": "houston we are so screwed", "Cluster": "the red poppyverse", "Description": "If you thought the previous crew had a massive problem, this new crew has escalated it.", "Characters": "PILOT, Various other fleet personnel", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "79, 53", "Content URL": ""}, {"ID": "81", "Name": "it was almost your turn", "Cluster": "the red poppyverse", "Description": "Congratulations. You were almost selected.", "Characters": "PILOT", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "8", "Collisions": "70", "Content URL": ""}, {"ID": "80", "Name": "unhinged lids and minds", "Cluster": "the red poppyverse", "Description": "The lids in question will be explained. The minds in question will not.", "Characters": "Rusted PILOT", "Size": "1", "(X) Relativity": "1", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}, {"ID": "79", "Name": "houston we’ve got a massive problem", "Cluster": "the red poppyverse", "Description": "Yes you do. Yes it is massive. Houston cannot help.", "Characters": "PILOT, Various other fleet personnel", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "53", "Content URL": ""}, {"ID": "74", "Name": "you get an f for effort", "Cluster": "the red poppyverse", "Description": "The F stands for failure.", "Characters": "PILOT the civilian test pilot", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}, {"ID": "70", "Name": "it’s your turn", "Cluster": "the red poppyverse", "Description": "Congratulations. You've been selected.", "Characters": "PILOT", "Size": "40", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "81, 90, 14, 191, 14, 43", "Content URL": ""}, {"ID": "63", "Name": "flirting after death", "Cluster": "the red poppyverse", "Description": "Death hasn't stopped anyone's game. If anything, it's improved it.", "Characters": "Various other fleet personnel", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "3", "Collisions": "", "Content URL": ""}, {"ID": "57", "Name": "you get a gold star", "Cluster": "the red poppyverse", "Description": "Congratulations. That is all.", "Characters": "PILOT", "Size": "10", "(X) Relativity": "10", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}, {"ID": "58", "Name": "counting stars", "Cluster": "the red poppyverse", "Description": "Everyone is counting stars. Way, way too many stars. No one is stopping.", "Characters": "PILOT", "Size": "15", "(X) Relativity": "10", "(Y) Relatability": "1", "(Z) Depth": "9", "Collisions": "", "Content URL": ""}, {"ID": "45", "Name": "six feet long and under", "Cluster": "the red poppyverse", "Description": "Human-length. Human-width. The math on this one is deliberately uncomfortable.", "Characters": "PILOT, SANTOS the medic", "Size": "10", "(X) Relativity": "1", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}, {"ID": "39", "Name": "dreams of death", "Cluster": "the red poppyverse", "Description": "PILOT dreams. They are not good dreams.", "Characters": "PILOT", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}, {"ID": "32", "Name": "contracted envy", "Cluster": "the red poppyverse", "Description": "DONOR works in the morgue. The dead don't complain. The living do. She prefers the dead, sometimes.", "Characters": "Mortician DONOR", "Size": "50", "(X) Relativity": "1", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}, {"ID": "23", "Name": "flirting with death", "Cluster": "the red poppyverse", "Description": "Not metaphorically. Literally circling the drain and making eye contact with it.", "Characters": "Mortician DONOR, Various other fleet personnel", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "3", "Collisions": "32, 187", "Content URL": ""}, {"ID": "27", "Name": "stars on a wall", "Cluster": "the red poppyverse", "Description": "PILOT counts stars. There are still too many. She also keeps going.", "Characters": "PILOT", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}, {"ID": "28", "Name": "stars on a canvas", "Cluster": "the red poppyverse", "Description": "DONOR counts stars. There are too many. She keeps going anyway.", "Characters": "DONOR", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "9", "Collisions": "27", "Content URL": ""}, {"ID": "20", "Name": "pre-piloting", "Cluster": "the red poppyverse", "Description": "Before PILOT was PILOT, she was something else.", "Characters": "PILOT", "Size": "5", "(X) Relativity": "1", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}]}, {"name": "the orange poppyverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.", "color": "#ff772b", "count": 22, "rows": [{"ID": "191", "Name": "in serif vs in source sans", "Cluster": "the orange poppyverse", "Description": "The gap between what got written down and what actually happened . It’s a canyon.", "Characters": "Techie PILOT, Various Bay Area housemates", "Size": "10", "(X) Relativity": "5", "(Y) Relatability": "", "(Z) Depth": "5", "Collisions": "106", "Content URL": ""}, {"ID": "186", "Name": "merry christmas now who stickerbombed the house", "Cluster": "the orange poppyverse", "Description": "The house has been stickerbombed. The house did not consent to being stickerbombed. Merry Christmas.", "Characters": "Techie PILOT, Various Bay Area housemates", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "1", "Collisions": "106", "Content URL": ""}, {"ID": "106", "Name": "by the bay", "Cluster": "the orange poppyverse", "Description": "Bay Area. Gray Area. Everyone here is a tired techie quietly screaming into their third cold brew.", "Characters": "Techie PILOT, Various Bay Area housemates", "Size": "50", "(X) Relativity": "0", "(Y) Relatability": "", "(Z) Depth": "1", "Collisions": "", "Content URL": ""}, {"ID": "103", "Name": "walk your pet rock", "Cluster": "the orange poppyverse", "Description": "Please clean up after your pet. Your pet is a rock. Your rock is more than a rock.", "Characters": "Linguist PILOT, The clinger, Various DC housemates", "Size": "1", "(X) Relativity": "10", "(Y) Relatability": "3", "(Z) Depth": "4", "Collisions": "67", "Content URL": ""}, {"ID": "102", "Name": "genre glitches and panelized panic", "Cluster": "the orange poppyverse", "Description": "The Poppyverse becomes a manga. It doesn't even last till lunch. The fourth wall was not designed to handle this art style.", "Characters": "PILOT, Techie PILOT, Various Bay Area housemates, Various other fleet personnel", "Size": "1", "(X) Relativity": "8", "(Y) Relatability": "5", "(Z) Depth": "0", "Collisions": "106", "Content URL": "https://inpoppyfields.tumblr.com/tagged/genre%20glitches%20and%20panelized%20panic/chrono"}, {"ID": "101", "Name": "happy thanksgiving and why is the sky pink", "Cluster": "the orange poppyverse", "Description": "The pink sky is not the emergency. The pink sky is just atmosphere. Everything else is the emergency.", "Characters": "Captain PILOT, Enlisted PILOT, Techie PILOT", "Size": "15", "(X) Relativity": "10", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "85", "Content URL": ""}, {"ID": "90", "Name": "section 94", "Cluster": "the orange poppyverse", "Description": "That is a large section number. Someone has been busy.", "Characters": "Techie PILOT, Various Bay Area housemates", "Size": "1", "(X) Relativity": "1", "(Y) Relatability": "5", "(Z) Depth": "1", "Collisions": "106", "Content URL": ""}, {"ID": "88", "Name": "you wore the same outfit twice", "Cluster": "the orange poppyverse", "Description": "The audacity. The nerve. The repeat.", "Characters": "Techie PILOT, Various Bay Area housemates", "Size": "1", "(X) Relativity": "1", "(Y) Relatability": "5", "(Z) Depth": "1", "Collisions": "106", "Content URL": ""}, {"ID": "87", "Name": "level up, level down, or just level sideways?", "Cluster": "the orange poppyverse", "Description": "Progress is relative. So is direction. So, honestly, is the floor.", "Characters": "Techie PILOT, Various Bay Area housemates", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "5", "(Z) Depth": "5", "Collisions": "106", "Content URL": ""}, {"ID": "84", "Name": "economy class sass", "Cluster": "the orange poppyverse", "Description": "Complimentary snacks will not be served. Neither will sympathy.", "Characters": "Techie PILOT, Various Bay Area housemates", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "4", "(Z) Depth": "0", "Collisions": "10", "Content URL": ""}, {"ID": "69", "Name": "assman omelet", "Cluster": "the orange poppyverse", "Description": "The fridge is haunting the kitchen. The kitchen is letting it.", "Characters": "AUTOPILOT is a fridge, Techie DONOR, Techie PILOT, UNIT is a stove, Various Bay Area housemates", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "5", "(Z) Depth": "0", "Collisions": "10, 26", "Content URL": ""}, {"ID": "67", "Name": "things to do in washington dc", "Cluster": "the orange poppyverse", "Description": "There's a lot to do in DC. None of it is enough to outrun being yourself.", "Characters": "Linguist PILOT, Various DC housemates", "Size": "40", "(X) Relativity": "1", "(Y) Relatability": "5", "(Z) Depth": "1", "Collisions": "8", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/things%20to%20do%20in%20dc"}, {"ID": "53", "Name": "houston, houston, i am the problem", "Cluster": "the orange poppyverse", "Description": "PILOT is the director of NASA. UNIT is a cat. DONOR may or may not be an extraterrestrial ghost simply messing around.", "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat", "Size": "1", "(X) Relativity": "1", "(Y) Relatability": "5", "(Z) Depth": "0", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/tagged/houston houston i'm the problem/chrono"}, {"ID": "50", "Name": "apple-y ever after", "Cluster": "the orange poppyverse", "Description": "Your software will update tonight.", "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates", "Size": "1", "(X) Relativity": "1", "(Y) Relatability": "5", "(Z) Depth": "0", "Collisions": "", "Content URL": ""}, {"ID": "40", "Name": "sheep milk latte", "Cluster": "the orange poppyverse", "Description": "Retired, coastal, vaguely cursed. The séance was not on the schedule.", "Characters": "Old retired DONOR, Old retired PILOT, UNIT the paranormal entity", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "4", "(Z) Depth": "0", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/tagged/sheep%20milk%20latte/chrono"}, {"ID": "43", "Name": "do you think they felt like heroes? / do you feel like a hero?", "Cluster": "the orange poppyverse", "Description": "A question posed quietly. No pressure. Really.", "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "4", "(Z) Depth": "1", "Collisions": "42, 89", "Content URL": ""}, {"ID": "31", "Name": "the house breathes / something in the walls watch", "Cluster": "the orange poppyverse", "Description": "Not creepy at all. Totally normal house. Definitely not watching you.", "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "4", "(Z) Depth": "4", "Collisions": "106", "Content URL": ""}, {"ID": "25", "Name": "four steps to nowhere", "Cluster": "the orange poppyverse", "Description": "Watch your step. The destination is not a place.", "Characters": "Techie DONOR, Techie PILOT", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "5", "(Z) Depth": "1", "Collisions": "", "Content URL": ""}, {"ID": "26", "Name": "happy memorial day", "Cluster": "the orange poppyverse", "Description": "A long weekend of trauma. The grill is not involved.", "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "5", "(Z) Depth": "1", "Collisions": "", "Content URL": ""}, {"ID": "8", "Name": "lost in translation", "Cluster": "the orange poppyverse", "Description": "Hopelessly, utterly, irretrievably lost. And that's just the vocabulary.", "Characters": "Linguist PILOT, Various expat PILOTs", "Size": "1", "(X) Relativity": "10", "(Y) Relatability": "4", "(Z) Depth": "0", "Collisions": "67", "Content URL": ""}, {"ID": "10", "Name": "happy fourth of july", "Cluster": "the orange poppyverse", "Description": "A single night. A lifetime of damage.", "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "5", "(Z) Depth": "1", "Collisions": "69", "Content URL": ""}, {"ID": "14", "Name": "in plaque vs in person", "Cluster": "the orange poppyverse", "Description": "The gap between the monument and the person. It's a canyon.", "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates", "Size": "10", "(X) Relativity": "6", "(Y) Relatability": "5", "(Z) Depth": "5", "Collisions": "13, 106", "Content URL": ""}]}, {"name": "the desert roseverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.", "color": "#ffd25f", "count": 7, "rows": [{"ID": "104", "Name": "scribing for the world house party ever", "Cluster": "the desert roseverse", "Description": "Someone has to document this. That someone is you.", "Characters": "PILOT, Various other fleet personnel", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "75", "Content URL": ""}, {"ID": "76", "Name": "i just saw beyonce", "Cluster": "the desert roseverse", "Description": "She saw BEYONCÉ. Actually.", "Characters": "PILOT, Various other fleet personnel", "Size": "1", "(X) Relativity": "1", "(Y) Relatability": "1", "(Z) Depth": "9", "Collisions": "75", "Content URL": ""}, {"ID": "75", "Name": "designated driver for the worst house party ever", "Cluster": "the desert roseverse", "Description": "You didn't want to be designated driver. And yet.", "Characters": "PILOT, Various other fleet personnel", "Size": "2", "(X) Relativity": "1", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "", "Content URL": ""}, {"ID": "46", "Name": "stained sands", "Cluster": "the desert roseverse", "Description": "It's ketchup. Relax. It's fine. It's definitely ketchup.", "Characters": "PILOT, Various other fleet personnel", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "10", "Collisions": "36", "Content URL": ""}, {"ID": "47", "Name": "sand & siblings", "Cluster": "the desert roseverse", "Description": "It's all fun and games until it isn't.", "Characters": "LIANG, PILOT", "Size": "10", "(X) Relativity": "10", "(Y) Relatability": "3", "(Z) Depth": "0", "Collisions": "36", "Content URL": ""}, {"ID": "36", "Name": "ant sized angels", "Cluster": "the desert roseverse", "Description": "From 10,000 feet, everyone looks like ants. At least ants have their lives together.", "Characters": "LIANG, PILOT", "Size": "3", "(X) Relativity": "10", "(Y) Relatability": "3", "(Z) Depth": "0", "Collisions": "47", "Content URL": "https://inpoppyfields.tumblr.com/tagged/ant%20sized%20angels/chrono"}, {"ID": "1", "Name": "sand & siblings & adult supervision", "Cluster": "the desert roseverse", "Description": "Mom and dad showed up. This changes everything.", "Characters": "LIANG, Older LIANG the special forces soldier, Older PILOT the CIA operator, PILOT", "Size": "10", "(X) Relativity": "10", "(Y) Relatability": "3", "(Z) Depth": "3", "Collisions": "54, 36, 47, 68", "Content URL": ""}]}, {"name": "the ultravioletverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.", "color": "#5e17eb", "count": 5, "rows": [{"ID": "100", "Name": "now you wanna demand a refund", "Cluster": "the ultravioletverse", "Description": "The experience was not as advertised.", "Characters": "Older PILOT the CIA operator, Techie PILOT", "Size": "1", "(X) Relativity": "10", "(Y) Relatability": "5", "(Z) Depth": "3", "Collisions": "1", "Content URL": ""}, {"ID": "98", "Name": "purple is the color of envy", "Cluster": "the ultravioletverse", "Description": "Green had the monopoly for centuries. Purple is staging a coup.", "Characters": "Older PILOT the CIA operator, Techie PILOT", "Size": "1", "(X) Relativity": "10", "(Y) Relatability": "5", "(Z) Depth": "3", "Collisions": "1", "Content URL": ""}, {"ID": "68", "Name": "found in translation", "Cluster": "the ultravioletverse", "Description": "Something was lost in translation. Something else was found.", "Characters": "Older PILOT the CIA operator, Techie PILOT", "Size": "3", "(X) Relativity": "0", "(Y) Relatability": "3", "(Z) Depth": "4", "Collisions": "1", "Content URL": ""}, {"ID": "54", "Name": "you wannabe me", "Cluster": "the ultravioletverse", "Description": "OLDER PILOT looks at MUNDANE PILOT and sees herself. MUNDANE PILOT looks back and has thoughts.", "Characters": "Older PILOT the CIA operator, Techie PILOT", "Size": "2", "(X) Relativity": "10", "(Y) Relatability": "5", "(Z) Depth": "4", "Collisions": "25, 1", "Content URL": ""}, {"ID": "6", "Name": "black opt in or out?", "Cluster": "the ultravioletverse", "Description": "OLDER PILOT is being asked a question. That question is the entire premise.", "Characters": "Older PILOT the CIA operator, Techie PILOT", "Size": "1", "(X) Relativity": "0", "(Y) Relatability": "3", "(Z) Depth": "3", "Collisions": "1", "Content URL": ""}]}, {"name": "the lilyverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.", "color": "#005eff", "count": 5, "rows": [{"ID": "65", "Name": "a spark in the dark", "Cluster": "the lilyverse", "Description": "The light reaches the darkest corners of the solar system. PILOT makes sure of it.", "Characters": "Commander DONOR, Lily PILOT is a ghost", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "6", "Collisions": "37", "Content URL": ""}, {"ID": "59", "Name": "lily pond ripples", "Cluster": "the lilyverse", "Description": "In the dark, lilies bloom. Everything else is negotiable.", "Characters": "AUTOPILOT, Commander DONOR", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "37", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/lily%20ponderings"}, {"ID": "48", "Name": "anomalies in pink", "Cluster": "the lilyverse", "Description": "The universe turns pink. Things get strange.", "Characters": "AUTOPILOT, Commander DONOR, Lily PILOT is a ghost, UNIT", "Size": "15", "(X) Relativity": "10", "(Y) Relatability": "1", "(Z) Depth": "4", "Collisions": "4, 27, 51", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/anomalies%20in%20pink"}, {"ID": "37", "Name": "lilium candidium", "Cluster": "the lilyverse", "Description": "The dark alternate timeline: DONOR commands alone, PILOT is dead from the start, and AUTOPILOT is unbothered about all of it.", "Characters": "AUTOPILOT, Commander DONOR, Lily PILOT", "Size": "15", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "7", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/lilium%20candidum"}, {"ID": "2", "Name": "uncanny valley", "Cluster": "the lilyverse", "Description": "AUTOPILOT just wants its mom. In this universe, that's more complicated than it sounds.", "Characters": "AUTOPILOT, Lily PILOT is a ghost", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "6", "Collisions": "48", "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/uncanny%20valley"}]}, {"name": "the spider lilyverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.", "color": "#4ce4ff", "count": 9, "rows": [{"ID": "96", "Name": "smoldering embers", "Cluster": "the spider lilyverse", "Description": "After the burn, the slow fade.", "Characters": "Rusted PILOT", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "9", "Collisions": "95, 96, 18", "Content URL": ""}, {"ID": "95", "Name": "orders from somewhere high above", "Cluster": "the spider lilyverse", "Description": "This is above your clearance level. It's also above everyone else's.", "Characters": "Commander DONOR, SANTOS the medic", "Size": "5", "(X) Relativity": "3", "(Y) Relatability": "1", "(Z) Depth": "8", "Collisions": "", "Content URL": ""}, {"ID": "93", "Name": "haunting goes both ways", "Cluster": "the spider lilyverse", "Description": "You can haunt yourself. Your past self can haunt yourself, and so can your future self. The universe has a truly terrible sense of humor.", "Characters": "Rusted PILOT, Rusted PILOT as a ghost, Young reincarnated PILOT, Young reincarnated PILOT as a hallucination", "Size": "5", "(X) Relativity": "10", "(Y) Relatability": "1", "(Z) Depth": "6", "Collisions": "18", "Content URL": ""}, {"ID": "52", "Name": "NULL error", "Cluster": "the spider lilyverse", "Description": "Meet NULL: a unit with no soul. This should be comforting. It is not.", "Characters": "NULL", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "7", "Content URL": ""}, {"ID": "44", "Name": "hot and cold", "Cluster": "the spider lilyverse", "Description": "Opposites attract. This is textbook. This does not make it easier.", "Characters": "Commander DONOR is also an anomalous entity, Rusted PILOT as a ghost", "Size": "1", "(X) Relativity": "9", "(Y) Relatability": "2", "(Z) Depth": "3", "Collisions": "41", "Content URL": ""}, {"ID": "38", "Name": "santos does not believe in ghosts", "Cluster": "the spider lilyverse", "Description": "SANTOS does not believe in ghosts. SANTOS is surrounded by ghosts.", "Characters": "Commander SANTOS, Rusted PILOT as a ghost", "Size": "1", "(X) Relativity": "5", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "7", "Content URL": ""}, {"ID": "15", "Name": "kintsugi in gold", "Cluster": "the spider lilyverse", "Description": "The cracks are filled with gold. That's the whole point.", "Characters": "Commander SANTOS, Young reincarnated PILOT", "Size": "5", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "5", "Collisions": "7, 37", "Content URL": ""}, {"ID": "18", "Name": "flecks of gold, rekindled", "Cluster": "the spider lilyverse", "Description": "Burn back brighter. The universe gave it another shot.", "Characters": "Commander SANTOS, Young reincarnated PILOT", "Size": "5", "(X) Relativity": "7", "(Y) Relatability": "1", "(Z) Depth": "7", "Collisions": "7", "Content URL": ""}, {"ID": "7", "Name": "flecks of gold", "Cluster": "the spider lilyverse", "Description": "Burn bright. While you can.", "Characters": "Rusted PILOT, Young ensign SANTOS", "Size": "10", "(X) Relativity": "0", "(Y) Relatability": "1", "(Z) Depth": "8", "Collisions": "", "Content URL": ""}]}, {"name": "beyond the poppyverse", "cover_url": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "description": "Where the fourth wall gets thin and the author starts pacing.", "color": "#ffc5c5", "count": 4, "rows": [{"ID": "41", "Name": "celestial bodies", "Cluster": "beyond the poppyverse", "Description": "PILOT is a neutron star. DONOR is a black hole. You're doing stellar, ladies.", "Characters": "DONOR the black hole, PILOT the neutron star", "Size": "1", "(X) Relativity": "10", "(Y) Relatability": "2", "(Z) Depth": "2", "Collisions": "", "Content URL": ""}, {"ID": "35", "Name": "make the stars scream", "Cluster": "beyond the poppyverse", "Description": "The stars are screaming. Literally.", "Characters": "DONOR, PILOT, Various other familiar souls", "Size": "1", "(X) Relativity": "10", "(Y) Relatability": "2", "(Z) Depth": "10", "Collisions": "", "Content URL": ""}, {"ID": "16", "Name": "21 pilots, too many pilots", "Cluster": "beyond the poppyverse", "Description": "All the PILOTs, from every fork and timeline and universe. No such thing as too many. Probably.", "Characters": "All the PILOTs, Techie PILOT", "Size": "5", "(X) Relativity": "10", "(Y) Relatability": "2", "(Z) Depth": "0", "Collisions": "", "Content URL": "https://inpoppyfields.tumblr.com/tagged/21%20pilots%20too%20many%20pilots/chrono"}, {"ID": "19", "Name": "you’ve got soul", "Cluster": "beyond the poppyverse", "Description": "The author hopes you do. Really.", "Characters": "", "Size": "1", "(X) Relativity": "10", "(Y) Relatability": "2", "(Z) Depth": "0", "Collisions": "", "Content URL": ""}]}], "columns": ["ID", "Name", "Cluster", "Description", "Characters", "Size", "(X) Relativity", "(Y) Relatability", "(Z) Depth", "Collisions", "Content URL"]}</script>
-  <script>
-    const data = JSON.parse(document.getElementById('dashboard-data').textContent);
+  <script id="poppy-data" type="application/json">
+{
+  "clusters": [
+    {
+      "name": "welcome to the poppyverse",
+      "color": "#ff1447",
+      "description": "Where it all begins. Your first step into this mess.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 0
+    },
+    {
+      "name": "deeper into the poppyverse",
+      "color": "#ff00a1",
+      "description": "Same multiverse branch, deeper layers, fewer safety rails.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 1
+    },
+    {
+      "name": "the red poppyverse",
+      "color": "#c40000",
+      "description": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 2
+    },
+    {
+      "name": "the orange poppyverse",
+      "color": "#ff772b",
+      "description": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 3
+    },
+    {
+      "name": "the desert roseverse",
+      "color": "#ffd25f",
+      "description": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 4
+    },
+    {
+      "name": "the ultravioletverse",
+      "color": "#5e17eb",
+      "description": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 5
+    },
+    {
+      "name": "the lilyverse",
+      "color": "#005eff",
+      "description": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 6
+    },
+    {
+      "name": "the spider lilyverse",
+      "color": "#4ce4ff",
+      "description": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 7
+    },
+    {
+      "name": "beyond the poppyverse",
+      "color": "#ffc5c5",
+      "description": "Where the fourth wall gets thin and the author starts pacing.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 8
+    }
+  ],
+  "entriesByCluster": {
+    "welcome to the poppyverse": [
+      {
+        "Name": "found files",
+        "Description": "Supplementary material. Read this before asking dumb questions.",
+        "Characters": "",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/found%20files"
+      },
+      {
+        "Name": "the beginning",
+        "Description": "Start here. One universe, out of many more to come. One mech unit, one pilot, one donor (donor of what, you’ll find out soon).",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/beginnings"
+      },
+      {
+        "Name": "pilot postings",
+        "Description": "PILOT discovers the internet. The internet is not ready.",
+        "Characters": "PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/pilot%20postings"
+      },
+      {
+        "Name": "automated absurdity",
+        "Description": "Yes, it's absurd. No, there will be no further explanation. UNIT is involved.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/automated%20absurdity"
+      },
+      {
+        "Name": "gentle giant",
+        "Description": "”Be strong enough to be gentle.”",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/gentle%20giant"
+      },
+      {
+        "Name": "machine learnings",
+        "Description": "UNIT is a machine learning things. The distinction matters. Whether what it's learning is reassuring or terrifying depends.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/machine%20learnings"
+      },
+      {
+        "Name": "unit by unit",
+        "Description": "Turns out UNIT isn't the only unit. There are others. This is not as comforting as it sounds.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/character%20spotlight"
+      },
+      {
+        "Name": "holomatter matters",
+        "Description": "Units. Units. Robots in disguise. Units. Units. More than meets the eye… because underneath the chassis and the horns and the several tons of metal is, if you look closely enough, something that learned to be human before it ever had the chance to be anything else.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/holomatter%20matters"
+      },
+      {
+        "Name": "skin and steel",
+        "Description": "What strength actually looks like.  Flesh and metal, soft and sharp. All are strong. None are simple.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/skin and steel"
+      },
+      {
+        "Name": "internal comms",
+        "Description": "Slack but orbital. The out-of-office replies are written in four languages and none of them are helpful.",
+        "Characters": "PILOT, Various other fleet personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/internal%20comms"
+      },
+      {
+        "Name": "mechanized messaging",
+        "Description": "Slack but sentient and enormous. The read receipts are haunting. So is everything else.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mechanized%20messaging"
+      },
+      {
+        "Name": "post-piloting",
+        "Description": "Post-everything, sort of. PILOT is retired — functionally, if not emotionally.",
+        "Characters": "PILOT the retired pilot",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/post%20piloting"
+      },
+      {
+        "Name": "area fifty-DONE",
+        "Description": "What happens at Area Fifty-Done stays at Area Fifty-Done. Allegedly.",
+        "Characters": "PILOT the civilian test pilot, REYES",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/area%20fifty%20done/chrono"
+      }
+    ],
+    "deeper into the poppyverse": [
+      {
+        "Name": "rest and rust",
+        "Description": "A million ways to die. None of them restful. All of them rusty.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/rest%20and%20rust"
+      },
+      {
+        "Name": "mechanical mortality",
+        "Description": "Units can die. Let that sink in.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mechanical%20mortality"
+      },
+      {
+        "Name": "ghost stories",
+        "Description": "Literal ghosts. Some of them are irritated about it.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/ghost%20stories"
+      },
+      {
+        "Name": "sisterhood in skin and steel",
+        "Description": "UNIT and AUTOPILOT, wholesome holomatter siblings… and then the sad part happens.",
+        "Characters": "AUTOPILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/sisterhood%20in%20steel%20and%20skin/chrono"
+      },
+      {
+        "Name": "commander UNIT",
+        "Description": "UNIT takes command. PILOT is dead. The universe reconsiders its choices.",
+        "Characters": "Commander UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/commander unit"
+      },
+      {
+        "Name": "commander PILOT",
+        "Description": "PILOT takes command. UNIT is dead. The universe holds its breath.",
+        "Characters": "Commander PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/commander%20pilot"
+      },
+      {
+        "Name": "mergence",
+        "Description": "PILOT and UNIT become one entity. Permanently. This is not a metaphor.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mergence"
+      }
+    ],
+    "the red poppyverse": [
+      {
+        "Name": "dress in layers",
+        "Description": "Dress for the weather and emergency triage.",
+        "Characters": "SANTOS the medic",
+        "Content URL": ""
+      },
+      {
+        "Name": "the civilian",
+        "Description": "She's just here to observe. Totally just observing.",
+        "Characters": "DONOR",
+        "Content URL": ""
+      },
+      {
+        "Name": "the sideliner",
+        "Description": "Benchwarmers have the best view of the game.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "beyond death and recognition",
+        "Description": "DONOR's used to patients who don't talk back. These ones won't shut up, and that’s beautiful.",
+        "Characters": "Mortician DONOR",
+        "Content URL": ""
+      },
+      {
+        "Name": "the piloting",
+        "Description": "The haunting, but make it specifically PILOT.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "economy class is a pain in the ass",
+        "Description": "The legroom is genuinely terrible. This is the least of everyone's problems.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "unhinged lids and minds",
+        "Description": "The lids in question will be explained. The minds in question will not.",
+        "Characters": "Rusted PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "houston we’ve got a big problem",
+        "Description": "Yes you do. Yes it is massive. Houston cannot help.",
+        "Characters": "PILOT, Various other fleet personnel",
+        "Content URL": ""
+      },
+      {
+        "Name": "houston we’ve got a bigger problem",
+        "Description": "If you thought the previous crew had it bad, this new crew has escalated it.",
+        "Characters": "PILOT, Various other fleet personnel",
+        "Content URL": ""
+      },
+      {
+        "Name": "you get an f for effort",
+        "Description": "The F stands for failure.",
+        "Characters": "PILOT the civilian test pilot",
+        "Content URL": ""
+      },
+      {
+        "Name": "it’s your turn",
+        "Description": "Congratulations. You've been selected.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "it was almost your turn",
+        "Description": "Congratulations. You were almost selected.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "you get a gold star",
+        "Description": "Congratulations. That is all.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "counting stars",
+        "Description": "Everyone is counting stars. Way, way too many stars. No one is stopping.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "six feet long and under",
+        "Description": "Human-length. Human-width. The math on this one is deliberately uncomfortable.",
+        "Characters": "PILOT, SANTOS the medic",
+        "Content URL": ""
+      },
+      {
+        "Name": "contracted envy",
+        "Description": "DONOR works in the morgue. The dead don't complain. The living do. She prefers the dead, sometimes.",
+        "Characters": "Mortician DONOR",
+        "Content URL": ""
+      },
+      {
+        "Name": "dreams of death",
+        "Description": "PILOT dreams. They are not good dreams.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "flirting with death",
+        "Description": "Not metaphorically. Literally circling the drain and making eye contact with it.",
+        "Characters": "Mortician DONOR, Various other fleet personnel",
+        "Content URL": ""
+      },
+      {
+        "Name": "flirting after death",
+        "Description": "Death hasn't stopped anyone's game. If anything, it's improved it.",
+        "Characters": "Various other fleet personnel",
+        "Content URL": ""
+      },
+      {
+        "Name": "stars on a wall",
+        "Description": "PILOT counts stars. There are still too many. She also keeps going.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "stars on a canvas",
+        "Description": "DONOR counts stars. There are too many. She keeps going anyway.",
+        "Characters": "DONOR",
+        "Content URL": ""
+      },
+      {
+        "Name": "pre-piloting",
+        "Description": "Before PILOT was PILOT, she was something else.",
+        "Characters": "PILOT",
+        "Content URL": ""
+      }
+    ],
+    "the orange poppyverse": [
+      {
+        "Name": "by the bay",
+        "Description": "Bay Area. Gray Area. Everyone here is a tired techie quietly screaming into their third cold brew.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "in serif vs in source sans",
+        "Description": "The gap between what got written down and what actually happened . It’s a canyon.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "merry christmas now who stickerbombed the house",
+        "Description": "The house has been stickerbombed. The house did not consent to being stickerbombed. Merry Christmas.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "things to do in washington dc",
+        "Description": "There's a lot to do in DC. None of it is enough to outrun being yourself.",
+        "Characters": "Linguist PILOT, Various DC housemates",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/things%20to%20do%20in%20dc"
+      },
+      {
+        "Name": "walk your pet rock",
+        "Description": "Please clean up after your pet. Your pet is a rock. Your rock is more than a rock.",
+        "Characters": "Linguist PILOT, The clinger, Various DC housemates",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/the%20unauthorized%20pet%20rock"
+      },
+      {
+        "Name": "genre glitches and panelized panic",
+        "Description": "The Poppyverse becomes a manga. It doesn't even last till lunch. The fourth wall was not designed to handle this art style.",
+        "Characters": "PILOT, Techie PILOT, Various Bay Area housemates, Various other fleet personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/genre%20glitches%20and%20panelized%20panic/chrono"
+      },
+      {
+        "Name": "happy thanksgiving and why is the sky pink",
+        "Description": "The pink sky is not the emergency. The pink sky is just atmosphere. Everything else is the emergency.",
+        "Characters": "Captain PILOT, Enlisted PILOT, Techie PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "section 94",
+        "Description": "That is a large section number. Someone has been busy.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "you wore the same outfit twice",
+        "Description": "The audacity. The nerve. The repeat.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "level up, level down, or just level sideways?",
+        "Description": "Progress is relative. So is direction. So, honestly, is the floor.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "economy class sass",
+        "Description": "Complimentary snacks will not be served. Neither will sympathy.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "assman omelet",
+        "Description": "The fridge is haunting the kitchen. The kitchen is letting it.",
+        "Characters": "AUTOPILOT is a fridge, Techie DONOR, Techie PILOT, UNIT is a stove, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "houston, houston, i am the problem",
+        "Description": "PILOT is the director of NASA. UNIT is a cat. DONOR may or may not be an extraterrestrial ghost simply messing around.",
+        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/houston houston i'm the problem/chrono"
+      },
+      {
+        "Name": "apple-y ever after",
+        "Description": "Your software will update tonight.",
+        "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "sheep milk latte",
+        "Description": "Retired, coastal, vaguely cursed. The séance was not on the schedule.",
+        "Characters": "Old retired DONOR, Old retired PILOT, UNIT the paranormal entity",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/sheep%20milk%20latte/chrono"
+      },
+      {
+        "Name": "do you think they felt like heroes? / do you feel like a hero?",
+        "Description": "A question posed quietly. No pressure. Really.",
+        "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "the house breathes / something in the walls watch",
+        "Description": "Not creepy at all. Totally normal house. Definitely not watching you.",
+        "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "four steps to nowhere",
+        "Description": "Watch your step. The destination is not a place.",
+        "Characters": "Techie DONOR, Techie PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "happy memorial day",
+        "Description": "A long weekend of trauma. The grill is not involved.",
+        "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "lost in translation",
+        "Description": "Hopelessly, utterly, irretrievably lost. And that's just the vocabulary.",
+        "Characters": "Linguist PILOT, Various expat PILOTs",
+        "Content URL": ""
+      },
+      {
+        "Name": "happy fourth of july",
+        "Description": "A single night. A lifetime of damage.",
+        "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "in plaque vs in person",
+        "Description": "The gap between the monument and the person. It's a canyon.",
+        "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      }
+    ],
+    "the desert roseverse": [
+      {
+        "Name": "designated driver for the worst house party ever",
+        "Description": "You didn't want to be designated driver. And yet.",
+        "Characters": "PILOT, Various other fleet personnel",
+        "Content URL": ""
+      },
+      {
+        "Name": "scribing for the world house party ever",
+        "Description": "Someone has to document this. That someone is you.",
+        "Characters": "PILOT, Various other fleet personnel",
+        "Content URL": ""
+      },
+      {
+        "Name": "i just saw beyonce",
+        "Description": "She saw BEYONCÉ. Actually.",
+        "Characters": "PILOT, Various other fleet personnel",
+        "Content URL": ""
+      },
+      {
+        "Name": "sand & siblings",
+        "Description": "It's all fun and games until it isn't.",
+        "Characters": "LIANG, PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "sand & siblings & adult supervision",
+        "Description": "Mom and dad showed up. This changes everything.",
+        "Characters": "LIANG, Older LIANG the special forces soldier, Older PILOT the CIA operator, PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "stained sands",
+        "Description": "It's ketchup. Relax. It's fine. It's definitely ketchup.",
+        "Characters": "PILOT, Various other fleet personnel",
+        "Content URL": ""
+      },
+      {
+        "Name": "ant sized angels",
+        "Description": "From 10,000 feet, everyone looks like ants. At least ants have their lives together.",
+        "Characters": "LIANG, PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/ant%20sized%20angels/chrono"
+      }
+    ],
+    "the ultravioletverse": [
+      {
+        "Name": "you wannabe me",
+        "Description": "OLDER PILOT looks at MUNDANE PILOT and sees herself. MUNDANE PILOT looks back and has thoughts.",
+        "Characters": "Older PILOT the CIA operator, Techie PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "now you wanna demand a refund",
+        "Description": "The experience was not as advertised.",
+        "Characters": "Older PILOT the CIA operator, Techie PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "purple is the color of envy",
+        "Description": "Green had the monopoly for centuries. Purple is staging a coup.",
+        "Characters": "Older PILOT the CIA operator, Techie PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "found in translation",
+        "Description": "Something was lost in translation. Something else was found.",
+        "Characters": "Older PILOT the CIA operator, Techie PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "black opt in or out?",
+        "Description": "OLDER PILOT is being asked a question. That question is the entire premise.",
+        "Characters": "Older PILOT the CIA operator, Techie PILOT",
+        "Content URL": ""
+      }
+    ],
+    "the lilyverse": [
+      {
+        "Name": "lilium candidium",
+        "Description": "The dark alternate timeline: DONOR commands alone, PILOT is dead from the start, and AUTOPILOT is unbothered about all of it.",
+        "Characters": "AUTOPILOT, Commander DONOR, Lily PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/lilium%20candidum"
+      },
+      {
+        "Name": "uncanny valley",
+        "Description": "AUTOPILOT just wants its mom. In this universe, that's more complicated than it sounds.",
+        "Characters": "AUTOPILOT, Lily PILOT is a ghost",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/uncanny%20valley"
+      },
+      {
+        "Name": "a spark in the dark",
+        "Description": "The light reaches the darkest corners of the solar system. PILOT makes sure of it.",
+        "Characters": "Commander DONOR, Lily PILOT is a ghost",
+        "Content URL": ""
+      },
+      {
+        "Name": "lily pond ripples",
+        "Description": "In the dark, lilies bloom. Everything else is negotiable.",
+        "Characters": "AUTOPILOT, Commander DONOR",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/lily%20ponderings"
+      },
+      {
+        "Name": "anomalies in pink",
+        "Description": "The universe turns pink. Things get strange.",
+        "Characters": "AUTOPILOT, Commander DONOR, Lily PILOT is a ghost, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/anomalies%20in%20pink"
+      }
+    ],
+    "the spider lilyverse": [
+      {
+        "Name": "smoldering embers",
+        "Description": "After the burn, the slow fade.",
+        "Characters": "Rusted PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "orders from somewhere high above",
+        "Description": "This is above your clearance level. It's also above everyone else's.",
+        "Characters": "Commander DONOR, SANTOS the medic",
+        "Content URL": ""
+      },
+      {
+        "Name": "haunting goes both ways",
+        "Description": "You can haunt yourself. Your past self can haunt yourself, and so can your future self. The universe has a truly terrible sense of humor.",
+        "Characters": "Rusted PILOT, Rusted PILOT as a ghost, Young reincarnated PILOT, Young reincarnated PILOT as a hallucination",
+        "Content URL": ""
+      },
+      {
+        "Name": "NULL error",
+        "Description": "Meet NULL: a unit with no soul. This should be comforting. It is not.",
+        "Characters": "NULL",
+        "Content URL": ""
+      },
+      {
+        "Name": "hot and cold",
+        "Description": "Opposites attract. This is textbook. This does not make it easier.",
+        "Characters": "Commander DONOR is also an anomalous entity, Rusted PILOT as a ghost",
+        "Content URL": ""
+      },
+      {
+        "Name": "santos does not believe in ghosts",
+        "Description": "SANTOS does not believe in ghosts. SANTOS is surrounded by ghosts.",
+        "Characters": "Commander SANTOS, Rusted PILOT as a ghost",
+        "Content URL": ""
+      },
+      {
+        "Name": "kintsugi in gold",
+        "Description": "The cracks are filled with gold. That's the whole point.",
+        "Characters": "Commander SANTOS, Young reincarnated PILOT",
+        "Content URL": ""
+      },
+      {
+        "Name": "flecks of gold",
+        "Description": "Burn bright. While you can.",
+        "Characters": "Rusted PILOT, Young ensign SANTOS",
+        "Content URL": ""
+      },
+      {
+        "Name": "flecks of gold, rekindled",
+        "Description": "Burn back brighter. The universe gave it another shot.",
+        "Characters": "Commander SANTOS, Young reincarnated PILOT",
+        "Content URL": ""
+      }
+    ],
+    "beyond the poppyverse": [
+      {
+        "Name": "21 pilots, too many pilots",
+        "Description": "All the PILOTs, from every fork and timeline and universe. No such thing as too many. Probably.",
+        "Characters": "All the PILOTs, Techie PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/21%20pilots%20too%20many%20pilots/chrono"
+      },
+      {
+        "Name": "you’ve got soul",
+        "Description": "The author hopes you do. Really.",
+        "Characters": "",
+        "Content URL": ""
+      },
+      {
+        "Name": "make the stars scream",
+        "Description": "The stars are screaming. Literally.",
+        "Characters": "DONOR, PILOT, Various other familiar souls",
+        "Content URL": ""
+      },
+      {
+        "Name": "celestial bodies",
+        "Description": "PILOT is a neutron star. DONOR is a black hole. You're doing stellar, ladies.",
+        "Characters": "DONOR the black hole, PILOT the neutron star",
+        "Content URL": ""
+      }
+    ]
+  },
+  "visibleColumns": [
+    "Name",
+    "Description",
+    "Characters",
+    "Content URL"
+  ]
+}
+</script>
 
-    const grid = document.getElementById('clusterGrid');
-    const drawer = document.getElementById('drawer');
-    const backdrop = document.getElementById('backdrop');
-    const drawerTop = document.getElementById('drawerTop');
-    const drawerKicker = document.getElementById('drawerKicker');
-    const drawerTitle = document.getElementById('drawerTitle');
-    const drawerDesc = document.getElementById('drawerDesc');
-    const tableWrap = document.getElementById('tableWrap');
-    const closeButton = document.getElementById('closeButton');
+  <script>
+    "use strict";
+
+    const rawData = document.getElementById("poppy-data").textContent;
+    const DATA = JSON.parse(rawData);
+
+    const clusterGrid = document.getElementById("clusterGrid");
+    const drawer = document.getElementById("drawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+    const drawerClose = document.getElementById("drawerClose");
+    const drawerTitle = document.getElementById("drawerTitle");
+    const drawerDescription = document.getElementById("drawerDescription");
+    const drawerBody = document.getElementById("drawerBody");
 
     function escapeHtml(value) {
-      return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
-    function cssUrl(value) {
-      return `url("${String(value).replaceAll('"', '%22')}")`;
+    function isUrl(value) {
+      return /^https?:\/\//i.test(String(value || "").trim());
     }
 
-    function linkifyCell(column, value) {
-      const text = String(value ?? '').trim();
+    function renderCell(column, value) {
+      const text = String(value || "").trim();
+
       if (!text) {
-        return '<span style="opacity:0.45">—</span>';
+        return '<span class="empty">—</span>';
       }
 
-      const isUrlColumn = /url|link|href/i.test(column);
-      if (isUrlColumn && /^https?:\/\//i.test(text)) {
-        const safe = escapeHtml(text);
-        return `<a href="${safe}" target="_blank" rel="noopener noreferrer">open</a>`;
+      if (column === "Content URL" && isUrl(text)) {
+        return `<a class="content-link" href="${escapeHtml(text)}" target="_blank" rel="noopener">Read</a>`;
       }
 
       return escapeHtml(text);
     }
 
-    function renderGrid() {
-      grid.innerHTML = '';
+    function renderTable(entries) {
+      const columns = DATA.visibleColumns || ["Name", "Description", "Characters", "Content URL"];
 
-      data.clusters.forEach((cluster, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'cluster-card' + (cluster.cover_url ? ' has-cover' : '');
-        button.style.setProperty('--cluster-color', cluster.color || '#555555');
-        button.style.setProperty('--overlay-opacity', cluster.cover_url ? '0.74' : '0.96');
-
-        if (cluster.cover_url) {
-          button.style.setProperty('--cover-url', cssUrl(cluster.cover_url));
-        }
-
-        button.innerHTML = `
-          <span class="cluster-count">${cluster.count} entr${cluster.count === 1 ? 'y' : 'ies'}</span>
-          <h2 class="cluster-name">${escapeHtml(cluster.name)}</h2>
-        `;
-
-        button.addEventListener('click', () => openDrawer(index));
-        grid.appendChild(button);
-      });
-    }
-
-    function renderTable(cluster) {
-      const rows = cluster.rows || [];
-      const columns = data.columns || [];
-
-      if (!rows.length) {
-        tableWrap.innerHTML = '<p class="empty-state">No TOC entries found for this cluster.</p>';
-        return;
+      if (!entries || entries.length === 0) {
+        return '<p class="no-entries">No entries in this cluster yet. The void remains administratively unfilled.</p>';
       }
 
-      const thead = columns.map(col => `<th>${escapeHtml(col)}</th>`).join('');
-      const tbody = rows.map(row => {
-        const cells = columns.map(col => `<td>${linkifyCell(col, row[col])}</td>`).join('');
-        return `<tr>${cells}</tr>`;
-      }).join('');
+      const thead = columns
+        .map(col => `<th>${escapeHtml(col)}</th>`)
+        .join("");
 
-      tableWrap.innerHTML = `
-        <table>
-          <thead><tr>${thead}</tr></thead>
-          <tbody>${tbody}</tbody>
-        </table>
+      const rows = entries
+        .map(entry => {
+          const cells = columns
+            .map(col => `<td>${renderCell(col, entry[col])}</td>`)
+            .join("");
+          return `<tr>${cells}</tr>`;
+        })
+        .join("");
+
+      return `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>${thead}</tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+        </div>
       `;
     }
 
-    function openDrawer(index) {
-      const cluster = data.clusters[index];
+    function openDrawer(cluster) {
+      const entries = DATA.entriesByCluster[cluster.name] || [];
 
-      drawerTop.style.setProperty('--active-color', cluster.color || '#555555');
-      drawerKicker.textContent = `${cluster.count} TOC entr${cluster.count === 1 ? 'y' : 'ies'}`;
-      drawerTitle.textContent = cluster.name;
-      drawerDesc.textContent = cluster.description || 'No cluster description provided. The void declined to comment.';
+      document.documentElement.style.setProperty("--active-color", cluster.color || "#FF1447");
 
-      renderTable(cluster);
+      drawerTitle.textContent = cluster.name || "";
+      drawerDescription.textContent = cluster.description || "";
+      drawerBody.innerHTML = renderTable(entries);
 
-      drawer.classList.add('open');
-      backdrop.classList.add('open');
-      drawer.setAttribute('aria-hidden', 'false');
-      backdrop.setAttribute('aria-hidden', 'false');
-      closeButton.focus();
+      drawer.classList.add("open");
+      drawerBackdrop.classList.add("open");
+      drawer.setAttribute("aria-hidden", "false");
     }
 
     function closeDrawer() {
-      drawer.classList.remove('open');
-      backdrop.classList.remove('open');
-      drawer.setAttribute('aria-hidden', 'true');
-      backdrop.setAttribute('aria-hidden', 'true');
+      drawer.classList.remove("open");
+      drawerBackdrop.classList.remove("open");
+      drawer.setAttribute("aria-hidden", "true");
     }
 
-    closeButton.addEventListener('click', closeDrawer);
-    backdrop.addEventListener('click', closeDrawer);
+    function renderClusters() {
+      clusterGrid.innerHTML = "";
 
-    window.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
+      DATA.clusters.forEach(cluster => {
+        const entries = DATA.entriesByCluster[cluster.name] || [];
+        const hasCover = Boolean(cluster.coverUrl);
+
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = `cluster-card${hasCover ? " has-cover" : ""}`;
+        card.style.setProperty("--cluster-color", cluster.color || "#FF1447");
+        card.setAttribute("aria-label", `Open ${cluster.name}`);
+
+        const bg = hasCover
+          ? `<div class="cluster-bg" style="background-image: url('${escapeHtml(cluster.coverUrl)}');"></div>`
+          : "";
+
+        card.innerHTML = `
+          ${bg}
+          <div class="cluster-color"></div>
+          <div class="cluster-vignette"></div>
+          <div class="cluster-content">
+            <h2 class="cluster-name">${escapeHtml(cluster.name)}</h2>
+            <div class="cluster-count">${entries.length} entr${entries.length === 1 ? "y" : "ies"}</div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => openDrawer(cluster));
+        clusterGrid.appendChild(card);
+      });
+    }
+
+    drawerClose.addEventListener("click", closeDrawer);
+    drawerBackdrop.addEventListener("click", closeDrawer);
+
+    window.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
         closeDrawer();
       }
     });
 
-    renderGrid();
+    renderClusters();
   </script>
 </body>
 </html>
