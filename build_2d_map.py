@@ -470,6 +470,7 @@ def build_html(data: dict[str, Any]) -> str:
 
     .cluster-name {{
       margin: 0;
+      color: white;
       font-family: "Michroma", sans-serif;
       font-size: 18px;
       line-height: 1.18;
