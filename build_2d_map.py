@@ -9,15 +9,9 @@ Source files:
 Output:
 - 2d_map.html
 
-This page shows:
-- A grid of 300px x 200px cluster cards.
-- Each card uses the cluster color and optional cluster cover image.
-- Clicking a cluster opens a right-side drawer.
-- The drawer shows the cluster description and a clean table of entries.
-
-Important:
-The 2D drawer table intentionally ONLY includes reader-facing fields:
+2D drawer table intentionally shows only:
 - Name
+- Sub-parts
 - Description
 - Characters
 - Content URL
@@ -25,13 +19,12 @@ The 2D drawer table intentionally ONLY includes reader-facing fields:
 It intentionally excludes:
 - ID
 - Cluster
+- Sub-cluster
 - Size
 - Collisions
 - (X) Relativity
 - (Y) Relatability
 - (Z) Depth
-- Cover URL
-- Featured
 """
 
 from __future__ import annotations
@@ -41,6 +34,7 @@ import html
 import json
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote, urlsplit, urlunsplit
 
 
 ROOT = Path(__file__).resolve().parent
@@ -52,10 +46,9 @@ OUTPUT_HTML = ROOT / "2d_map.html"
 POPPY_PINK = "#FF1447"
 TUMBLR_ARCHIVE_URL = "https://inpoppyfields.tumblr.com/"
 
-# Strict allow-list for the 2D drawer table.
-# Do NOT add ID / Cluster / Size / Collisions / X/Y/Z unless you actually want them visible.
 VISIBLE_TOC_COLUMNS = [
     "Name",
+    "Sub-parts",
     "Description",
     "Characters",
     "Content URL",
@@ -63,7 +56,6 @@ VISIBLE_TOC_COLUMNS = [
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
-    """Read a CSV file using utf-8-sig to strip BOM if present."""
     if not path.exists():
         raise FileNotFoundError(f"Missing required file: {path.name}")
 
@@ -85,7 +77,6 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
 
 def normalize_key(value: str) -> str:
-    """Normalize column names for loose matching."""
     return (
         value.strip()
         .lower()
@@ -96,7 +87,6 @@ def normalize_key(value: str) -> str:
 
 
 def get_first(row: dict[str, str], candidates: list[str], default: str = "") -> str:
-    """Get the first matching value from a row using loose normalized column matching."""
     normalized = {normalize_key(k): k for k in row.keys()}
 
     for candidate in candidates:
@@ -108,7 +98,6 @@ def get_first(row: dict[str, str], candidates: list[str], default: str = "") -> 
 
 
 def clean_hex_color(value: str, fallback: str = POPPY_PINK) -> str:
-    """Return a valid-ish hex color string."""
     value = (value or "").strip()
     if not value:
         return fallback
@@ -122,12 +111,25 @@ def clean_hex_color(value: str, fallback: str = POPPY_PINK) -> str:
     return value
 
 
-def is_blank(value: Any) -> bool:
-    return value is None or str(value).strip() == ""
+def normalize_url(value: str) -> str:
+    value = str(value or "").strip()
+    if not value:
+        return ""
+
+    if not value.lower().startswith(("http://", "https://")):
+        return ""
+
+    try:
+        parts = urlsplit(value)
+        path = quote(parts.path, safe="/:%")
+        query = quote(parts.query, safe="=&?/%:+,#[]@!$'()*;")
+        fragment = quote(parts.fragment, safe="")
+        return urlunsplit((parts.scheme, parts.netloc, path, query, fragment))
+    except Exception:
+        return value
 
 
 def make_nav(active: str) -> str:
-    """Shared top bubble nav used across generated pages."""
     items = [
         ("Home", "index.html", "home"),
         ("About", "about.html", "about"),
@@ -159,7 +161,6 @@ def make_nav(active: str) -> str:
 
 
 def favicon_html() -> str:
-    """Emoji favicon."""
     return """
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="50%" x="50%" dominant-baseline="middle" text-anchor="middle" font-size="52">🌷</text></svg>'>
 """.strip()
@@ -181,7 +182,7 @@ def build_data() -> dict[str, Any]:
         )
 
         description = get_first(row, ["Description", "Desc"])
-        cover_url = get_first(row, ["Cover URL", "Cover", "Image URL", "Image"])
+        cover_url = normalize_url(get_first(row, ["Cover URL", "Cover", "Image URL", "Image"]))
 
         clusters.append(
             {
@@ -201,24 +202,17 @@ def build_data() -> dict[str, Any]:
 
     for row in toc_rows:
         cluster = get_first(row, ["Cluster", "Tags"])
-        if not cluster:
-            continue
-
-        # If a TOC row references a cluster not in SRC_clusters.csv, skip it for the 2D map.
-        # The cluster file is the source of truth for visible cards.
-        if cluster not in cluster_names:
+        if not cluster or cluster not in cluster_names:
             continue
 
         visible_row: dict[str, str] = {}
 
         for col in VISIBLE_TOC_COLUMNS:
             value = get_first(row, [col])
-            if not is_blank(value):
-                visible_row[col] = value
-            else:
-                visible_row[col] = ""
+            if col == "Content URL":
+                value = normalize_url(value)
+            visible_row[col] = value
 
-        # Skip fully empty-looking rows, but keep rows with at least a Name.
         if not visible_row.get("Name"):
             continue
 
@@ -232,13 +226,6 @@ def build_data() -> dict[str, Any]:
 
 
 def json_script(data: dict[str, Any]) -> str:
-    """
-    Embed JSON safely in a script tag.
-
-    Important:
-    Do NOT HTML-escape the entire JSON blob into &quot;.
-    Instead, JSON-dump it and protect closing script tags.
-    """
     raw = json.dumps(data, ensure_ascii=False, indent=2)
     raw = raw.replace("</", "<\\/")
     return f'<script id="poppy-data" type="application/json">\n{raw}\n</script>'
@@ -269,6 +256,7 @@ def build_html(data: dict[str, Any]) -> str:
       --muted: rgba(255, 255, 255, 0.68);
       --line: rgba(255, 255, 255, 0.14);
       --nav-height: 58px;
+      --active-color: {POPPY_PINK};
     }}
 
     * {{
@@ -469,8 +457,8 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     .cluster-name {{
+    color: white;
       margin: 0;
-      color: white;
       font-family: "Michroma", sans-serif;
       font-size: 18px;
       line-height: 1.18;
@@ -522,11 +510,6 @@ def build_html(data: dict[str, Any]) -> str:
       transform: translateX(0);
     }}
 
-    /*
-      Important spacing behavior:
-      The gradient reaches the literal top of the drawer.
-      The text inside gets padding-top so the fixed top nav does not block it.
-    */
     .drawer-header {{
       position: relative;
       padding: calc(var(--nav-height) + 26px) 28px 24px;
@@ -553,16 +536,6 @@ def build_html(data: dict[str, Any]) -> str:
       font-size: 20px;
       font-weight: 900;
       cursor: pointer;
-      transition:
-        background 160ms ease,
-        border-color 160ms ease,
-        box-shadow 160ms ease;
-    }}
-
-    .drawer-close:hover {{
-      background: rgba(255, 255, 255, 0.14);
-      border-color: color-mix(in srgb, var(--active-color) 70%, white 30%);
-      box-shadow: 0 0 18px color-mix(in srgb, var(--active-color) 45%, transparent);
     }}
 
     .drawer-title {{
@@ -599,7 +572,7 @@ def build_html(data: dict[str, Any]) -> str:
 
     table {{
       width: 100%;
-      min-width: 720px;
+      min-width: 760px;
       border-collapse: collapse;
     }}
 
@@ -649,10 +622,6 @@ def build_html(data: dict[str, Any]) -> str:
       letter-spacing: 0.08em;
       text-transform: uppercase;
       white-space: nowrap;
-    }}
-
-    .content-link:hover {{
-      filter: brightness(1.15);
     }}
 
     .no-entries {{
@@ -762,7 +731,7 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     function renderTable(entries) {{
-      const columns = DATA.visibleColumns || ["Name", "Description", "Characters", "Content URL"];
+      const columns = DATA.visibleColumns || ["Name", "Sub-parts", "Description", "Characters", "Content URL"];
 
       if (!entries || entries.length === 0) {{
         return '<p class="no-entries">No entries in this cluster yet. The void remains administratively unfilled.</p>';

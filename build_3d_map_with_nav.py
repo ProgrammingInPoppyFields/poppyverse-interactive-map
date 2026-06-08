@@ -9,18 +9,18 @@ Source files:
 Output:
 - 3d_map.html
 
-This page shows:
-- A cinematic 3D graph using Three.js + 3d-force-graph.
-- Cluster-colored glowing nodes.
-- Collision links.
-- A collapsible cluster legend.
-- A right-side drawer for clicked node details.
-- Shared top toolbar:
-  - Home
-  - About
-  - 2D Map
-  - 3D Map
-  - Tumblr Archive
+3D visual rules:
+- Keep graph nodes.
+- Keep collision links if resolvable.
+- Keep click drawer.
+- Keep top nav.
+- Keep Multiverse Color Legend.
+- Do NOT show axes.
+- Do NOT show axis labels.
+- Do NOT show hover labels.
+- Do NOT show HUD title/subtitle.
+- Do NOT show content ratings in clicked cards.
+- Do NOT show bounding cube.
 """
 
 from __future__ import annotations
@@ -30,6 +30,7 @@ import html
 import json
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote, urlsplit, urlunsplit
 
 
 ROOT = Path(__file__).resolve().parent
@@ -43,7 +44,6 @@ TUMBLR_ARCHIVE_URL = "https://inpoppyfields.tumblr.com/"
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
-    """Read CSV using utf-8-sig to strip BOM if present."""
     if not path.exists():
         raise FileNotFoundError(f"Missing required file: {path.name}")
 
@@ -53,15 +53,12 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
         for raw_row in reader:
             clean_row: dict[str, str] = {}
-
             for key, value in raw_row.items():
                 if key is None:
                     continue
-
                 clean_key = str(key).strip()
                 clean_value = "" if value is None else str(value).strip()
                 clean_row[clean_key] = clean_value
-
             rows.append(clean_row)
 
     return rows
@@ -109,7 +106,6 @@ def parse_float(value: str, fallback: float = 0.0) -> float:
     if not value:
         return fallback
 
-    # Accept "(7)" style too.
     if value.startswith("(") and ")" in value:
         value = value[1:value.index(")")]
 
@@ -125,11 +121,27 @@ def parse_bool(value: str) -> bool:
 
 def parse_list(value: str) -> list[str]:
     value = str(value or "").strip()
-
     if not value:
         return []
-
     return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def normalize_url(value: str) -> str:
+    value = str(value or "").strip()
+    if not value:
+        return ""
+
+    if not value.lower().startswith(("http://", "https://")):
+        return ""
+
+    try:
+        parts = urlsplit(value)
+        path = quote(parts.path, safe="/:%")
+        query = quote(parts.query, safe="=&?/%:+,#[]@!$'()*;")
+        fragment = quote(parts.fragment, safe="")
+        return urlunsplit((parts.scheme, parts.netloc, path, query, fragment))
+    except Exception:
+        return value
 
 
 def make_nav(active: str) -> str:
@@ -189,7 +201,7 @@ def build_data() -> dict[str, Any]:
         )
 
         description = get_first(row, ["Description", "Desc"])
-        cover_url = get_first(row, ["Cover URL", "Cover", "Image URL", "Image"])
+        cover_url = normalize_url(get_first(row, ["Cover URL", "Cover", "Image URL", "Image"]))
 
         cluster = {
             "name": name,
@@ -204,14 +216,14 @@ def build_data() -> dict[str, Any]:
 
     nodes: list[dict[str, Any]] = []
 
-    for row in toc_rows:
-        node_id = get_first(row, ["ID", "Id", "id"])
+    for row_index, row in enumerate(toc_rows, start=1):
+        node_id = get_first(row, ["ID", "Id", "id"]) or str(row_index)
         name = get_first(row, ["Name", "Title"])
 
         if not node_id:
-            node_id = name
+            node_id = str(row_index)
 
-        if not node_id or not name:
+        if not name:
             continue
 
         cluster_name = get_first(row, ["Cluster", "Tags"], "(unclustered)")
@@ -221,18 +233,19 @@ def build_data() -> dict[str, Any]:
         cluster_description = cluster["description"] if cluster else ""
 
         node = {
-            "id": node_id,
+            "id": str(node_id),
             "label": name,
             "cluster": cluster_name,
             "clusterDescription": cluster_description,
             "color": color,
             "description": get_first(row, ["Description", "Desc"]),
+            "subparts": get_first(row, ["Sub-parts", "Subparts", "Parts"]),
             "characters": parse_list(get_first(row, ["Characters"])),
             "collisions": parse_list(get_first(row, ["Collisions", "Collision"])),
-            "contentUrl": get_first(row, ["Content URL", "URL", "Url"]),
-            "coverUrl": get_first(row, ["Cover URL", "Cover", "Image URL", "Image"]),
+            "contentUrl": normalize_url(get_first(row, ["Content URL", "URL", "Url"])),
+            "coverUrl": normalize_url(get_first(row, ["Cover URL", "Cover", "Image URL", "Image"])),
             "featured": parse_bool(get_first(row, ["Featured"])),
-            "size": max(1.0, parse_float(get_first(row, ["Size", "Value"]), 5.0)),
+            "size": max(1.0, parse_float(get_first(row, ["Size", "Value"]), 1.0)),
             "xValue": parse_float(get_first(row, ["(X) Relativity", "X", "Relativity"]), 0.0),
             "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
             "zValue": parse_float(get_first(row, ["(Z) Depth", "Z", "Depth"]), 0.0),
@@ -245,7 +258,6 @@ def build_data() -> dict[str, Any]:
 
     for node in nodes:
         raw_id = str(node["id"]).strip()
-
         try:
             numeric_lookup[str(int(float(raw_id)))] = node
         except ValueError:
@@ -291,7 +303,7 @@ def build_data() -> dict[str, Any]:
                     "source": source_id,
                     "target": target_id,
                     "color": "#FFFFFF",
-                    "width": 1.6,
+                    "width": 1.3,
                 }
             )
 
@@ -432,35 +444,6 @@ def build_html(data: dict[str, Any]) -> str:
       height: 100vh;
     }}
 
-    .hud-title {{
-      position: fixed;
-      top: calc(var(--nav-height) + 20px);
-      left: 22px;
-      z-index: 20;
-      pointer-events: none;
-    }}
-
-    .hud-title h1 {{
-      margin: 0;
-      color: var(--poppy-pink);
-      font-family: "Michroma", sans-serif;
-      font-size: clamp(18px, 2.3vw, 30px);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      text-shadow:
-        0 0 12px rgba(255, 20, 71, 0.68),
-        0 0 30px rgba(255, 20, 71, 0.34);
-    }}
-
-    .hud-title p {{
-      max-width: 460px;
-      margin: 8px 0 0;
-      color: rgba(255, 255, 255, 0.66);
-      font-size: 13px;
-      line-height: 1.5;
-      text-shadow: 0 0 14px rgba(0, 0, 0, 0.82);
-    }}
-
     .legend {{
       position: fixed;
       top: calc(var(--nav-height) + 20px);
@@ -530,49 +513,6 @@ def build_html(data: dict[str, Any]) -> str:
       color: rgba(255, 255, 255, 0.66);
       font-size: 11px;
       line-height: 1.45;
-    }}
-
-    .hover-tip {{
-      position: fixed;
-      left: 22px;
-      bottom: 72px;
-      z-index: 26;
-      color: var(--poppy-pink);
-      font-family: "Michroma", sans-serif;
-      font-size: clamp(18px, 2vw, 28px);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      text-shadow: 0 0 18px rgba(0, 0, 0, 0.92);
-      opacity: 0;
-      transform: translateY(8px);
-      transition:
-        opacity 140ms ease,
-        transform 140ms ease;
-      pointer-events: none;
-      max-width: min(760px, calc(100vw - 44px));
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }}
-
-    .hover-tip.visible {{
-      opacity: 1;
-      transform: translateY(0);
-    }}
-
-    .axis-explainer {{
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 24;
-      color: rgba(255, 255, 255, 0.82);
-      text-align: right;
-      font-size: 10px;
-      line-height: 1.45;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      pointer-events: none;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
     }}
 
     .drawer-backdrop {{
@@ -702,34 +642,6 @@ def build_html(data: dict[str, Any]) -> str:
       line-height: 1.65;
     }}
 
-    .metric-grid {{
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }}
-
-    .metric {{
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.065);
-      border: 1px solid rgba(255, 255, 255, 0.11);
-    }}
-
-    .metric-label {{
-      color: rgba(255, 255, 255, 0.54);
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }}
-
-    .metric-value {{
-      margin-top: 4px;
-      color: #fff;
-      font-size: 18px;
-      font-weight: 900;
-    }}
-
     .read-link {{
       display: inline-flex;
       align-items: center;
@@ -747,17 +659,7 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     @media (max-width: 760px) {{
-      .hud-title {{
-        top: calc(var(--nav-height) + 14px);
-        left: 16px;
-        right: 16px;
-      }}
-
       .legend {{
-        display: none;
-      }}
-
-      .axis-explainer {{
         display: none;
       }}
 
@@ -778,26 +680,10 @@ def build_html(data: dict[str, Any]) -> str:
 
   <div id="graph"></div>
 
-  <section class="hud-title">
-    <h1>POPPYVERSE 3D MAP</h1>
-    <p>
-      Quantum entanglement, emotional gravity, collision lines, and other
-      suspiciously sincere crimes against linear organization.
-    </p>
-  </section>
-
   <aside id="legend" class="legend">
     <button id="legendToggle" class="legend-toggle" type="button">Multiverse Color Legend ▸</button>
     <div id="legendRows" class="legend-rows"></div>
   </aside>
-
-  <div id="hoverTip" class="hover-tip"></div>
-
-  <div class="axis-explainer">
-    <div><strong>Multiverse Positioning System</strong></div>
-    <div><strong>Quantum Entanglement:</strong> contained → meta bleed</div>
-    <div><strong>Emotional Gravity:</strong> light ↓ heavy</div>
-  </div>
 
   <div id="drawerBackdrop" class="drawer-backdrop"></div>
 
@@ -826,7 +712,6 @@ def build_html(data: dict[str, Any]) -> str:
     const NODE_SCATTER = 50;
 
     const graphEl = document.getElementById("graph");
-    const hoverTip = document.getElementById("hoverTip");
     const legend = document.getElementById("legend");
     const legendToggle = document.getElementById("legendToggle");
     const legendRows = document.getElementById("legendRows");
@@ -906,23 +791,6 @@ def build_html(data: dict[str, Any]) -> str:
       node.__glow.material.opacity = 0.82;
     }}
 
-    function showHoverTip(node) {{
-      if (!node || selectedNode) {{
-        hoverTip.classList.remove("visible");
-        hoverTip.textContent = "";
-        return;
-      }}
-
-      hoverTip.textContent = node.label || node.id || "";
-      hoverTip.style.color = node.color || "#FF1447";
-      hoverTip.classList.add("visible");
-    }}
-
-    function hideHoverTip() {{
-      hoverTip.classList.remove("visible");
-      hoverTip.textContent = "";
-    }}
-
     function renderList(items) {{
       if (!items || !items.length) return "<p>—</p>";
       return `<p>${{items.map(escapeHtml).join(", ")}}</p>`;
@@ -930,7 +798,6 @@ def build_html(data: dict[str, Any]) -> str:
 
     function openDrawer(node) {{
       selectedNode = node;
-      hideHoverTip();
       setHighlightedNode(node);
 
       const accent = node.color || "#FF1447";
@@ -947,6 +814,15 @@ def build_html(data: dict[str, Any]) -> str:
         ? `<a class="read-link" href="${{escapeHtml(node.contentUrl)}}" target="_blank" rel="noopener">Read More</a>`
         : `<p>Content not ready.</p>`;
 
+      const subpartsHtml = node.subparts
+        ? `
+          <section class="drawer-section">
+            <h3>Sub-parts</h3>
+            <p>${{escapeHtml(node.subparts)}}</p>
+          </section>
+        `
+        : "";
+
       drawerBody.innerHTML = `
         ${{cover}}
 
@@ -955,28 +831,7 @@ def build_html(data: dict[str, Any]) -> str:
           <p>${{escapeHtml(node.description || "No description yet.")}}</p>
         </section>
 
-        <section class="drawer-section">
-          <h3>Cluster Description</h3>
-          <p>${{escapeHtml(node.clusterDescription || "No cluster description yet.")}}</p>
-        </section>
-
-        <section class="drawer-section">
-          <h3>Map Values</h3>
-          <div class="metric-grid">
-            <div class="metric">
-              <div class="metric-label">Entanglement</div>
-              <div class="metric-value">${{escapeHtml(node.xValue)}}</div>
-            </div>
-            <div class="metric">
-              <div class="metric-label">Gravity</div>
-              <div class="metric-value">${{escapeHtml(node.zValue)}}</div>
-            </div>
-            <div class="metric">
-              <div class="metric-label">Size</div>
-              <div class="metric-value">${{escapeHtml(node.size)}}</div>
-            </div>
-          </div>
-        </section>
+        ${{subpartsHtml}}
 
         <section class="drawer-section">
           <h3>Characters</h3>
@@ -1069,185 +924,6 @@ def build_html(data: dict[str, Any]) -> str:
       }};
     }}
 
-    function addTextSprite(scene, text, x, y, z, scale = 160) {{
-      const canvas = document.createElement("canvas");
-      canvas.width = 1024;
-      canvas.height = 256;
-
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillStyle = "#ffffff";
-
-      let fontSize = 86;
-      const pad = 44;
-
-      while (fontSize > 24) {{
-        ctx.font = `bold ${{fontSize}}px Arial`;
-        if (ctx.measureText(text).width <= canvas.width - pad * 2) break;
-        fontSize -= 4;
-      }}
-
-      ctx.font = `bold ${{fontSize}}px Arial`;
-      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-
-      const tex = new THREE.CanvasTexture(canvas);
-      const sprite = new THREE.Sprite(
-        new THREE.SpriteMaterial({{
-          map: tex,
-          transparent: true,
-          opacity: 0.82
-        }})
-      );
-
-      sprite.scale.set(scale, scale * 0.25, 1);
-      sprite.position.set(x, y, z);
-      scene.add(sprite);
-
-      return sprite;
-    }}
-
-    function addAxes(scene, nodes) {{
-      let minZ = Infinity;
-
-      nodes.forEach(node => {{
-        minZ = Math.min(minZ, node.z);
-      }});
-
-      if (!Number.isFinite(minZ)) minZ = 0;
-
-      const axisZ = minZ - 120;
-      const axisMat = new THREE.LineBasicMaterial({{
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.72
-      }});
-
-      const tickMat = new THREE.LineBasicMaterial({{
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.48
-      }});
-
-      const relToX = value => value * 40;
-      const depToY = value => -value * DEPTH_SCALE;
-
-      const x0 = relToX(0) - 40;
-      const x1 = relToX(10) + 40;
-      const y0 = depToY(0) - 40;
-      const y1 = depToY(10) + 40;
-
-      scene.add(new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(x0, 0, axisZ),
-          new THREE.Vector3(x1, 0, axisZ)
-        ]),
-        axisMat
-      ));
-
-      scene.add(new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(0, y0, axisZ),
-          new THREE.Vector3(0, y1, axisZ)
-        ]),
-        axisMat
-      ));
-
-      addTextSprite(scene, "QUANTUM ENTANGLEMENT", (x0 + x1) / 2, y0 - 30, axisZ, 300);
-      addTextSprite(scene, "EMOTIONAL GRAVITY", x0 - 35, (y0 + y1) / 2, axisZ, 260);
-
-      for (let i = 0; i <= 10; i++) {{
-        const x = relToX(i);
-
-        scene.add(new THREE.Line(
-          new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(x, 0, axisZ),
-            new THREE.Vector3(x, -10, axisZ)
-          ]),
-          tickMat
-        ));
-
-        addTextSprite(scene, String(i), x, -34, axisZ, 70);
-      }}
-
-      for (let d = 0; d <= 10; d++) {{
-        const y = depToY(d);
-
-        scene.add(new THREE.Line(
-          new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(0, y, axisZ),
-            new THREE.Vector3(-10, y, axisZ)
-          ]),
-          tickMat
-        ));
-
-        addTextSprite(scene, String(d), -55, y, axisZ, 70);
-      }}
-    }}
-
-    function boundsForNodes(nodes) {{
-      let minX = Infinity;
-      let minY = Infinity;
-      let minZ = Infinity;
-      let maxX = -Infinity;
-      let maxY = -Infinity;
-      let maxZ = -Infinity;
-
-      nodes.forEach(node => {{
-        minX = Math.min(minX, node.x);
-        minY = Math.min(minY, node.y);
-        minZ = Math.min(minZ, node.z);
-        maxX = Math.max(maxX, node.x);
-        maxY = Math.max(maxY, node.y);
-        maxZ = Math.max(maxZ, node.z);
-      }});
-
-      const pad = 45;
-
-      minX -= pad;
-      minY -= pad;
-      minZ -= pad;
-      maxX += pad;
-      maxY += pad;
-      maxZ += pad;
-
-      return {{
-        minX, minY, minZ,
-        maxX, maxY, maxZ,
-        cx: (minX + maxX) / 2,
-        cy: (minY + maxY) / 2,
-        cz: (minZ + maxZ) / 2
-      }};
-    }}
-
-    function addBoundingCube(scene, bounds) {{
-      const p000 = new THREE.Vector3(bounds.minX, bounds.minY, bounds.minZ);
-      const p100 = new THREE.Vector3(bounds.maxX, bounds.minY, bounds.minZ);
-      const p010 = new THREE.Vector3(bounds.minX, bounds.maxY, bounds.minZ);
-      const p110 = new THREE.Vector3(bounds.maxX, bounds.maxY, bounds.minZ);
-
-      const p001 = new THREE.Vector3(bounds.minX, bounds.minY, bounds.maxZ);
-      const p101 = new THREE.Vector3(bounds.maxX, bounds.minY, bounds.maxZ);
-      const p011 = new THREE.Vector3(bounds.minX, bounds.maxY, bounds.maxZ);
-      const p111 = new THREE.Vector3(bounds.maxX, bounds.maxY, bounds.maxZ);
-
-      const pts = [
-        p000, p100, p100, p110, p110, p010, p010, p000,
-        p001, p101, p101, p111, p111, p011, p011, p001,
-        p000, p001, p100, p101, p110, p111, p010, p011
-      ];
-
-      const geom = new THREE.BufferGeometry().setFromPoints(pts);
-      const mat = new THREE.LineBasicMaterial({{
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.24
-      }});
-
-      scene.add(new THREE.LineSegments(geom, mat));
-    }}
-
     function start() {{
       buildLegend();
 
@@ -1310,8 +986,8 @@ def build_html(data: dict[str, Any]) -> str:
           return core;
         }})
         .linkColor(link => link.color || "#ffffff")
-        .linkWidth(link => link.width || 1.6)
-        .linkOpacity(0.55);
+        .linkWidth(link => link.width || 1.3)
+        .linkOpacity(0.42);
 
       const renderer = new THREE.WebGLRenderer({{
         antialias: true,
@@ -1342,12 +1018,46 @@ def build_html(data: dict[str, Any]) -> str:
       controls.enableRotate = true;
       controls.enablePan = true;
       controls.minDistance = 20;
-      controls.maxDistance = 1200;
+      controls.maxDistance = 1600;
 
-      addAxes(scene, graphData.nodes);
+      const bounds = (() => {{
+        let minX = Infinity;
+        let minY = Infinity;
+        let minZ = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+        let maxZ = -Infinity;
 
-      const bounds = boundsForNodes(graphData.nodes);
-      addBoundingCube(scene, bounds);
+        graphData.nodes.forEach(node => {{
+          minX = Math.min(minX, node.x);
+          minY = Math.min(minY, node.y);
+          minZ = Math.min(minZ, node.z);
+          maxX = Math.max(maxX, node.x);
+          maxY = Math.max(maxY, node.y);
+          maxZ = Math.max(maxZ, node.z);
+        }});
+
+        if (!Number.isFinite(minX)) {{
+          minX = minY = minZ = -100;
+          maxX = maxY = maxZ = 100;
+        }}
+
+        const pad = 45;
+        minX -= pad;
+        minY -= pad;
+        minZ -= pad;
+        maxX += pad;
+        maxY += pad;
+        maxZ += pad;
+
+        return {{
+          minX, minY, minZ,
+          maxX, maxY, maxZ,
+          cx: (minX + maxX) / 2,
+          cy: (minY + maxY) / 2,
+          cz: (minZ + maxZ) / 2
+        }};
+      }})();
 
       controls.target.set(bounds.cx, bounds.cy, bounds.cz);
 
@@ -1380,16 +1090,12 @@ def build_html(data: dict[str, Any]) -> str:
         hoveredNode = node || null;
 
         if (!hoveredNode) {{
-          hideHoverTip();
-
           graphData.nodes.forEach(n => {{
             if (n !== selectedNode) resetNodeVisual(n);
           }});
-
           return;
         }}
 
-        showHoverTip(hoveredNode);
         setHighlightedNode(hoveredNode);
       }});
 
