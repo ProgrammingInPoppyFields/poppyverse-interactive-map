@@ -19,6 +19,7 @@
       --muted: rgba(255, 255, 255, 0.68);
       --line: rgba(255, 255, 255, 0.14);
       --nav-height: 58px;
+      --active-color: #FF1447;
     }
 
     * {
@@ -219,8 +220,8 @@
     }
 
     .cluster-name {
+    color: white;
       margin: 0;
-      color: white;
       font-family: "Michroma", sans-serif;
       font-size: 18px;
       line-height: 1.18;
@@ -272,11 +273,6 @@
       transform: translateX(0);
     }
 
-    /*
-      Important spacing behavior:
-      The gradient reaches the literal top of the drawer.
-      The text inside gets padding-top so the fixed top nav does not block it.
-    */
     .drawer-header {
       position: relative;
       padding: calc(var(--nav-height) + 26px) 28px 24px;
@@ -303,16 +299,6 @@
       font-size: 20px;
       font-weight: 900;
       cursor: pointer;
-      transition:
-        background 160ms ease,
-        border-color 160ms ease,
-        box-shadow 160ms ease;
-    }
-
-    .drawer-close:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: color-mix(in srgb, var(--active-color) 70%, white 30%);
-      box-shadow: 0 0 18px color-mix(in srgb, var(--active-color) 45%, transparent);
     }
 
     .drawer-title {
@@ -349,7 +335,7 @@
 
     table {
       width: 100%;
-      min-width: 720px;
+      min-width: 760px;
       border-collapse: collapse;
     }
 
@@ -399,10 +385,6 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       white-space: nowrap;
-    }
-
-    .content-link:hover {
-      filter: brightness(1.15);
     }
 
     .no-entries {
@@ -511,498 +493,1290 @@
       "order": 4
     },
     {
+      "name": "area fifty-done",
+      "color": "#4dff00",
+      "description": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 5
+    },
+    {
       "name": "the ultravioletverse",
       "color": "#5e17eb",
       "description": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 5
+      "order": 6
     },
     {
       "name": "the lilyverse",
       "color": "#005eff",
       "description": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 6
+      "order": 7
     },
     {
       "name": "the spider lilyverse",
       "color": "#4ce4ff",
       "description": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 7
+      "order": 8
     },
     {
       "name": "beyond the poppyverse",
       "color": "#ffc5c5",
       "description": "Where the fourth wall gets thin and the author starts pacing.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 8
+      "order": 9
+    },
+    {
+      "name": "found files",
+      "color": "#d9d9d9",
+      "description": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 10
     }
   ],
   "entriesByCluster": {
     "welcome to the poppyverse": [
       {
-        "Name": "found files",
-        "Description": "Supplementary material. Read this before asking dumb questions.",
-        "Characters": "",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/found%20files"
+        "Name": "The Drill That Holds",
+        "Sub-parts": "",
+        "Description": "A catastrophic drill keeps going because the scariest machine in the room is the one choosing restraint.",
+        "Characters": "DRILLER, GAMMA",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/807876479662899200/the-drill-that-holds"
       },
       {
-        "Name": "the beginning",
-        "Description": "Start here. One universe, out of many more to come. One mech unit, one pilot, one donor (donor of what, you’ll find out soon).",
-        "Characters": "DONOR, PILOT, UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/beginnings"
+        "Name": "The Driller",
+        "Sub-parts": "",
+        "Description": "A subterranean monster-machine exists to break the earth, and the real terror is how calmly it knows its job.",
+        "Characters": "DRILLER",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/807875483216789504/the-driller"
       },
       {
-        "Name": "pilot postings",
-        "Description": "PILOT discovers the internet. The internet is not ready.",
+        "Name": "ERIEYE & TITAN - Sky & Earth",
+        "Sub-parts": "v1 / v2",
+        "Description": "One watches the sky, one anchors the earth, and neither is as simple as protection.",
+        "Characters": "ERIEYE, TITAN",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/sky%20and%20earth/chrono"
+      },
+      {
+        "Name": "SERAPHIM - Angel",
+        "Sub-parts": "",
+        "Description": "SERAPHIM is angelic in the old way: beautiful, terrifying, and not here for comfort.",
+        "Characters": "SERPHIM",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/790305076800602112/spotlight-seraphim-angel"
+      },
+      {
+        "Name": "VIGIL - Survivor",
+        "Sub-parts": "",
+        "Description": "VIGIL survives, which is less triumphant than it sounds and more sacred than it admits.",
+        "Characters": "VIGIL, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761642385125113856/spotlight-vigil"
+      },
+      {
+        "Name": "ERIEYE & TITAN - Heaven",
+        "Sub-parts": "",
+        "Description": "Heaven becomes radar, altitude, and the awful kindness of being watched over.",
+        "Characters": "ERIEYE, TITAN",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/763486348767313920/spotlight-erieye-heaven"
+      },
+      {
+        "Name": "ERIEYE & TITAN - Heaven and Hell",
+        "Sub-parts": "p1 / p2",
+        "Description": "Protection and terror share an airspace and refuse to file separate paperwork.",
+        "Characters": "ERIEYE, TITAN",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/heaven%20and%20hell/chrono"
+      },
+      {
+        "Name": "ERIEYE",
+        "Sub-parts": "p1 / p2 / p3 / p4",
+        "Description": "ERIEYE turns surveillance into personality and watchfulness into a kind of loneliness.",
+        "Characters": "ERIEYE",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/erieye/chrono"
+      },
+      {
+        "Name": "RATCHET - Giants in Waiting",
+        "Sub-parts": "",
+        "Description": "RATCHET waits with all the patience of a giant that has not yet stood up.",
+        "Characters": "RATCHET",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761012309930000384/spotlight-ratchet-giants-in-waiting"
+      },
+      {
+        "Name": "SENTINEL - Sentience",
+        "Sub-parts": "",
+        "Description": "SENTINEL crosses the line from guarding to knowing it is guarding.",
+        "Characters": "SENTINEL, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760312233618259968/spotlight-sentinel-nascence"
+      },
+      {
+        "Name": "PRISMA - Epitaph",
+        "Sub-parts": "",
+        "Description": "PRISMA’s epitaph reads like salvage, light, and identity refusing to die in one piece.",
+        "Characters": "PRISMA, various dead units",
+        "Content URL": "https://inpoppyfields.tumblr.com/search/PRISMA%20-%20Epitaph"
+      },
+      {
+        "Name": "MIRA - Ocean",
+        "Sub-parts": "",
+        "Description": "MIRA is oceanic: distant, immense, and probably deeper than anyone’s clearance level.",
+        "Characters": "MIRA, various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760128936428601344/spotlight-mira"
+      },
+      {
+        "Name": "Sick Call: A Band-Aid for a Tank",
+        "Sub-parts": "",
+        "Description": "Medical care meets tank-scale injury and produces an industrial-strength tenderness problem.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764813912121262080/sick-call-a-band-aid-for-a-tank"
+      },
+      {
+        "Name": "Sick Call: Sleepover",
+        "Sub-parts": "",
+        "Description": "A sick-call turns into a sleepover, because even impossible bodies need company.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764813728693862401/sick-call-sleepover"
+      },
+      {
+        "Name": "Sick Call: Pain Relief",
+        "Sub-parts": "",
+        "Description": "Pain relief gets complicated when the patient is a machine, an avatar, and a person.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764813679931850752/sick-call-pain-relief"
+      },
+      {
+        "Name": "The Daughter",
+        "Sub-parts": "",
+        "Description": "Daughterhood enters the machine-body problem and makes it worse in the gentlest way.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764812924982362112/the-daughter"
+      },
+      {
+        "Name": "Nap_With_Notifications_On.png",
+        "Sub-parts": "",
+        "Description": "A lock-screen nap becomes archaeological evidence of exhaustion with push notifications.",
         "Characters": "PILOT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/pilot%20postings"
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764812453101125632/lock-screen-sleeping-in"
       },
       {
-        "Name": "automated absurdity",
-        "Description": "Yes, it's absurd. No, there will be no further explanation. UNIT is involved.",
+        "Name": "Costco_At_Midnight.heic",
+        "Sub-parts": "",
+        "Description": "A midnight Costco run becomes found footage from the domestic uncanny.",
+        "Characters": "PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764812262927220736/lock-screen-costco-at-midnight"
+      },
+      {
+        "Name": "Calendar_SpaceBase.ics",
+        "Sub-parts": "",
+        "Description": "Space Base life appears as calendar blocks, because even anomalies need scheduling.",
+        "Characters": "PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764811960267177984/calendar-day-view-space-base"
+      },
+      {
+        "Name": "Calendar_EarthBase.ics",
+        "Sub-parts": "",
+        "Description": "Earth Base gets the calendar treatment, and the normal meetings are somehow the suspicious part.",
+        "Characters": "PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764811896880807936/calendar-day-view-earth-base"
+      },
+      {
+        "Name": "InstagramHistory_2.json",
+        "Sub-parts": "",
+        "Description": "The archive recovers feeling from exported Instagram debris, which is upsettingly plausible.",
+        "Characters": "PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764811830102228993/instagram-2"
+      },
+      {
+        "Name": "InstagramHistory_1.json",
+        "Sub-parts": "",
+        "Description": "The first social-media artifact proves the Poppyverse would absolutely survive as platform trash.",
+        "Characters": "PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764811733357510656/instagram-1"
+      },
+      {
+        "Name": "Robots in Disguise: GAMMA and the Skateboarder",
+        "Sub-parts": "",
+        "Description": "GAMMA’s holomatter disguise collides with skateboarding, because some machines apparently need both speed and plausible deniability.",
         "Characters": "UNIT, Various other units",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/automated%20absurdity"
+        "Content URL": "https://inpoppyfields.tumblr.com/post/763714439880065024/more-than-meets-the-eye-gamma-and-the"
       },
       {
-        "Name": "gentle giant",
-        "Description": "”Be strong enough to be gentle.”",
-        "Characters": "PILOT, UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/gentle%20giant"
+        "Name": "Robots in Disguise: UNIT and the Red Poppies",
+        "Sub-parts": "",
+        "Description": "UNIT’s holomatter presence meets red poppies, folding memorial symbolism into something warmly, dangerously alive.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/763714375543652352/more-than-meets-the-eye-unit-and-the-red-poppies"
       },
       {
-        "Name": "machine learnings",
-        "Description": "UNIT is a machine learning things. The distinction matters. Whether what it's learning is reassuring or terrifying depends.",
+        "Name": "Robots in Disguise: TITAN and the Toy Tank",
+        "Sub-parts": "",
+        "Description": "TITAN’s softness is refracted through a toy tank, making the biggest unit feel heartbreakingly small.",
         "Characters": "UNIT, Various other units",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/machine%20learnings"
+        "Content URL": "https://inpoppyfields.tumblr.com/post/763714281102573568/more-than-meets-the-eye-the-toy-tank"
       },
       {
-        "Name": "unit by unit",
-        "Description": "Turns out UNIT isn't the only unit. There are others. This is not as comforting as it sounds.",
+        "Name": "HOLOMATTER MATTERS",
+        "Sub-parts": "p1 / p2 / p3 / p4 / p5 / p6",
+        "Description": "A holomatter index of machine avatars, disguise logic, and the emotional consequences of giving war machines human-scale bodies.",
         "Characters": "UNIT, Various other units",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/character%20spotlight"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/holomatter%20matters/chrono"
       },
       {
-        "Name": "holomatter matters",
-        "Description": "Units. Units. Robots in disguise. Units. Units. More than meets the eye… because underneath the chassis and the horns and the several tons of metal is, if you look closely enough, something that learned to be human before it ever had the chance to be anything else.",
+        "Name": "Unauthorized Visitors: Incident Compilation",
+        "Sub-parts": "p1 / p2 / The Siblings",
+        "Description": "A compilation of unauthorized visitor incidents proving that Earth Base security is mostly vibes, paperwork, and disbelief.",
         "Characters": "UNIT, Various other units",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/holomatter%20matters"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/unauthorized%20visitors/chrono"
       },
       {
-        "Name": "skin and steel",
-        "Description": "What strength actually looks like.  Flesh and metal, soft and sharp. All are strong. None are simple.",
-        "Characters": "PILOT, UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/skin and steel"
-      },
-      {
-        "Name": "internal comms",
-        "Description": "Slack but orbital. The out-of-office replies are written in four languages and none of them are helpful.",
-        "Characters": "PILOT, Various other fleet personnel",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/internal%20comms"
-      },
-      {
-        "Name": "mechanized messaging",
-        "Description": "Slack but sentient and enormous. The read receipts are haunting. So is everything else.",
+        "Name": "Pinterest DIY: Plushies",
+        "Sub-parts": "",
+        "Description": "The Poppyverse becomes plushie-craftable, which is somehow adorable, alarming, and probably against several safety policies.",
         "Characters": "UNIT, Various other units",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mechanized%20messaging"
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764811516885286912/pinterest-diy-plushies"
       },
       {
-        "Name": "post-piloting",
-        "Description": "Post-everything, sort of. PILOT is retired — functionally, if not emotionally.",
+        "Name": "The Toasted CPU",
+        "Sub-parts": "",
+        "Description": "A toasted CPU turns hardware failure into snack comedy and tiny electrical tragedy.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764811082799939584/the-toasted-cpu"
+      },
+      {
+        "Name": "Defying Physics: The Turtle and the Hare",
+        "Sub-parts": "",
+        "Description": "A physics-defying race logic gag where speed, scale, and mechanical bodies make the fable deeply unfair.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764471122494390272/defying-physics-blazing-fast"
+      },
+      {
+        "Name": "Defying Physics: A Titanic Problem",
+        "Sub-parts": "",
+        "Description": "A gigantic mechanical problem challenges scale, motion, and the assumption that physics will behave politely.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764470921888186368/defying-physics-a-titanic-problem"
+      },
+      {
+        "Name": "Defying Physics: When Sheep Fly",
+        "Sub-parts": "",
+        "Description": "The sheep fly. The laws of nature file a complaint.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764434769923784704/defying-physics-when-sheep-fly"
+      },
+      {
+        "Name": "Mornings",
+        "Sub-parts": "",
+        "Description": "A morning routine proves that war machines can still be terrible at mornings.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760136746593894400/mornings"
+      },
+      {
+        "Name": "Myopia",
+        "Sub-parts": "p1 / p2",
+        "Description": "A thread about limited vision, literal and emotional, because nobody here sees enough soon enough.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/myopia/chrono"
+      },
+      {
+        "Name": "More Than Meets the Eye",
+        "Sub-parts": "",
+        "Description": "The opening thesis: every machine is more than its silhouette, which is rude of them.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760135569815764992/more-than-meets-the-eye"
+      },
+      {
+        "Name": "Under the Radar",
+        "Sub-parts": "",
+        "Description": "Something important slips under the radar, and the radar is probably personally offended.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760135412338638848/under-the-radar"
+      },
+      {
+        "Name": "Over the Radar",
+        "Sub-parts": "",
+        "Description": "A communications-focused machine-learning entry about signals, proximity, and being impossible to ignore once detected.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760135131164999680/close-communications"
+      },
+      {
+        "Name": "Fly Like a Bee",
+        "Sub-parts": "",
+        "Description": "Flight gets tiny, busy, impossible, and emotionally overqualified.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760134715439185920/fly-like-a-bee"
+      },
+      {
+        "Name": "Using Its Head",
+        "Sub-parts": "",
+        "Description": "An automated-absurdity entry about a machine solving problems with exactly the wrong body part and too much commitment.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760134640638050304/pile-bunked"
+      },
+      {
+        "Name": "Sartorial Sightings",
+        "Sub-parts": "",
+        "Description": "A hangar-observation fashion log for machines and avatars, because even impossible bodies apparently have looks.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760132988417769472/hangar-observations"
+      },
+      {
+        "Name": "Wild Night Out",
+        "Sub-parts": "v1 / v2",
+        "Description": "A thread of units or avatars having the kind of night out that makes after-action reports emotionally unusable.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/wild%20nights%20out/chrono"
+      },
+      {
+        "Name": "Post-Piloting",
+        "Sub-parts": "1 / 2 / 3 / Bumper Stickers / Extra Cheese Pizza / Sedentary Shift 1 / Sedentary Shift 2 / Bedroom Ceiling Galaxy / The Final Dream / The Final Recharge p1 / The Final Recharge p2 / After the Dream v1 / After the Dream v2 / After the Dream v3",
+        "Description": "After piloting, the body leaves the cockpit but the cockpit does not leave the body.",
         "Characters": "PILOT the retired pilot",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/post%20piloting"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/post%20piloting/chrono"
       },
       {
-        "Name": "area fifty-DONE",
-        "Description": "What happens at Area Fifty-Done stays at Area Fifty-Done. Allegedly.",
-        "Characters": "PILOT the civilian test pilot, REYES",
-        "Content URL": "https://inpoppyfields.tumblr.com/tagged/area%20fifty%20done/chrono"
+        "Name": "Her Face in Every Sky",
+        "Sub-parts": "",
+        "Description": "A ghost-in-the-machine piece where a beloved face appears everywhere, turning recognition into a haunting.",
+        "Characters": "PILOT, DONOR, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760416975168192512/her-face"
+      },
+      {
+        "Name": "Her Embrace",
+        "Sub-parts": "",
+        "Description": "An embrace becomes shelter, trap, memory, and mercy all at once.",
+        "Characters": "PILOT, DONOR, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760415194349469696/her-embrace"
+      },
+      {
+        "Name": "Sun and Moon",
+        "Sub-parts": "",
+        "Description": "Two presences orbit each other with the obviousness of myth and the subtlety of disaster.",
+        "Characters": "PILOT, DONOR, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760415094473736192/sun-and-moon"
+      },
+      {
+        "Name": "Poppies",
+        "Sub-parts": "p1 / p2 / p3 / p4",
+        "Description": "The poppies keep blooming through memorials, machines, and whatever the archive refuses to bury.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/poppies/chrono"
+      },
+      {
+        "Name": "Soft",
+        "Sub-parts": "",
+        "Description": "UNIT is soft, which remains logistically absurd and emotionally nonnegotiable.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760128769231142912/skin-and-steel-soft"
+      },
+      {
+        "Name": "Sleep",
+        "Sub-parts": "",
+        "Description": "A war machine sleeps, and the room has the decency to become holy about it.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760128563779371008/skin-steel-sleep"
+      },
+      {
+        "Name": "Gentle",
+        "Sub-parts": "",
+        "Description": "UNIT is introduced as massive, dangerous, and built around a tenderness problem.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760038945185841152/gentle-giant"
+      },
+      {
+        "Name": "Aries",
+        "Sub-parts": "",
+        "Description": "The ram imagery is not subtle; neither is the protectiveness.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760039038896013312/gentle-giant-aries"
+      },
+      {
+        "Name": "Dirt Drawings",
+        "Sub-parts": "",
+        "Description": "UNIT draws in dirt with the seriousness of a child and the scale of construction equipment.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760039190934274048/gentle-giant-dirt-drawings"
+      },
+      {
+        "Name": "Dirt Drawings of Doom",
+        "Sub-parts": "",
+        "Description": "The dirt drawings become ominous, because cute things here always unionize with doom.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760039281531191296/gentle-giant-dirt-drawings-of-doom"
+      },
+      {
+        "Name": "The Lamb",
+        "Sub-parts": "",
+        "Description": "The lamb is softness with horns nearby.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20lamb/chrono"
+      },
+      {
+        "Name": "SFW (Soft for Work)",
+        "Sub-parts": "",
+        "Description": "UNIT’s softness remains workplace-safe only by the loosest possible definition.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760040197249433600/gentle-giant-socially-awkward"
+      },
+      {
+        "Name": "NSFW (Not Soft for Work)",
+        "Sub-parts": "",
+        "Description": "The softness exits HR compliance and enters emotional hazard territory.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760040343137812480/gentle-giant-socially-awkward-and-unintentionally"
+      },
+      {
+        "Name": "#internal_comms",
+        "Sub-parts": "#wrecked_recruits / #generic_generals / #lots_of_pilots / #private_matters / #did_ensign_up_for_this / #colonels_on_a_cob / TAGGING GHOSTS",
+        "Description": "Internal messages reveal the machines are painfully alive and absolutely gossip-capable.",
+        "Characters": "PILOT, various other fleet personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/internal%20comms/chrono"
+      },
+      {
+        "Name": "The Piloting and the Piloted",
+        "Sub-parts": "p1 / p2",
+        "Description": "Pilot and machine blur into one control loop with feelings attached.",
+        "Characters": "various base personnel, various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20piloting%20and%20piloted/chrono"
+      },
+      {
+        "Name": "#mechanized_messaging",
+        "Sub-parts": "#tank_tread_carefully / #computationally_commanding / #robots_in_disguise / #holomatter_help_hubub [1] / #holomatter_help_hubub [2]",
+        "Description": "The machines text, signal, and accidentally confess through comms like professionals with no boundaries.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/mechanized%20messaging/chrono"
+      },
+      {
+        "Name": "Beginnings",
+        "Sub-parts": "1 / 2 / 3 / 4 / 5 / 6 / 7.1 / 7.2 / 8.1 / 8.2 / 9",
+        "Description": "The beginning begins innocently, which is how the archive tricks you.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/beginnings/chrono"
       }
     ],
     "deeper into the poppyverse": [
       {
-        "Name": "rest and rust",
-        "Description": "A million ways to die. None of them restful. All of them rusty.",
+        "Name": "Signature",
+        "Sub-parts": "",
+        "Description": "An office-signature problem turns into authorship, identity, and the quiet horror of leaving your mark.",
+        "Characters": "UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/807876913944199168/signature"
+      },
+      {
+        "Name": "Mourning in Metal",
+        "Sub-parts": "v1 / v2 / v3",
+        "Description": "A metal-bodied mourning thread where grief refuses to stay organic.",
+        "Characters": "UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/mourning%20in%20metal/chrono"
+      },
+      {
+        "Name": "Subconscious Selections: Shorts",
+        "Sub-parts": "",
+        "Description": "A set of intimate shorts where UNIT and AUTOPILOT’s changing hair, projections, and battlefield wounds turn avatar styling into grief evidence.",
+        "Characters": "UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796915602683985920/subconscious-selections-shorts"
+      },
+      {
+        "Name": "Subconscious Selections: Standard Issue",
+        "Sub-parts": "",
+        "Description": "PILOT sees UNIT and AUTOPILOT grown into field-worn adults, no longer girls but women shaped by war, memory, and each other.",
+        "Characters": "PILOT, UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796914974595350528/standard-issue-subconscious-selections"
+      },
+      {
+        "Name": "She Feels",
+        "Sub-parts": "",
+        "Description": "A thread for the terrifying proposition that the machine is not just responding; she is feeling.",
+        "Characters": "AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/she%20feels/chrono"
+      },
+      {
+        "Name": "One and the Same",
+        "Sub-parts": "",
+        "Description": "A tech encounters UNIT’s wounded avatar beside its broken mech body and realizes the gentle girl and terrifying machine are not separate beings.",
+        "Characters": "UNIT, RIAZ",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796911798900097024/sisterhood-in-steel-skin-one-and-the-same"
+      },
+      {
+        "Name": "[Sisterhood in Steel & Skin]: The Frosty Sister",
+        "Sub-parts": "",
+        "Description": "One sister carries coldness like armor, weapon, weather, and warning label.",
+        "Characters": "UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796911718154551297/sisterhood-in-steel-skin-the-frosty-sister"
+      },
+      {
+        "Name": "[Sisterhood in Steel & Skin]: The Fiery Sister",
+        "Sub-parts": "",
+        "Description": "One sister burns hot enough to make affection look like a containment risk.",
+        "Characters": "UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796911613610442752/sisterhood-in-steel-skin-the-fiery-sister"
+      },
+      {
+        "Name": "[REST AND RUST]: The Woman in Black and Red",
+        "Sub-parts": "",
+        "Description": "The woman in black and red appears like recovery wearing danger’s jacket.",
         "Characters": "PILOT, UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/rest%20and%20rust"
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764814532779606016/rest-and-rust-the-woman-in-black-and-red"
       },
       {
-        "Name": "mechanical mortality",
-        "Description": "Units can die. Let that sink in.",
-        "Characters": "UNIT, Various other units",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mechanical%20mortality"
-      },
-      {
-        "Name": "ghost stories",
-        "Description": "Literal ghosts. Some of them are irritated about it.",
+        "Name": "Mergence",
+        "Sub-parts": "p1 / p2 / p3 / p4 / p5 / p6 / p7 / p8 / p9",
+        "Description": "Merging stops being a technical term and starts being a personal threat.",
         "Characters": "PILOT, UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/ghost%20stories"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/mergence/chrono"
       },
       {
-        "Name": "sisterhood in skin and steel",
-        "Description": "UNIT and AUTOPILOT, wholesome holomatter siblings… and then the sad part happens.",
-        "Characters": "AUTOPILOT, UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/tagged/sisterhood%20in%20steel%20and%20skin/chrono"
+        "Name": "Facial Recognition in the Garden",
+        "Sub-parts": "",
+        "Description": "The garden recognizes a face it should not know, which is how peace gets compromised.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760411447481319424/rest-and-rust-facial-recognition-in-the-garden"
       },
       {
-        "Name": "commander UNIT",
-        "Description": "UNIT takes command. PILOT is dead. The universe reconsiders its choices.",
+        "Name": "Bye Bye Bluebird",
+        "Sub-parts": "",
+        "Description": "Something small and blue leaves the frame, and the loss lands harder than expected.",
+        "Characters": "UNIT, GAMMA",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760579223796826112/bye-bye-bluebird"
+      },
+      {
+        "Name": "Commander UNIT",
+        "Sub-parts": "p1 / p2 / p3 / p4 / p5 / p6 / p7 / p8 / p9 / p10 / p11",
+        "Description": "UNIT in command is still gentle; this somehow makes it more dangerous.",
         "Characters": "Commander UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/commander unit"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/commander%20unit/chrono"
       },
       {
-        "Name": "commander PILOT",
-        "Description": "PILOT takes command. UNIT is dead. The universe holds its breath.",
+        "Name": "Commander PILOT",
+        "Sub-parts": "p1 / p2 / p3 / p4 / p5 / p6 / p7",
+        "Description": "PILOT in command proves authority can be exhausted, haunted, and still correct.",
         "Characters": "Commander PILOT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/commander%20pilot"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/commander%20pilot/chrono"
       },
       {
-        "Name": "mergence",
-        "Description": "PILOT and UNIT become one entity. Permanently. This is not a metaphor.",
+        "Name": "Together Forever",
+        "Sub-parts": "p1 / p2 / p3 / p4",
+        "Description": "Together forever, in this universe, is less romance than threat assessment.",
         "Characters": "PILOT, UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/mergence"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/together%20forever/chrono"
+      },
+      {
+        "Name": "MECH Z",
+        "Sub-parts": "",
+        "Description": "MECH Z arrives like a classification error with legs.",
+        "Characters": "UNIT, MECH Z",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760214693236408320/mech-z"
+      },
+      {
+        "Name": "Ghost in My Bones",
+        "Sub-parts": "p1 / p2",
+        "Description": "The haunting is no longer beside the body; it is load-bearing.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/ghost%20in%20my%20bones/chrono"
+      },
+      {
+        "Name": "Gifts From the Grave",
+        "Sub-parts": "",
+        "Description": "The dead keep giving gifts, and nobody knows the return policy.",
+        "Characters": "various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760213965702823936/gifts-from-the-grave"
+      },
+      {
+        "Name": "Gifts From the Scrapyard",
+        "Sub-parts": "p1 / p2",
+        "Description": "The scrapyard offers love in the shape of parts nobody asked to inherit.",
+        "Characters": "various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/gifts%20from%20the%20scrapyard/chrono"
+      },
+      {
+        "Name": "Ghost in My Ship",
+        "Sub-parts": "p1 / p2 / p3",
+        "Description": "The ship carries its ghost like cargo that cannot be offloaded.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/ghost%20in%20my%20ship/chrono"
+      },
+      {
+        "Name": "Ghost in My Shell",
+        "Sub-parts": "v1 / v2",
+        "Description": "Armor becomes a shell, then a grave, then a self-shaped echo.",
+        "Characters": "PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/ghost%20in%20my%20shell/chrono"
+      },
+      {
+        "Name": "Reconfiguration in Two Ways",
+        "Sub-parts": "p1 / p2",
+        "Description": "A rebuild can mean repair or erasure, and the body knows the difference.",
+        "Characters": "UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/reconfiguration%20in%20two%20ways/chrono"
+      },
+      {
+        "Name": "The Crypt",
+        "Sub-parts": "",
+        "Description": "The crypt stores machinery like remains and remains like machinery.",
+        "Characters": "UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760136517939314688/the-crypt"
+      },
+      {
+        "Name": "GAMMA 2.0",
+        "Sub-parts": "",
+        "Description": "GAMMA comes back upgraded, which is not the same as coming back okay.",
+        "Characters": "UNIT, GAMMA",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760136464210280448/spotlight-gamma-rebirth"
+      },
+      {
+        "Name": "Refurbished Hardware",
+        "Sub-parts": "",
+        "Description": "Reused parts make survival possible and emotionally disgusting.",
+        "Characters": "UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760136009493217280/reused-parts"
+      },
+      {
+        "Name": "Warpaint",
+        "Sub-parts": "",
+        "Description": "Paint becomes record, warning, armor, and a very bad coping mechanism.",
+        "Characters": "UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760135947742543872/warpaint"
+      },
+      {
+        "Name": "Administering Vital Aid",
+        "Sub-parts": "",
+        "Description": "Battlefield medicine turns mechanical when the patient is too large to be fully human and too alive to be equipment.",
+        "Characters": "UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760135811490611200/administering-vital-aid"
+      },
+      {
+        "Name": "Casualties",
+        "Sub-parts": "",
+        "Description": "Searching becomes counting, and counting becomes its own kind of injury.",
+        "Characters": "UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760135764720959488/searching"
+      },
+      {
+        "Name": "Legacy Hardware",
+        "Sub-parts": "",
+        "Description": "New parts arrive carrying old ghosts and terrible warranty implications.",
+        "Characters": "UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/760135703231447040/new-parts"
+      },
+      {
+        "Name": "Cold Blood is Still Blood",
+        "Sub-parts": "",
+        "Description": "Cold blood is still blood; the story refuses to let temperature decide personhood.",
+        "Characters": "AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/812363643660468224/cold-blood-is-still-blood"
+      },
+      {
+        "Name": "Wavelengths",
+        "Sub-parts": "",
+        "Description": "The sisters understand each other in frequencies humans can barely hear.",
+        "Characters": "UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/812363093616246784/wavelengths"
+      },
+      {
+        "Name": "The Unrecoverables",
+        "Sub-parts": "01 / 02 / 03 / 04 / 05 / 06 / 07 / 08 / MILO [p1] / MILO [p2] / MILO [v2]",
+        "Description": "Some people, files, and futures cannot be recovered; the archive keeps them anyway.",
+        "Characters": "PILOT, DONOR, various fleet personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20unrecoverables/chrono"
       }
     ],
     "the red poppyverse": [
       {
-        "Name": "dress in layers",
-        "Description": "Dress for the weather and emergency triage.",
+        "Name": "Dress in Layers",
+        "Sub-parts": "",
+        "Description": "A practical reminder to bring a jacket, possibly two, because the forecast is doing character development.",
         "Characters": "SANTOS the medic",
         "Content URL": ""
       },
       {
-        "Name": "the civilian",
-        "Description": "She's just here to observe. Totally just observing.",
+        "Name": "The Civilian",
+        "Sub-parts": "",
+        "Description": "Someone stands around in normal-person mode and makes the mistake of being available for plot errands.",
         "Characters": "DONOR",
         "Content URL": ""
       },
       {
-        "Name": "the sideliner",
-        "Description": "Benchwarmers have the best view of the game.",
+        "Name": "The Sideliner",
+        "Sub-parts": "",
+        "Description": "A benchwarmer observes the game and discovers the sidelines are also part of the field, rude.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "beyond death and recognition",
-        "Description": "DONOR's used to patients who don't talk back. These ones won't shut up, and that’s beautiful.",
+        "Name": "Beyond Death and Recognition",
+        "Sub-parts": "",
+        "Description": "A paperwork-intensive afterparty where nobody remembers the guest list correctly.",
         "Characters": "Mortician DONOR",
         "Content URL": ""
       },
       {
-        "Name": "the piloting",
-        "Description": "The haunting, but make it specifically PILOT.",
+        "Name": "The Piloting",
+        "Sub-parts": "",
+        "Description": "A beginner’s guide to sitting in the special chair and immediately regretting the seating arrangement.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "economy class is a pain in the ass",
-        "Description": "The legroom is genuinely terrible. This is the least of everyone's problems.",
+        "Name": "Economy Class Is a Pain in the Ass",
+        "Sub-parts": "",
+        "Description": "A deeply relatable complaint about legroom, seating zones, and the emotional cost of boarding group nonsense.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "unhinged lids and minds",
-        "Description": "The lids in question will be explained. The minds in question will not.",
+        "Name": "Unhinged Lids and Minds",
+        "Sub-parts": "",
+        "Description": "Some containers are having a normal one; the lids are not cooperating and neither is anyone else.",
         "Characters": "Rusted PILOT",
         "Content URL": ""
       },
       {
-        "Name": "houston we’ve got a big problem",
-        "Description": "Yes you do. Yes it is massive. Houston cannot help.",
-        "Characters": "PILOT, Various other fleet personnel",
+        "Name": "Houston, We’ve Got a Big Problem",
+        "Sub-parts": "",
+        "Description": "Houston receives an oopsie of impressive size and everyone updates the group chat accordingly.",
+        "Characters": "PILOT, various other fleet personnel",
         "Content URL": ""
       },
       {
-        "Name": "houston we’ve got a bigger problem",
-        "Description": "If you thought the previous crew had it bad, this new crew has escalated it.",
-        "Characters": "PILOT, Various other fleet personnel",
+        "Name": "Houston, We’ve Got a Bigger Problem",
+        "Sub-parts": "",
+        "Description": "The oopsie gets a sequel, because apparently Houston subscribed to the deluxe problem package.",
+        "Characters": "PILOT, various other fleet personnel",
         "Content URL": ""
       },
       {
-        "Name": "you get an f for effort",
-        "Description": "The F stands for failure.",
+        "Name": "You Get an F for Effort",
+        "Sub-parts": "",
+        "Description": "A grading incident where the rubric is unclear, the stakes are suspicious, and extra credit is not available.",
         "Characters": "PILOT the civilian test pilot",
         "Content URL": ""
       },
       {
-        "Name": "it’s your turn",
-        "Description": "Congratulations. You've been selected.",
+        "Name": "It’s Your Turn",
+        "Sub-parts": "",
+        "Description": "Someone is politely informed that the universe has reached their number at the deli counter.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "it was almost your turn",
-        "Description": "Congratulations. You were almost selected.",
+        "Name": "It Was Almost Your Turn",
+        "Sub-parts": "",
+        "Description": "A near-miss with the cosmic ticket dispenser, which is somehow not comforting.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "you get a gold star",
-        "Description": "Congratulations. That is all.",
+        "Name": "You Get a Gold Star",
+        "Sub-parts": "",
+        "Description": "A sticker-based reward system appears, and absolutely everyone should be worried about that.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "counting stars",
-        "Description": "Everyone is counting stars. Way, way too many stars. No one is stopping.",
+        "Name": "Counting Stars",
+        "Sub-parts": "",
+        "Description": "A little counting exercise for anyone who enjoys astronomy, arithmetic, and making themselves sad by accident.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "six feet long and under",
-        "Description": "Human-length. Human-width. The math on this one is deliberately uncomfortable.",
+        "Name": "Six Feet Long and Under",
+        "Sub-parts": "",
+        "Description": "A measurement lesson involving length, depth, and why rulers should mind their business.",
         "Characters": "PILOT, SANTOS the medic",
         "Content URL": ""
       },
       {
-        "Name": "contracted envy",
-        "Description": "DONOR works in the morgue. The dead don't complain. The living do. She prefers the dead, sometimes.",
+        "Name": "Contracted Envy",
+        "Sub-parts": "",
+        "Description": "A freelancer develops professional jealousy over someone else’s suspiciously stable career trajectory.",
         "Characters": "Mortician DONOR",
         "Content URL": ""
       },
       {
-        "Name": "dreams of death",
-        "Description": "PILOT dreams. They are not good dreams.",
+        "Name": "Dreams of Death",
+        "Sub-parts": "",
+        "Description": "Sleep brings another charming little slideshow from the brain’s least customer-friendly department.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "flirting with death",
-        "Description": "Not metaphorically. Literally circling the drain and making eye contact with it.",
-        "Characters": "Mortician DONOR, Various other fleet personnel",
+        "Name": "Flirting with Death",
+        "Sub-parts": "",
+        "Description": "Someone gets a little too familiar with the office goth and HR has questions.",
+        "Characters": "Mortician DONOR, various other fleet personnel",
         "Content URL": ""
       },
       {
-        "Name": "flirting after death",
-        "Description": "Death hasn't stopped anyone's game. If anything, it's improved it.",
-        "Characters": "Various other fleet personnel",
+        "Name": "Flirting After Death",
+        "Sub-parts": "",
+        "Description": "The workplace situationship continues past normal business hours and possibly several other boundaries.",
+        "Characters": "various other fleet personnel",
         "Content URL": ""
       },
       {
-        "Name": "stars on a wall",
-        "Description": "PILOT counts stars. There are still too many. She also keeps going.",
+        "Name": "Stars on a Wall",
+        "Sub-parts": "",
+        "Description": "A wall gets decorated with stars, because interior design is cheaper than emotional processing.",
         "Characters": "PILOT",
         "Content URL": ""
       },
       {
-        "Name": "stars on a canvas",
-        "Description": "DONOR counts stars. There are too many. She keeps going anyway.",
+        "Name": "Stars on a Canvas",
+        "Sub-parts": "",
+        "Description": "An arts-and-crafts session attempts to turn too many stars into something wall-safe.",
         "Characters": "DONOR",
         "Content URL": ""
       },
       {
-        "Name": "pre-piloting",
-        "Description": "Before PILOT was PILOT, she was something else.",
+        "Name": "Pre-Piloting",
+        "Sub-parts": "",
+        "Description": "Before the big chair, there is paperwork, vibes, and a suspicious amount of foreshadowing.",
         "Characters": "PILOT",
         "Content URL": ""
       }
     ],
     "the orange poppyverse": [
       {
-        "Name": "by the bay",
-        "Description": "Bay Area. Gray Area. Everyone here is a tired techie quietly screaming into their third cold brew.",
-        "Characters": "Techie PILOT, Various Bay Area housemates",
-        "Content URL": ""
+        "Name": "Top 10 Unexplained: The Space Center",
+        "Sub-parts": "",
+        "Description": "A ranking of Space Center weirdness that implies someone had enough incidents to make a list.",
+        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796916495101853696/top-10-unexplained-the-space-center"
       },
       {
-        "Name": "in serif vs in source sans",
-        "Description": "The gap between what got written down and what actually happened . It’s a canyon.",
-        "Characters": "Techie PILOT, Various Bay Area housemates",
-        "Content URL": ""
+        "Name": "Top 10 Unexplained: The Visitors Center",
+        "Sub-parts": "",
+        "Description": "The visitor center gets its own list of anomalies, because even the public-facing parts of the space program cannot keep reality normal.",
+        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796916444984213504/top-10-unexplained-the-visitors-center"
       },
       {
-        "Name": "merry christmas now who stickerbombed the house",
-        "Description": "The house has been stickerbombed. The house did not consent to being stickerbombed. Merry Christmas.",
-        "Characters": "Techie PILOT, Various Bay Area housemates",
-        "Content URL": ""
+        "Name": "That’s Not in the Textbooks",
+        "Sub-parts": "",
+        "Description": "A textbook-safe universe briefly fails inspection at the Space Center.",
+        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796916347426750464/thats-not-in-the-textbooks"
       },
       {
-        "Name": "things to do in washington dc",
-        "Description": "There's a lot to do in DC. None of it is enough to outrun being yourself.",
+        "Name": "More Than Meets the Cat",
+        "Sub-parts": "",
+        "Description": "Orbital Debris the cat is either a cat, an omen, or a classified morale hazard.",
+        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796916255767527425/more-than-meets-the-cat"
+      },
+      {
+        "Name": "Spaceships & Suburbia",
+        "Sub-parts": "",
+        "Description": "The NASA timeline parks impossible spacecraft beside ordinary domestic weirdness and calls that a setting.",
+        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796916064040681472/spaceships-suburbia"
+      },
+      {
+        "Name": "[Houston, Houston, I’m the Problem] INTRO",
+        "Sub-parts": "",
+        "Description": "A welcome mat for the NASA timeline, where the Space Center’s biggest anomaly is usually PILOT.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809303402146349057/houston-houston-im-the-problem-intro"
+      },
+      {
+        "Name": "[Sheep Milk Latte]",
+        "Sub-parts": "p0 / p1",
+        "Description": "A weirdly domestic, caffeinated orange-Poppyverse thread where ordinary errands and emotional surrealism share the same cup.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/sheep%20milk%20latte/chrono"
+      },
+      {
+        "Name": "[Sheep Milk Latte] INTRO",
+        "Sub-parts": "",
+        "Description": "An intro to the café branch where absurd drinks carry suspicious amounts of emotional payload.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809303512817238016/sheep-milk-latte-intro"
+      },
+      {
+        "Name": "[ASSMAN OMELET]: The New Kid",
+        "Sub-parts": "",
+        "Description": "A new kid arrives in the Assman Omelet timeline, because even cursed domesticity needs onboarding.",
+        "Characters": "PILOT, DONOR, UNIT, AUTOPILOT, NULL",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796910173170089984/assman-omelet-the-new-kid"
+      },
+      {
+        "Name": "[ASSMAN OMELET] [Farewell in Purple] [p1]",
+        "Sub-parts": "p1 / p2 / p3",
+        "Description": "A purple-tinged farewell thread where domestic absurdity brushes against KILOTON-shaped grief.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/farewell%20in%20purple/chrono"
+      },
+      {
+        "Name": "[ASSMAN OMELET]: Honey, the Kids *ARE* the Fridge",
+        "Sub-parts": "",
+        "Description": "PILOT and DONOR try naming their haunted appliances, only to discover the stove, fridge, and purple presence have opinions.",
+        "Characters": "PILOT, DONOR, UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796909575462961152/assman-omelet-honey-the-kids-are-the-fridge"
+      },
+      {
+        "Name": "[ASSMAN OMELET] [Intermission in Purple] [p1]",
+        "Sub-parts": "p1 / p2 / p3",
+        "Description": "A purple intermission where the joke-house pauses long enough for the grief in the walls to become audible.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/intermission%20in%20purple/chrono"
+      },
+      {
+        "Name": "[ASSMAN OMELET]: The Kids",
+        "Sub-parts": "",
+        "Description": "UNIT and AUTOPILOT become fridge-magnet children with the emotional subtlety of a ransom note.",
+        "Characters": "PILOT, DONOR, UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796908944307142656/assman-omelet-the-kids"
+      },
+      {
+        "Name": "[ASSMAN OMELET]: The Fridge",
+        "Sub-parts": "",
+        "Description": "The fridge becomes a family archive, passive-aggressive shrine, and deeply unserious haunting device.",
+        "Characters": "PILOT, DONOR, UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796908257261371392/in-another-world-aka-ours-assman-omelet"
+      },
+      {
+        "Name": "[In Another World… AKA Ours]: Frosty the Snowman",
+        "Sub-parts": "",
+        "Description": "A holiday object does what holiday objects should never do: matter cosmically.",
+        "Characters": "The BY THE BAY cast, DONOR",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796907731694075904/in-another-world-aka-ours-frosty-the-snowman"
+      },
+      {
+        "Name": "[In Another World AKA Ours] INTRO ADDENDUM",
+        "Sub-parts": "",
+        "Description": "The domestic timeline receives a correction, because even normal life requires patch notes.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809302845060988928/in-another-world-aka-ours-intro-addendum"
+      },
+      {
+        "Name": "[In Another World AKA Ours] INTRO",
+        "Sub-parts": "",
+        "Description": "The no-mechs timeline starts here, allegedly normal and immediately suspicious.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809302780696281088/in-another-world-aka-ours-intro"
+      },
+      {
+        "Name": "The house knows something that you do not [p1]",
+        "Sub-parts": "p1 / p2 / p3",
+        "Description": "The DC house keeps secrets with the smug patience of old walls.",
         "Characters": "Linguist PILOT, Various DC housemates",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/things%20to%20do%20in%20dc"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20house%20knows%20something%20that%20you%20do%20not/chrono"
       },
       {
-        "Name": "walk your pet rock",
-        "Description": "Please clean up after your pet. Your pet is a rock. Your rock is more than a rock.",
-        "Characters": "Linguist PILOT, The clinger, Various DC housemates",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/the%20unauthorized%20pet%20rock"
+        "Name": "The city knows something that you do not",
+        "Sub-parts": "p1 / p2",
+        "Description": "Washington, DC becomes an archive with monuments for teeth.",
+        "Characters": "Linguist PILOT, Various DC housemates",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20city%20knows%20something%20that%20you%20do%20not/chrono"
       },
       {
-        "Name": "genre glitches and panelized panic",
-        "Description": "The Poppyverse becomes a manga. It doesn't even last till lunch. The fourth wall was not designed to handle this art style.",
-        "Characters": "PILOT, Techie PILOT, Various Bay Area housemates, Various other fleet personnel",
-        "Content URL": "https://inpoppyfields.tumblr.com/tagged/genre%20glitches%20and%20panelized%20panic/chrono"
+        "Name": "[Things To Do in DC]: INTRO",
+        "Sub-parts": "",
+        "Description": "A travel guide for sightseeing, sacred spaces, and places that should not be emotionally sentient.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809295298054766592/things-to-do-in-dc-intro"
       },
       {
-        "Name": "happy thanksgiving and why is the sky pink",
-        "Description": "The pink sky is not the emergency. The pink sky is just atmosphere. Everything else is the emergency.",
+        "Name": "Family Portrait",
+        "Sub-parts": "",
+        "Description": "A NASA family portrait captures impossible kinship pretending to be ordinary.",
+        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/810503484922281984/family-portrait"
+      },
+      {
+        "Name": "TOP MOST TRUSTED SPACE NEWS SOURCE, ACCORDING TO NASA DIRECTOR",
+        "Sub-parts": "",
+        "Description": "PILOT’s media credibility ranking is either satire, propaganda, or a staffing emergency.",
+        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/810502958947188736/top-most-trusted-space-news-source-according-to"
+      },
+      {
+        "Name": "The Coffin in the Crowd",
+        "Sub-parts": "",
+        "Description": "A coffin appears in public, and DC’s ceremonial instincts make everything worse.",
+        "Characters": "Linguist PILOT, Various DC housemates",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809323503418474496/the-coffin-in-the-crowd"
+      },
+      {
+        "Name": "The Hill",
+        "Sub-parts": "p1 / p2 / p3",
+        "Description": "The Hill becomes terrain, institution, symbol, and bad omen.",
+        "Characters": "Linguist PILOT, Various DC housemates",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20hill/chrono"
+      },
+      {
+        "Name": "The Unauthorized Pet Rock",
+        "Sub-parts": "p0 / p1 / p2 / p3 / p4 / p5 / EPILOGUE",
+        "Description": "A pet rock enters the archive without permission and immediately becomes suspiciously important.",
+        "Characters": "Linguist PILOT, Various DC housemates",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20unauthorized%20pet%20rock/chrono"
+      },
+      {
+        "Name": "In Serif vs. Source Sans",
+        "Sub-parts": "",
+        "Description": "Typography becomes the gap between memorial polish and what actually happened.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "Merry Christmas, Now Who Stickerbombed the House?",
+        "Sub-parts": "",
+        "Description": "Christmas arrives with stickerbomb vandalism and domestic multiverse vandalism.",
+        "Characters": "Techie PILOT, Various Bay Area housemates",
+        "Content URL": ""
+      },
+      {
+        "Name": "Happy Thanksgiving and Why Is the Sky Pink?",
+        "Sub-parts": "",
+        "Description": "Thanksgiving proceeds under a pink sky, which is not the strangest emergency.",
         "Characters": "Captain PILOT, Enlisted PILOT, Techie PILOT",
         "Content URL": ""
       },
       {
-        "Name": "section 94",
-        "Description": "That is a large section number. Someone has been busy.",
+        "Name": "Section 94",
+        "Sub-parts": "",
+        "Description": "A cemetery section number becomes a whole geography of grief.",
         "Characters": "Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       },
       {
-        "Name": "you wore the same outfit twice",
-        "Description": "The audacity. The nerve. The repeat.",
+        "Name": "You Wore the Same Outfit Twice",
+        "Sub-parts": "",
+        "Description": "Techie PILOT commits fashion repetition; the timeline survives, barely.",
         "Characters": "Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       },
       {
-        "Name": "level up, level down, or just level sideways?",
-        "Description": "Progress is relative. So is direction. So, honestly, is the floor.",
+        "Name": "Level Up, Level Down, or Just Level Sideways?",
+        "Sub-parts": "",
+        "Description": "Career progress turns into a directionless platformer with emotional fall damage.",
         "Characters": "Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       },
       {
-        "Name": "economy class sass",
-        "Description": "Complimentary snacks will not be served. Neither will sympathy.",
+        "Name": "Economy Class Sass",
+        "Sub-parts": "",
+        "Description": "Techie PILOT brings sass to economy class because legroom cannot have the last word.",
         "Characters": "Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       },
       {
-        "Name": "assman omelet",
-        "Description": "The fridge is haunting the kitchen. The kitchen is letting it.",
-        "Characters": "AUTOPILOT is a fridge, Techie DONOR, Techie PILOT, UNIT is a stove, Various Bay Area housemates",
-        "Content URL": ""
-      },
-      {
-        "Name": "houston, houston, i am the problem",
-        "Description": "PILOT is the director of NASA. UNIT is a cat. DONOR may or may not be an extraterrestrial ghost simply messing around.",
-        "Characters": "DONOR the anomalous extreterrestrial interdimensional entity, Director PILOT, UNIT is a cat",
-        "Content URL": "https://inpoppyfields.tumblr.com/tagged/houston houston i'm the problem/chrono"
-      },
-      {
-        "Name": "apple-y ever after",
-        "Description": "Your software will update tonight.",
+        "Name": "Apple-y Ever After",
+        "Sub-parts": "",
+        "Description": "Tech work, domestic fantasy, and software updates collide in one suspiciously shiny ending.",
         "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       },
       {
-        "Name": "sheep milk latte",
-        "Description": "Retired, coastal, vaguely cursed. The séance was not on the schedule.",
-        "Characters": "Old retired DONOR, Old retired PILOT, UNIT the paranormal entity",
-        "Content URL": "https://inpoppyfields.tumblr.com/tagged/sheep%20milk%20latte/chrono"
-      },
-      {
-        "Name": "do you think they felt like heroes? / do you feel like a hero?",
-        "Description": "A question posed quietly. No pressure. Really.",
+        "Name": "Do You Think They Felt Like Heroes? / Do You Feel Like a Hero?",
+        "Sub-parts": "",
+        "Description": "The hero question lands quietly and refuses to leave.",
         "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       },
       {
-        "Name": "the house breathes / something in the walls watch",
-        "Description": "Not creepy at all. Totally normal house. Definitely not watching you.",
-        "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
-        "Content URL": ""
-      },
-      {
-        "Name": "four steps to nowhere",
-        "Description": "Watch your step. The destination is not a place.",
+        "Name": "Four Steps to Nowhere",
+        "Sub-parts": "",
+        "Description": "Four steps are enough to prove the destination was never the point.",
         "Characters": "Techie DONOR, Techie PILOT",
         "Content URL": ""
       },
       {
-        "Name": "happy memorial day",
-        "Description": "A long weekend of trauma. The grill is not involved.",
+        "Name": "Happy Memorial Day",
+        "Sub-parts": "",
+        "Description": "A long weekend meets memorial grief and absolutely loses.",
         "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       },
       {
-        "Name": "lost in translation",
-        "Description": "Hopelessly, utterly, irretrievably lost. And that's just the vocabulary.",
+        "Name": "Lost in Translation",
+        "Sub-parts": "",
+        "Description": "Language fails, and the failure brings receipts.",
         "Characters": "Linguist PILOT, Various expat PILOTs",
         "Content URL": ""
       },
       {
-        "Name": "happy fourth of july",
-        "Description": "A single night. A lifetime of damage.",
+        "Name": "Happy Fourth of July",
+        "Sub-parts": "",
+        "Description": "Fireworks, patriotism, and trauma share one very loud night.",
         "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       },
       {
-        "Name": "in plaque vs in person",
-        "Description": "The gap between the monument and the person. It's a canyon.",
+        "Name": "In Plaque vs. in Person",
+        "Sub-parts": "",
+        "Description": "The plaque simplifies what the person could not survive.",
         "Characters": "Techie DONOR, Techie PILOT, Various Bay Area housemates",
         "Content URL": ""
       }
     ],
     "the desert roseverse": [
       {
-        "Name": "designated driver for the worst house party ever",
-        "Description": "You didn't want to be designated driver. And yet.",
-        "Characters": "PILOT, Various other fleet personnel",
-        "Content URL": ""
+        "Name": "Modern Family",
+        "Sub-parts": "p1 / p2 / p3 / p4",
+        "Description": "The desert-rose household tries to be a family, despite reality being deeply unlicensed for childcare.",
+        "Characters": "LIANG, PILOT, Older LIANG, Older PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/modern%20family/chrono"
       },
       {
-        "Name": "scribing for the world house party ever",
-        "Description": "Someone has to document this. That someone is you.",
-        "Characters": "PILOT, Various other fleet personnel",
-        "Content URL": ""
+        "Name": "Mirage Patrol",
+        "Sub-parts": "v0 / v1 p1 / v1 p2 / v2",
+        "Description": "A patrol crosses heat, duty, and memory until the horizon starts editing itself.",
+        "Characters": "LIANG, PILOT, Older LIANG",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/mirage%20patrol/chrono"
       },
       {
-        "Name": "i just saw beyonce",
-        "Description": "She saw BEYONCÉ. Actually.",
-        "Characters": "PILOT, Various other fleet personnel",
-        "Content URL": ""
+        "Name": "Keep on Dreamin’ Kid",
+        "Sub-parts": "p1 / p2",
+        "Description": "A small stubborn dream survives in the desert, annoyingly alive and hard to kill.",
+        "Characters": "LIANG, Older LIANG",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/keep%20on%20dreamin%20kid/chrono"
       },
       {
-        "Name": "sand & siblings",
-        "Description": "It's all fun and games until it isn't.",
+        "Name": "Ant-Sized Angels",
+        "Sub-parts": "v1 / v2",
+        "Description": "Tiny humans, huge sky, and the terrible math of being someone’s wingman.",
         "Characters": "LIANG, PILOT",
-        "Content URL": ""
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/ant%20sized%20angels%20-%20earth%20and%20sky/chrono"
       },
       {
-        "Name": "sand & siblings & adult supervision",
-        "Description": "Mom and dad showed up. This changes everything.",
-        "Characters": "LIANG, Older LIANG the special forces soldier, Older PILOT the CIA operator, PILOT",
-        "Content URL": ""
-      },
-      {
-        "Name": "stained sands",
-        "Description": "It's ketchup. Relax. It's fine. It's definitely ketchup.",
-        "Characters": "PILOT, Various other fleet personnel",
-        "Content URL": ""
-      },
-      {
-        "Name": "ant sized angels",
-        "Description": "From 10,000 feet, everyone looks like ants. At least ants have their lives together.",
+        "Name": "Meet LIANG, the wingman",
+        "Sub-parts": "",
+        "Description": "LIANG enters as the grounded backup plan every doomed flyer secretly needs.",
         "Characters": "LIANG, PILOT",
-        "Content URL": "https://inpoppyfields.tumblr.com/tagged/ant%20sized%20angels/chrono"
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796821134593163264/ant-sized-angels-intro-the-wingman"
+      },
+      {
+        "Name": "[Ants & Angels] INTRO",
+        "Sub-parts": "",
+        "Description": "A desert intro where smallness and divinity share a flight path.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": ""
+      }
+    ],
+    "area fifty-done": [
+      {
+        "Name": "Do Units Dream Sweetly?",
+        "Sub-parts": "",
+        "Description": "The units dream of McDonald’s, laundry rage, failed calls, wrong mirrors, and impossible hallways—then go to work anyway.",
+        "Characters": "various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/808419699533709312/do-units-dream-sweetly"
+      },
+      {
+        "Name": "“Are those kids allowed here?”",
+        "Sub-parts": "",
+        "Description": "A new Earth Base tech meets UNIT and AUTOPILOT as casual avatar girls first, then discovers they are also building-sized war machines.",
+        "Characters": "various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/803716188882468864/are-those-kids-allowed-here"
+      },
+      {
+        "Name": "Work Voice vs. BBQ Voice",
+        "Sub-parts": "",
+        "Description": "NASA professionalism loses a custody battle with barbecue casual, and the tonal whiplash is structural damage.",
+        "Characters": "various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/803715211624415232/work-voice-vs-bbq-voice"
+      },
+      {
+        "Name": "[Welcome to Area Fifty-DONE] OK Nevermind, Even We Can’t Explain These Incidents",
+        "Sub-parts": "",
+        "Description": "A final escalation of Area Fifty-DONE incidents so strange that even the in-universe explainers give up and start labeling the chaos.",
+        "Characters": "various base personnel, various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796917123403415552/ok-nevermind-even-we-cant-explain-these"
+      },
+      {
+        "Name": "[Welcome to Area Fifty-DONE] Weird Shit Happens Too Often, So Here’s a Tier System",
+        "Sub-parts": "",
+        "Description": "A ranking system for Earth Base weirdness, because anomalies happen often enough that someone finally made them administratively sortable.",
+        "Characters": "various base personnel, various units, DONOR probably fooling around",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796916869435146240/weird-shit-happens-too-often-so-heres-a-tier"
+      },
+      {
+        "Name": "BLDG K BSMT",
+        "Sub-parts": "1 / 2 / 3",
+        "Description": "The basement has a name, which already means everyone is doomed.",
+        "Characters": "various base personnel, various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/bldg%20k%20bsmt/chrono"
+      },
+      {
+        "Name": "Perimeter Visitors Compendium",
+        "Sub-parts": "ORIGINAL / CONTINUED / UNEDITED",
+        "Description": "The perimeter keeps receiving visitors and none of them respect boundaries.",
+        "Characters": "various base personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/perimeter%20visitors/chrono"
+      },
+      {
+        "Name": "The Quiet Floor",
+        "Sub-parts": "p0.1 / p0.2 / p1 / p2 / p3 / p4",
+        "Description": "The quiet floor is quiet in the way a predator is quiet.",
+        "Characters": "PILOT, REYES",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20quiet%20floor/chrono"
+      },
+      {
+        "Name": "The Quiet One",
+        "Sub-parts": "p1 / p2 / p3 / p4 / p5 / p6",
+        "Description": "The quiet one says little, which is generally how the worst file starts.",
+        "Characters": "various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20quiet%20one/chrono"
+      },
+      {
+        "Name": "Even the Architecture is Cursed Here",
+        "Sub-parts": "",
+        "Description": "Area Fifty-DONE’s buildings are not passive structures; they are accomplices.",
+        "Characters": "PILOT, REYES, various base personnel, various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809395458615263232/even-the-architecture-is-cursed-here"
+      },
+      {
+        "Name": "The Sentient Mechs are the Least Weirdest Thing Here",
+        "Sub-parts": "",
+        "Description": "The sentient mechs are somehow not the weird part, which is HR’s problem now.",
+        "Characters": "PILOT, REYES, various base personnel, various units",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809395153895899136/the-sentient-mechs-are-the-least-weirdest-thing"
+      },
+      {
+        "Name": "Ouija Boards are Useless Here",
+        "Sub-parts": "",
+        "Description": "The haunting is too advanced for consumer-grade ghost interfaces.",
+        "Characters": "PILOT, REYES, various base personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/809394163693076480/ouija-boards-are-useless-here"
+      },
+      {
+        "Name": "The Other Side of the Heat",
+        "Sub-parts": "The woman in the sun / The white house with the blue shutters",
+        "Description": "Past the heat is not safety, just a different kind of exposure.",
+        "Characters": "PILOT, REYES, various base personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20other%20side%20of%20the%20heat/chrono"
       }
     ],
     "the ultravioletverse": [
       {
-        "Name": "you wannabe me",
+        "Name": "You Wanna Be Me",
+        "Sub-parts": "",
         "Description": "OLDER PILOT looks at MUNDANE PILOT and sees herself. MUNDANE PILOT looks back and has thoughts.",
         "Characters": "Older PILOT the CIA operator, Techie PILOT",
         "Content URL": ""
       },
       {
-        "Name": "now you wanna demand a refund",
+        "Name": "Now You Wanna Demand a Refund",
+        "Sub-parts": "",
         "Description": "The experience was not as advertised.",
         "Characters": "Older PILOT the CIA operator, Techie PILOT",
         "Content URL": ""
       },
       {
-        "Name": "purple is the color of envy",
+        "Name": "Purple Is the Color of Envy",
+        "Sub-parts": "",
         "Description": "Green had the monopoly for centuries. Purple is staging a coup.",
         "Characters": "Older PILOT the CIA operator, Techie PILOT",
         "Content URL": ""
       },
       {
-        "Name": "found in translation",
+        "Name": "Found in Translation",
+        "Sub-parts": "",
         "Description": "Something was lost in translation. Something else was found.",
         "Characters": "Older PILOT the CIA operator, Techie PILOT",
         "Content URL": ""
       },
       {
-        "Name": "black opt in or out?",
+        "Name": "Black Opt in or Out?",
+        "Sub-parts": "",
         "Description": "OLDER PILOT is being asked a question. That question is the entire premise.",
         "Characters": "Older PILOT the CIA operator, Techie PILOT",
         "Content URL": ""
@@ -1010,87 +1784,213 @@
     ],
     "the lilyverse": [
       {
-        "Name": "lilium candidium",
-        "Description": "The dark alternate timeline: DONOR commands alone, PILOT is dead from the start, and AUTOPILOT is unbothered about all of it.",
-        "Characters": "AUTOPILOT, Commander DONOR, Lily PILOT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/lilium%20candidum"
+        "Name": "[LILY PONDERINGS]: Dream of an Old Flame",
+        "Sub-parts": "",
+        "Description": "An old flame returns as dream residue, because the Lilyverse never lets fire stay past tense.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764815943347191808/lily-ponderings-dream-of-an-old-flame"
       },
       {
-        "Name": "uncanny valley",
-        "Description": "AUTOPILOT just wants its mom. In this universe, that's more complicated than it sounds.",
+        "Name": "[LILY PONDERINGS]: Flame in the Dark",
+        "Sub-parts": "",
+        "Description": "A tiny flame keeps burning in the dark, rude with hope and worse with memory.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/764815832493801472/lily-ponderings-flame-in-the-dark"
+      },
+      {
+        "Name": "[LILY PONDERINGS]: The Anomalous Cat [2]",
+        "Sub-parts": "",
+        "Description": "The anomalous cat returns, which is adorable until the recognition starts.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/search/%5BLILY%20PONDERINGS%5D%3A%20The%20Anomalous%20Cat%20%5B2%5D"
+      },
+      {
+        "Name": "[LILY PONDERINGS]: The Anomalous Cat [1]",
+        "Sub-parts": "p1 / p2",
+        "Description": "A strange cat arrives carrying the softest possible category of existential threat.",
+        "Characters": "DONOR, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20anomalous%20cat/chrono"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM] - FINALE - Back to Stardust",
+        "Sub-parts": "",
+        "Description": "The finale sends what is left back to stardust, which is poetic and absolutely not fine.",
+        "Characters": "DONOR, PILOT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761682204801826816/lilium-candidum-back-to-stardust"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: The Silver Ribbon",
+        "Sub-parts": "",
+        "Description": "A silver ribbon tries to hold memory together with the least adequate possible materials.",
+        "Characters": "DONOR, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761674967240900608/lilium-candidum-the-silver-ribbon"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: Silk and Steel",
+        "Sub-parts": "p1 / p2 / p3",
+        "Description": "Softness meets armor and neither one escapes unchanged.",
+        "Characters": "DONOR, AUTOPILOT, various fleet personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/silk%20and%20steel/chrono"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: Cold Words",
+        "Sub-parts": "",
+        "Description": "Words freeze before they wound, which does not make them gentler.",
+        "Characters": "DONOR, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761488202627530752/lilium-candidum-reckless"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: Breaking Point",
+        "Sub-parts": "",
+        "Description": "The pressure finally wins, and no one gets to call it sudden.",
+        "Characters": "DONOR, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761388530915246080/lilium-candidum-breaking-point"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: Breaking the Broken",
+        "Sub-parts": "",
+        "Description": "Repair becomes another way to fracture what was already barely holding.",
+        "Characters": "DONOR, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761388206774255616/lilium-candidum-breaking-the-broken"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: Autopilot Mode",
+        "Sub-parts": "",
+        "Description": "Survival hits autopilot when the self can no longer stay in the cockpit.",
+        "Characters": "DONOR, PILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761387716712742912/lilium-candidum-autopilot-mode"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: The Machine [v1] - Not Her",
+        "Sub-parts": "",
+        "Description": "The machine looks close enough to hurt and wrong enough to survive.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/search/%5BLILIUM%20CANDIDUM%5D%3A%20The%20Machine%20%5Bv1%5D%20-%20Not%20Her"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: The Machine",
+        "Sub-parts": "v1 / v2",
+        "Description": "The Machine thread asks whether resemblance is resurrection, replacement, or insult.",
+        "Characters": "UNIT, Various other units",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/lilium%20candidum%20-%20the%20machine/chrono"
+      },
+      {
+        "Name": "[LILIUM CANDIDUM]: Beginnings",
+        "Sub-parts": "p1 / p2",
+        "Description": "The Lilyverse begins before anyone understands how expensive tenderness will become.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/lilium%20candidum%20-%20beginnings/chrono"
+      },
+      {
+        "Name": "Uncanny Valley",
+        "Sub-parts": "p1 / p2 / p3 / p4 / p5 / p6 / p7 / p8 / p9",
+        "Description": "The valley gets crowded with almost-human things and absolutely no emotional zoning laws.",
         "Characters": "AUTOPILOT, Lily PILOT is a ghost",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/uncanny%20valley"
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/uncanny%20valley/chrono"
       },
       {
-        "Name": "a spark in the dark",
-        "Description": "The light reaches the darkest corners of the solar system. PILOT makes sure of it.",
-        "Characters": "Commander DONOR, Lily PILOT is a ghost",
-        "Content URL": ""
+        "Name": "Sisters in Pink",
+        "Sub-parts": "p1 / p2",
+        "Description": "Pink-coded sisterhood arrives soft, bright, and emotionally armed.",
+        "Characters": "UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/sisters%20in%20pink/chrono"
       },
       {
-        "Name": "lily pond ripples",
-        "Description": "In the dark, lilies bloom. Everything else is negotiable.",
-        "Characters": "AUTOPILOT, Commander DONOR",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/lily%20ponderings"
+        "Name": "Poppies and Lilies",
+        "Sub-parts": "",
+        "Description": "The poppy and lily symbol systems collide, bringing two flower-coded strands of grief and recognition into the same frame.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761402778216235008/anomalies-in-pink-poppies-and-lilies"
       },
       {
-        "Name": "anomalies in pink",
-        "Description": "The universe turns pink. Things get strange.",
-        "Characters": "AUTOPILOT, Commander DONOR, Lily PILOT is a ghost, UNIT",
-        "Content URL": "https://inpoppyfields.tumblr.com/archive/tagged/anomalies%20in%20pink"
+        "Name": "Units for Measure",
+        "Sub-parts": "p1 / p2",
+        "Description": "The archive attempts to measure units and discovers the units are measuring back.",
+        "Characters": "UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/units%20for%20measure/chrono"
+      },
+      {
+        "Name": "The Dream in the Cupola",
+        "Sub-parts": "",
+        "Description": "A pink-dream sequence set in a cupola, where vision, height, and memory become unnervingly tender.",
+        "Characters": "PILOT, DONOR",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761390437058641920/anomalies-in-pink-the-dream-2"
+      },
+      {
+        "Name": "The Dream in the Corridor",
+        "Sub-parts": "",
+        "Description": "A corridor dream in pink, all liminal architecture and emotional pursuit through a space that will not stay neutral.",
+        "Characters": "PILOT, DONOR",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/761390342758072320/anomalies-in-pink-the-dream-1"
+      },
+      {
+        "Name": "Storm in Pink",
+        "Sub-parts": "p1 / p2 / p3 / p4 / p5",
+        "Description": "Pink becomes weather, warning, and emotional pressure system.",
+        "Characters": "PILOT, DONOR, UNIT, AUTOPILOT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/storm%20in%20pink/chrono"
       }
     ],
     "the spider lilyverse": [
       {
-        "Name": "smoldering embers",
+        "Name": "Smoldering Embers",
+        "Sub-parts": "",
         "Description": "After the burn, the slow fade.",
         "Characters": "Rusted PILOT",
         "Content URL": ""
       },
       {
-        "Name": "orders from somewhere high above",
+        "Name": "Orders from Somewhere High Above",
+        "Sub-parts": "",
         "Description": "This is above your clearance level. It's also above everyone else's.",
         "Characters": "Commander DONOR, SANTOS the medic",
         "Content URL": ""
       },
       {
-        "Name": "haunting goes both ways",
+        "Name": "Haunting Goes Both Ways",
+        "Sub-parts": "",
         "Description": "You can haunt yourself. Your past self can haunt yourself, and so can your future self. The universe has a truly terrible sense of humor.",
         "Characters": "Rusted PILOT, Rusted PILOT as a ghost, Young reincarnated PILOT, Young reincarnated PILOT as a hallucination",
         "Content URL": ""
       },
       {
-        "Name": "NULL error",
+        "Name": "NULL Error",
+        "Sub-parts": "",
         "Description": "Meet NULL: a unit with no soul. This should be comforting. It is not.",
-        "Characters": "NULL",
+        "Characters": "",
         "Content URL": ""
       },
       {
-        "Name": "hot and cold",
+        "Name": "Hot and Cold",
+        "Sub-parts": "",
         "Description": "Opposites attract. This is textbook. This does not make it easier.",
         "Characters": "Commander DONOR is also an anomalous entity, Rusted PILOT as a ghost",
         "Content URL": ""
       },
       {
-        "Name": "santos does not believe in ghosts",
+        "Name": "SANTOS Does Not Believe in Ghosts",
+        "Sub-parts": "",
         "Description": "SANTOS does not believe in ghosts. SANTOS is surrounded by ghosts.",
         "Characters": "Commander SANTOS, Rusted PILOT as a ghost",
         "Content URL": ""
       },
       {
-        "Name": "kintsugi in gold",
+        "Name": "Kintsugi in Gold",
+        "Sub-parts": "",
         "Description": "The cracks are filled with gold. That's the whole point.",
         "Characters": "Commander SANTOS, Young reincarnated PILOT",
         "Content URL": ""
       },
       {
-        "Name": "flecks of gold",
+        "Name": "Flecks of Gold",
+        "Sub-parts": "",
         "Description": "Burn bright. While you can.",
         "Characters": "Rusted PILOT, Young ensign SANTOS",
         "Content URL": ""
       },
       {
-        "Name": "flecks of gold, rekindled",
+        "Name": "Flecks of Gold, Rekindled",
+        "Sub-parts": "",
         "Description": "Burn back brighter. The universe gave it another shot.",
         "Characters": "Commander SANTOS, Young reincarnated PILOT",
         "Content URL": ""
@@ -1098,33 +1998,61 @@
     ],
     "beyond the poppyverse": [
       {
-        "Name": "21 pilots, too many pilots",
-        "Description": "All the PILOTs, from every fork and timeline and universe. No such thing as too many. Probably.",
-        "Characters": "All the PILOTs, Techie PILOT",
+        "Name": "The Poppyverse Becomes a Manga and Doesn’t Even Make It to The Boss Fight",
+        "Sub-parts": "",
+        "Description": "War gets manga-filtered into kanji, speed lines, and marketable grief, and everyone hates the camera for it.",
+        "Characters": "various fleet personnel",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/808237761524039680/the-poppyverse-becomes-a-manga-and-doesnt-even"
+      },
+      {
+        "Name": "The Poppyverse Becomes a Manga and Doesn’t Even Make It to Breakfast",
+        "Sub-parts": "",
+        "Description": "The Poppyverse gets anime-brained before breakfast, which is somehow both funnier and more damning than combat.",
+        "Characters": "The BY THE BAY cast",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/808234644267024384/the-poppyverse-becomes-a-manga-and-doesnt-even"
+      },
+      {
+        "Name": "[Celestial Bodies]",
+        "Sub-parts": "v1 / v2 / v3",
+        "Description": "A cosmic-side thread where bodies, pilots, and machines start behaving less like people and more like orbiting symbols of each other.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/celestial%20bodies/chrono"
+      },
+      {
+        "Name": "[Celestial Bodies] [Intro]",
+        "Sub-parts": "",
+        "Description": "An introductory frame for celestial-body variants, setting up a starry, symbolic branch of PILOT, DONOR, and multiverse recursion.",
+        "Characters": "DONOR, PILOT, UNIT",
+        "Content URL": "https://inpoppyfields.tumblr.com/post/796911037849927680/celestial-bodies-intro"
+      },
+      {
+        "Name": "[21 Pilots, Too Many Pilots] [v1]: The Pink Plane Problem",
+        "Sub-parts": "v1 / v2",
+        "Description": "A variant pileup of too many PILOTs and one very pink aviation problem that refuses to stay inside normal continuity.",
+        "Characters": "All the PILOTs",
         "Content URL": "https://inpoppyfields.tumblr.com/tagged/21%20pilots%20too%20many%20pilots/chrono"
+      }
+    ],
+    "found files": [
+      {
+        "Name": "INITIAL FOUND FILES",
+        "Sub-parts": "HUMAN PERSONNEL / UNIT SPECS / EARTH BASE / SPACE BASE",
+        "Description": "Earth Base is introduced as a file, which immediately makes the building look guilty.",
+        "Characters": "various personnel, various units, various engines",
+        "Content URL": "https://inpoppyfields.tumblr.com/search/%5BLOCATION%20PROFILES%5D%3A%20The%20Earth%20Base"
       },
       {
-        "Name": "you’ve got soul",
-        "Description": "The author hopes you do. Really.",
-        "Characters": "",
-        "Content URL": ""
-      },
-      {
-        "Name": "make the stars scream",
-        "Description": "The stars are screaming. Literally.",
-        "Characters": "DONOR, PILOT, Various other familiar souls",
-        "Content URL": ""
-      },
-      {
-        "Name": "celestial bodies",
-        "Description": "PILOT is a neutron star. DONOR is a black hole. You're doing stellar, ladies.",
-        "Characters": "DONOR the black hole, PILOT the neutron star",
-        "Content URL": ""
+        "Name": "The Drives & Engines Archive",
+        "Sub-parts": "WHO AND WHAT ARE DRIVES & ENGINES / WHY THEY ARE DRAWN TO CERTAIN PLACES / UNRESOLVED / UNBOWED / FIRST / ULTRAVIOLET / CLINGER",
+        "Description": "The archive catalogs the forces underneath the stories: drives, engines, and reusable dread.",
+        "Characters": "various personnel, various units, various engines",
+        "Content URL": "https://inpoppyfields.tumblr.com/tagged/the%20drives%20and%20engines%20archive/chrono"
       }
     ]
   },
   "visibleColumns": [
     "Name",
+    "Sub-parts",
     "Description",
     "Characters",
     "Content URL"
@@ -1174,7 +2102,7 @@
     }
 
     function renderTable(entries) {
-      const columns = DATA.visibleColumns || ["Name", "Description", "Characters", "Content URL"];
+      const columns = DATA.visibleColumns || ["Name", "Sub-parts", "Description", "Characters", "Content URL"];
 
       if (!entries || entries.length === 0) {
         return '<p class="no-entries">No entries in this cluster yet. The void remains administratively unfilled.</p>';
