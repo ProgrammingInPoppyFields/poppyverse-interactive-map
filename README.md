@@ -1,10 +1,20 @@
-# poppyverse-3d
+<p align="center">
+  <img src="/screenshots/4.png" alt="The Poppyverse — glowing story clusters linked by collision lines" width="100%" />
+</p>
 
-**Forked from:** [vasturiano/3d-force-graph](https://github.com/vasturiano/3d-force-graph)
+<h1 align="center">poppyverse-3d</h1>
 
-![poppyverse preview](/screenshots/1.png)
+<p align="center">
+  <em>part story map, part multiverse directory, part emotionally unstable control panel</em>
+</p>
 
-A small static site for navigating the Poppyverse: part story map, part multiverse directory, part emotionally unstable control panel.
+<p align="center">
+  <strong>Forked from:</strong> <a href="https://github.com/vasturiano/3d-force-graph">vasturiano/3d-force-graph</a>
+</p>
+
+---
+
+A small static site for navigating the Poppyverse.
 
 ---
 
