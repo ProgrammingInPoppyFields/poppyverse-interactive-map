@@ -123,7 +123,7 @@
       top: calc(var(--nav-height) + 20px);
       right: 18px;
       z-index: 22;
-      width: min(360px, calc(100vw - 36px));
+      width: min(320px, calc(100vw - 36px));
       max-height: calc(100vh - var(--nav-height) - 40px);
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.18);
@@ -187,6 +187,73 @@
       color: rgba(255, 255, 255, 0.66);
       font-size: 11px;
       line-height: 1.45;
+    }
+
+    .axes-toggle {
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      z-index: 22;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.54);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .axes-toggle input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .axes-toggle-track {
+      position: relative;
+      width: 34px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      transition: background 0.18s ease;
+      flex: none;
+    }
+
+    .axes-toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.18s ease;
+    }
+
+    .axes-toggle input:checked + .axes-toggle-track {
+      background: var(--poppy-pink);
+    }
+
+    .axes-toggle input:checked + .axes-toggle-track .axes-toggle-thumb {
+      transform: translateX(16px);
+    }
+
+    .axes-toggle input:focus-visible + .axes-toggle-track {
+      outline: 2px solid rgba(255, 255, 255, 0.6);
+      outline-offset: 2px;
+    }
+
+    .axes-toggle-label {
+      color: #fff;
+      font-family: "Michroma", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .drawer-backdrop {
@@ -374,41 +441,47 @@
     <div id="drawerBody" class="drawer-body"></div>
   </aside>
 
+  <label class="axes-toggle" for="axesToggle">
+    <input type="checkbox" id="axesToggle" />
+    <span class="axes-toggle-track"><span class="axes-toggle-thumb"></span></span>
+    <span class="axes-toggle-label">Show axes</span>
+  </label>
+
   <script id="poppy-data" type="application/json">
 {
   "clusters": [
+    {
+      "name": "found files",
+      "color": "#d9d9d9",
+      "description": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 0
+    },
     {
       "name": "welcome to the poppyverse",
       "color": "#ff1447",
       "description": "Where it all begins. Your first step into this mess.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 0
+      "order": 1
     },
     {
       "name": "deeper into the poppyverse",
       "color": "#ff00a1",
       "description": "Same multiverse branch, deeper layers, fewer safety rails.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 1
+      "order": 2
     },
     {
       "name": "the red poppyverse",
       "color": "#c40000",
       "description": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 2
+      "order": 3
     },
     {
       "name": "the orange poppyverse",
       "color": "#ff772b",
       "description": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
-      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 3
-    },
-    {
-      "name": "the desert roseverse",
-      "color": "#ffd25f",
-      "description": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 4
     },
@@ -420,37 +493,37 @@
       "order": 5
     },
     {
+      "name": "the desert roseverse",
+      "color": "#ffd25f",
+      "description": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
+      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "order": 6
+    },
+    {
       "name": "the ultravioletverse",
       "color": "#5e17eb",
       "description": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 6
+      "order": 7
     },
     {
       "name": "the lilyverse",
       "color": "#005eff",
       "description": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 7
+      "order": 8
     },
     {
       "name": "the spider lilyverse",
       "color": "#4ce4ff",
       "description": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 8
+      "order": 9
     },
     {
       "name": "beyond the poppyverse",
       "color": "#ffc5c5",
       "description": "Where the fourth wall gets thin and the author starts pacing.",
-      "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "order": 9
-    },
-    {
-      "name": "found files",
-      "color": "#d9d9d9",
-      "description": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 10
     }
@@ -462,7 +535,7 @@
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "The units dream of McDonald’s, laundry rage, failed calls, wrong mirrors, and impossible hallways—then go to work anyway.",
+      "description": "The units dream of laundry, drive-thrus, wrong rooms, and other suspiciously human system errors.",
       "subparts": "",
       "characters": [
         "various units"
@@ -472,9 +545,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 5.0,
-      "zValue": 2.0
+      "xValue": 9.0,
+      "yValue": 4.0,
+      "zValue": 5.0
     },
     {
       "id": "2",
@@ -482,7 +555,7 @@
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
       "color": "#ffc5c5",
-      "description": "War gets manga-filtered into kanji, speed lines, and marketable grief, and everyone hates the camera for it.",
+      "description": "War gets manga-filtered into kanji, speed lines, and marketable grief.",
       "subparts": "",
       "characters": [
         "various fleet personnel"
@@ -493,8 +566,8 @@
       "featured": false,
       "size": 1.0,
       "xValue": 10.0,
-      "yValue": 3.0,
-      "zValue": 4.0
+      "yValue": 6.0,
+      "zValue": 3.0
     },
     {
       "id": "3",
@@ -502,7 +575,7 @@
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
       "color": "#ffc5c5",
-      "description": "The Poppyverse gets anime-brained before breakfast, which is somehow both funnier and more damning than combat.",
+      "description": "The Poppyverse gets anime animated before breakfast, which is somehow both funnier and more damning than combat.",
       "subparts": "",
       "characters": [
         "The BY THE BAY cast"
@@ -513,8 +586,8 @@
       "featured": false,
       "size": 1.0,
       "xValue": 10.0,
-      "yValue": 4.0,
-      "zValue": 6.0
+      "yValue": 6.0,
+      "zValue": 3.0
     },
     {
       "id": "4",
@@ -522,7 +595,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "An office-signature problem turns into authorship, identity, and the quiet horror of leaving your mark.",
+      "description": "An office-signature problem.",
       "subparts": "",
       "characters": [
         "UNIT",
@@ -535,7 +608,7 @@
       "size": 1.0,
       "xValue": 3.0,
       "yValue": 1.0,
-      "zValue": 6.0
+      "zValue": 8.0
     },
     {
       "id": "5",
@@ -543,7 +616,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A catastrophic drill keeps going because the scariest machine in the room is the one choosing restraint.",
+      "description": "It does it well.",
       "subparts": "",
       "characters": [
         "DRILLER",
@@ -555,8 +628,8 @@
       "featured": false,
       "size": 1.0,
       "xValue": 1.0,
-      "yValue": 3.0,
-      "zValue": 7.0
+      "yValue": 2.0,
+      "zValue": 5.0
     },
     {
       "id": "6",
@@ -564,19 +637,21 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A subterranean monster-machine exists to break the earth, and the real terror is how calmly it knows its job.",
+      "description": "It knows its job.",
       "subparts": "",
       "characters": [
         "DRILLER"
       ],
-      "collisions": [],
+      "collisions": [
+        "5"
+      ],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/807875483216789504/the-driller",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
       "xValue": 1.0,
-      "yValue": 5.0,
-      "zValue": 0.0
+      "yValue": 2.0,
+      "zValue": 5.0
     },
     {
       "id": "7",
@@ -584,7 +659,7 @@
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "A new Earth Base tech meets UNIT and AUTOPILOT as casual avatar girls first, then discovers they are also building-sized war machines.",
+      "description": "Seriously, are they?",
       "subparts": "",
       "characters": [
         "various units"
@@ -594,9 +669,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
+      "xValue": 2.0,
       "yValue": 2.0,
-      "zValue": 7.0
+      "zValue": 1.0
     },
     {
       "id": "8",
@@ -604,7 +679,7 @@
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "NASA professionalism loses a custody battle with barbecue casual, and the tonal whiplash is structural damage.",
+      "description": "Professionalism. It matters.",
       "subparts": "",
       "characters": [
         "various units"
@@ -614,52 +689,31 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
-      "yValue": 5.0,
+      "xValue": 2.0,
+      "yValue": 2.0,
       "zValue": 1.0
     },
     {
-      "id": "9",
-      "label": "[Welcome to Area Fifty-DONE] OK Nevermind, Even We Can’t Explain These Incidents",
-      "cluster": "area fifty-done",
-      "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#4dff00",
-      "description": "A final escalation of Area Fifty-DONE incidents so strange that even the in-universe explainers give up and start labeling the chaos.",
-      "subparts": "",
-      "characters": [
-        "various base personnel",
-        "various units"
-      ],
-      "collisions": [],
-      "contentUrl": "https://inpoppyfields.tumblr.com/post/796917123403415552/ok-nevermind-even-we-cant-explain-these",
-      "coverUrl": "",
-      "featured": false,
-      "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 5.0
-    },
-    {
       "id": "10",
-      "label": "[Welcome to Area Fifty-DONE] Weird Shit Happens Too Often, So Here’s a Tier System",
+      "label": "Welcome to Area Fifty-DONE",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "A ranking system for Earth Base weirdness, because anomalies happen often enough that someone finally made them administratively sortable.",
-      "subparts": "",
+      "description": "A ranking system, because anomalies happen often enough that someone finally made them administratively sortable.",
+      "subparts": "Here’s a Tier System / OK NVM",
       "characters": [
         "various base personnel",
         "various units",
         "DONOR probably fooling around"
       ],
       "collisions": [],
-      "contentUrl": "https://inpoppyfields.tumblr.com/post/796916869435146240/weird-shit-happens-too-often-so-heres-a-tier",
+      "contentUrl": "https://inpoppyfields.tumblr.com/tagged/welcome%20to%20area%20fifty%20done/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 4.0,
-      "zValue": 5.0
+      "xValue": 8.0,
+      "yValue": 2.0,
+      "zValue": 2.0
     },
     {
       "id": "11",
@@ -667,7 +721,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A ranking of Space Center weirdness that implies someone had enough incidents to make a list.",
+      "description": "If you thought the visitor center was weird enough…",
       "subparts": "",
       "characters": [
         "DONOR the anomalous extreterrestrial interdimensional entity",
@@ -679,9 +733,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 4.0,
-      "zValue": 5.0
+      "xValue": 9.0,
+      "yValue": 5.0,
+      "zValue": 2.0
     },
     {
       "id": "12",
@@ -689,7 +743,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The visitor center gets its own list of anomalies, because even the public-facing parts of the space program cannot keep reality normal.",
+      "description": "The visitor center gets its own list of anomalies, because even the public-facing parts of the national space program cannot keep reality normal.",
       "subparts": "",
       "characters": [
         "DONOR the anomalous extreterrestrial interdimensional entity",
@@ -701,9 +755,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 4.0,
-      "zValue": 7.0
+      "xValue": 9.0,
+      "yValue": 5.0,
+      "zValue": 2.0
     },
     {
       "id": "13",
@@ -711,7 +765,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A textbook-safe universe briefly fails inspection at the Space Center.",
+      "description": "What happened to the appendix?",
       "subparts": "",
       "characters": [
         "DONOR the anomalous extreterrestrial interdimensional entity",
@@ -723,9 +777,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 4.0,
-      "zValue": 7.0
+      "xValue": 9.0,
+      "yValue": 5.0,
+      "zValue": 3.0
     },
     {
       "id": "14",
@@ -745,9 +799,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
+      "xValue": 9.0,
       "yValue": 5.0,
-      "zValue": 7.0
+      "zValue": 3.0
     },
     {
       "id": "15",
@@ -755,7 +809,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The NASA timeline parks impossible spacecraft beside ordinary domestic weirdness and calls that a setting.",
+      "description": "PILOT is the director of NASA. UNIT is a cat. DONOR may or may not be an extraterrestrial ghost simply messing around.",
       "subparts": "",
       "characters": [
         "DONOR the anomalous extreterrestrial interdimensional entity",
@@ -767,9 +821,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
+      "xValue": 6.0,
       "yValue": 5.0,
-      "zValue": 5.0
+      "zValue": 3.0
     },
     {
       "id": "16",
@@ -777,7 +831,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A welcome mat for the NASA timeline, where the Space Center’s biggest anomaly is usually PILOT.",
+      "description": "",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -789,9 +843,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 4.0,
-      "zValue": 6.0
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
     },
     {
       "id": "17",
@@ -799,7 +853,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "A metal-bodied mourning thread where grief refuses to stay organic.",
+      "description": "Grief refuses to stay organic.",
       "subparts": "v1 / v2 / v3",
       "characters": [
         "UNIT",
@@ -810,8 +864,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 9.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 8.0
     },
     {
@@ -820,7 +874,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "A set of intimate shorts where UNIT and AUTOPILOT’s changing hair, projections, and battlefield wounds turn avatar styling into grief evidence.",
+      "description": "More growing pains",
       "subparts": "",
       "characters": [
         "UNIT",
@@ -831,9 +885,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
+      "xValue": 1.0,
       "yValue": 1.0,
-      "zValue": 10.0
+      "zValue": 6.0
     },
     {
       "id": "19",
@@ -841,7 +895,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "PILOT sees UNIT and AUTOPILOT grown into field-worn adults, no longer girls but women shaped by war, memory, and each other.",
+      "description": "They grow up so fast.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -853,9 +907,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 2.0,
-      "zValue": 10.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 6.0
     },
     {
       "id": "20",
@@ -873,8 +927,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 3.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 6.0
     },
     {
@@ -894,9 +948,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 6.0
     },
     {
       "id": "22",
@@ -915,9 +969,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 3.0,
-      "zValue": 10.0
+      "xValue": 2.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "23",
@@ -936,9 +990,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 8.0,
-      "yValue": 3.0,
-      "zValue": 10.0
+      "xValue": 2.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "24",
@@ -946,12 +1000,11 @@
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
       "color": "#ffc5c5",
-      "description": "A cosmic-side thread where bodies, pilots, and machines start behaving less like people and more like orbiting symbols of each other.",
+      "description": "PILOT is a neutron star. DONOR is a black hole. You're doing stellar, ladies.",
       "subparts": "v1 / v2 / v3",
       "characters": [
         "DONOR",
-        "PILOT",
-        "UNIT"
+        "PILOT"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/celestial%20bodies/chrono",
@@ -959,8 +1012,8 @@
       "featured": false,
       "size": 3.0,
       "xValue": 9.0,
-      "yValue": 2.0,
-      "zValue": 2.0
+      "yValue": 1.0,
+      "zValue": 3.0
     },
     {
       "id": "25",
@@ -968,7 +1021,7 @@
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
       "color": "#ffc5c5",
-      "description": "An introductory frame for celestial-body variants, setting up a starry, symbolic branch of PILOT, DONOR, and multiverse recursion.",
+      "description": "",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -980,17 +1033,17 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 10.0,
-      "yValue": 1.0,
-      "zValue": 5.0
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
     },
     {
       "id": "26",
-      "label": "[21 Pilots, Too Many Pilots] [v1]: The Pink Plane Problem",
+      "label": "[21 Pilots, Too Many Pilots]",
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
       "color": "#ffc5c5",
-      "description": "A variant pileup of too many PILOTs and one very pink aviation problem that refuses to stay inside normal continuity.",
+      "description": "All the PILOTs, from every fork and timeline and universe. No such thing as too many. Probably.",
       "subparts": "v1 / v2",
       "characters": [
         "All the PILOTs"
@@ -1001,8 +1054,8 @@
       "featured": false,
       "size": 5.0,
       "xValue": 10.0,
-      "yValue": 2.0,
-      "zValue": 7.0
+      "yValue": 1.0,
+      "zValue": 2.0
     },
     {
       "id": "27",
@@ -1010,21 +1063,23 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A weirdly domestic, caffeinated orange-Poppyverse thread where ordinary errands and emotional surrealism share the same cup.",
+      "description": "Retired, coastal, vaguely cursed. The séance was not on the schedule.",
       "subparts": "p0 / p1",
       "characters": [
         "DONOR",
         "PILOT",
         "UNIT"
       ],
-      "collisions": [],
+      "collisions": [
+        "139"
+      ],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/sheep%20milk%20latte/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 0.0,
-      "yValue": 5.0,
-      "zValue": 3.0
+      "xValue": 6.0,
+      "yValue": 9.0,
+      "zValue": 1.0
     },
     {
       "id": "28",
@@ -1032,7 +1087,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "An intro to the café branch where absurd drinks carry suspicious amounts of emotional payload.",
+      "description": "",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1044,9 +1099,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
-      "yValue": 5.0,
-      "zValue": 2.0
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
     },
     {
       "id": "29",
@@ -1054,7 +1109,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A new kid arrives in the Assman Omelet timeline, because even cursed domesticity needs onboarding.",
+      "description": "Uh-oh…",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -1069,30 +1124,33 @@
       "featured": false,
       "size": 1.0,
       "xValue": 7.0,
-      "yValue": 5.0,
-      "zValue": 4.0
+      "yValue": 10.0,
+      "zValue": 3.0
     },
     {
       "id": "30",
-      "label": "[ASSMAN OMELET] [Farewell in Purple] [p1]",
+      "label": "[ASSMAN OMELET] [Farewell in Purple]",
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A purple-tinged farewell thread where domestic absurdity brushes against KILOTON-shaped grief.",
+      "description": "A purple-tinged farewell.",
       "subparts": "p1 / p2 / p3",
       "characters": [
         "DONOR",
         "PILOT",
         "UNIT"
       ],
-      "collisions": [],
+      "collisions": [
+        "32",
+        "71"
+      ],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/farewell%20in%20purple/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
       "xValue": 4.0,
-      "yValue": 5.0,
-      "zValue": 1.0
+      "yValue": 10.0,
+      "zValue": 10.0
     },
     {
       "id": "31",
@@ -1100,7 +1158,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "PILOT and DONOR try naming their haunted appliances, only to discover the stove, fridge, and purple presence have opinions.",
+      "description": "We’re not kidding around.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -1113,13 +1171,13 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 5.0,
-      "zValue": 5.0
+      "xValue": 6.0,
+      "yValue": 10.0,
+      "zValue": 3.0
     },
     {
       "id": "32",
-      "label": "[ASSMAN OMELET] [Intermission in Purple] [p1]",
+      "label": "[ASSMAN OMELET] [Intermission in Purple]",
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
@@ -1130,14 +1188,16 @@
         "PILOT",
         "UNIT"
       ],
-      "collisions": [],
+      "collisions": [
+        "71"
+      ],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/intermission%20in%20purple/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 2.0,
-      "yValue": 5.0,
-      "zValue": 2.0
+      "xValue": 7.0,
+      "yValue": 10.0,
+      "zValue": 10.0
     },
     {
       "id": "33",
@@ -1145,7 +1205,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "UNIT and AUTOPILOT become fridge-magnet children with the emotional subtlety of a ransom note.",
+      "description": "They’re alright.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -1158,9 +1218,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 2.0,
-      "yValue": 5.0,
-      "zValue": 3.0
+      "xValue": 6.0,
+      "yValue": 10.0,
+      "zValue": 2.0
     },
     {
       "id": "34",
@@ -1168,7 +1228,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The fridge becomes a family archive, passive-aggressive shrine, and deeply unserious haunting device.",
+      "description": "The leftovers are the least of your concerns.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -1181,9 +1241,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 10.0,
-      "yValue": 5.0,
-      "zValue": 4.0
+      "xValue": 6.0,
+      "yValue": 10.0,
+      "zValue": 2.0
     },
     {
       "id": "35",
@@ -1191,7 +1251,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A holiday object does what holiday objects should never do: matter cosmically.",
+      "description": "“Let’s run and we’ll have some fun before I melt away!”",
       "subparts": "",
       "characters": [
         "The BY THE BAY cast",
@@ -1202,9 +1262,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 5.0,
-      "zValue": 6.0
+      "xValue": 7.0,
+      "yValue": 10.0,
+      "zValue": 1.0
     },
     {
       "id": "36",
@@ -1212,7 +1272,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The domestic timeline receives a correction, because even normal life requires patch notes.",
+      "description": "",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1224,9 +1284,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
-      "yValue": 4.0,
-      "zValue": 3.0
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
     },
     {
       "id": "37",
@@ -1234,7 +1294,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The no-mechs timeline starts here, allegedly normal and immediately suspicious.",
+      "description": "",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1246,9 +1306,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 4.0,
-      "zValue": 5.0
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
     },
     {
       "id": "38",
@@ -1256,7 +1316,7 @@
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
       "color": "#ffd25f",
-      "description": "The desert-rose household tries to be a family, despite reality being deeply unlicensed for childcare.",
+      "description": "A cheerful family sitcom setup, except the family tree has been folded into an paradoxical origami crane and nobody should ask follow-up questions.",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
         "LIANG",
@@ -1269,9 +1329,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 4.0,
-      "xValue": 7.0,
+      "xValue": 8.0,
       "yValue": 5.0,
-      "zValue": 4.0
+      "zValue": 3.0
     },
     {
       "id": "39",
@@ -1292,8 +1352,8 @@
       "featured": false,
       "size": 4.0,
       "xValue": 9.0,
-      "yValue": 4.0,
-      "zValue": 5.0
+      "yValue": 5.0,
+      "zValue": 3.0
     },
     {
       "id": "40",
@@ -1301,7 +1361,7 @@
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
       "color": "#ffd25f",
-      "description": "A small stubborn dream survives in the desert, annoyingly alive and hard to kill.",
+      "description": "He’s annoyingly alive and hard to kill.",
       "subparts": "p1 / p2",
       "characters": [
         "LIANG",
@@ -1312,9 +1372,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 3.0,
-      "yValue": 3.0,
-      "zValue": 8.0
+      "xValue": 7.0,
+      "yValue": 5.0,
+      "zValue": 3.0
     },
     {
       "id": "41",
@@ -1322,7 +1382,7 @@
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
       "color": "#ffd25f",
-      "description": "Tiny humans, huge sky, and the terrible math of being someone’s wingman.",
+      "description": "From 10,000 feet, everyone looks like ants. At least ants have their lives together.",
       "subparts": "v1 / v2",
       "characters": [
         "LIANG",
@@ -1333,9 +1393,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 8.0
+      "xValue": 8.0,
+      "yValue": 5.0,
+      "zValue": 3.0
     },
     {
       "id": "42",
@@ -1343,7 +1403,7 @@
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
       "color": "#ffd25f",
-      "description": "LIANG enters as the grounded backup plan every doomed flyer secretly needs.",
+      "description": "He’s your wingman!",
       "subparts": "",
       "characters": [
         "LIANG",
@@ -1354,9 +1414,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 8.0,
-      "yValue": 3.0,
-      "zValue": 7.0
+      "xValue": 10.0,
+      "yValue": 5.0,
+      "zValue": 3.0
     },
     {
       "id": "43",
@@ -1364,7 +1424,7 @@
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
       "color": "#ffd25f",
-      "description": "A desert intro where smallness and divinity share a flight path.",
+      "description": "",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1376,21 +1436,21 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 4.0,
-      "zValue": 4.0
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
     },
     {
       "id": "44",
-      "label": "The house knows something that you do not [p1]",
+      "label": "The house knows something that you do not",
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The DC house keeps secrets with the smug patience of old walls.",
+      "description": "Totally not creepy at all.",
       "subparts": "p1 / p2 / p3",
       "characters": [
         "Linguist PILOT",
-        "Various DC housemates"
+        "various DC housemates"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/the%20house%20knows%20something%20that%20you%20do%20not/chrono",
@@ -1399,7 +1459,7 @@
       "size": 3.0,
       "xValue": 6.0,
       "yValue": 5.0,
-      "zValue": 3.0
+      "zValue": 2.0
     },
     {
       "id": "45",
@@ -1407,20 +1467,20 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Washington, DC becomes an archive with monuments for teeth.",
+      "description": "When public grief grows teeth.",
       "subparts": "p1 / p2",
       "characters": [
         "Linguist PILOT",
-        "Various DC housemates"
+        "various DC housemates"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/the%20city%20knows%20something%20that%20you%20do%20not/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 2.0,
+      "xValue": 6.0,
       "yValue": 5.0,
-      "zValue": 1.0
+      "zValue": 2.0
     },
     {
       "id": "46",
@@ -1428,7 +1488,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A travel guide for sightseeing, sacred spaces, and places that should not be emotionally sentient.",
+      "description": "",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1440,9 +1500,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 4.0,
-      "zValue": 6.0
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
     },
     {
       "id": "47",
@@ -1450,7 +1510,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "One watches the sky, one anchors the earth, and neither is as simple as protection.",
+      "description": "One watches the sky, one anchors the earth.",
       "subparts": "v1 / v2",
       "characters": [
         "ERIEYE",
@@ -1461,9 +1521,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 5.0,
-      "yValue": 4.0,
-      "zValue": 4.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 7.0
     },
     {
       "id": "48",
@@ -1471,7 +1531,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "SERAPHIM is angelic in the old way: beautiful, terrifying, and not here for comfort.",
+      "description": "Gone before the halo could cool.",
       "subparts": "",
       "characters": [
         "SERPHIM"
@@ -1481,9 +1541,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 0.0,
-      "yValue": 2.0,
-      "zValue": 3.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 8.0
     },
     {
       "id": "49",
@@ -1491,7 +1551,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "VIGIL survives, which is less triumphant than it sounds and more sacred than it admits.",
+      "description": "Survival is less triumphant than it sounds and more sacred than it admits.",
       "subparts": "",
       "characters": [
         "VIGIL",
@@ -1502,9 +1562,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 3.0,
-      "zValue": 6.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 8.0
     },
     {
       "id": "50",
@@ -1523,9 +1583,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 3.0,
-      "zValue": 3.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 9.0
     },
     {
       "id": "51",
@@ -1533,7 +1593,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "Protection and terror share an airspace and refuse to file separate paperwork.",
+      "description": "Protection and terror share an airspace.",
       "subparts": "p1 / p2",
       "characters": [
         "ERIEYE",
@@ -1544,9 +1604,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 6.0,
-      "yValue": 5.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 9.0
     },
     {
       "id": "52",
@@ -1554,7 +1614,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "ERIEYE turns surveillance into personality and watchfulness into a kind of loneliness.",
+      "description": "Chirp chirp.",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
         "ERIEYE"
@@ -1564,9 +1624,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 4.0,
-      "xValue": 5.0,
-      "yValue": 4.0,
-      "zValue": 5.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 2.0
     },
     {
       "id": "53",
@@ -1574,7 +1634,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "RATCHET waits with all the patience of a giant that has not yet stood up.",
+      "description": "They wait…",
       "subparts": "",
       "characters": [
         "RATCHET"
@@ -1584,9 +1644,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 2.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "54",
@@ -1605,9 +1665,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 5.0,
-      "zValue": 0.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "55",
@@ -1615,7 +1675,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "PRISMA’s epitaph reads like salvage, light, and identity refusing to die in one piece.",
+      "description": "The epitaph reads like salvage, light, and identity refusing to die in one piece.",
       "subparts": "",
       "characters": [
         "PRISMA",
@@ -1626,9 +1686,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 4.0,
-      "zValue": 3.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 7.0
     },
     {
       "id": "56",
@@ -1648,8 +1708,8 @@
       "featured": false,
       "size": 1.0,
       "xValue": 1.0,
-      "yValue": 5.0,
-      "zValue": 3.0
+      "yValue": 1.0,
+      "zValue": 7.0
     },
     {
       "id": "57",
@@ -1657,7 +1717,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "An old flame returns as dream residue, because the Lilyverse never lets fire stay past tense.",
+      "description": "The universe never lets old flames stay past tense.",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1669,9 +1729,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
-      "yValue": 4.0,
-      "zValue": 9.0
+      "xValue": 3.0,
+      "yValue": 1.0,
+      "zValue": 4.0
     },
     {
       "id": "58",
@@ -1691,35 +1751,13 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
+      "xValue": 3.0,
       "yValue": 1.0,
-      "zValue": 10.0
-    },
-    {
-      "id": "59",
-      "label": "[LILY PONDERINGS]: The Anomalous Cat [2]",
-      "cluster": "the lilyverse",
-      "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#005eff",
-      "description": "The anomalous cat returns, which is adorable until the recognition starts.",
-      "subparts": "",
-      "characters": [
-        "DONOR",
-        "PILOT",
-        "UNIT"
-      ],
-      "collisions": [],
-      "contentUrl": "https://inpoppyfields.tumblr.com/search/%5BLILY%20PONDERINGS%5D%3A%20The%20Anomalous%20Cat%20%5B2%5D",
-      "coverUrl": "",
-      "featured": false,
-      "size": 1.0,
-      "xValue": 9.0,
-      "yValue": 2.0,
-      "zValue": 5.0
+      "zValue": 4.0
     },
     {
       "id": "60",
-      "label": "[LILY PONDERINGS]: The Anomalous Cat [1]",
+      "label": "[LILY PONDERINGS]: The Anomalous Cat",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
@@ -1734,9 +1772,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 6.0,
-      "yValue": 4.0,
-      "zValue": 7.0
+      "xValue": 3.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "61",
@@ -1744,7 +1782,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "The woman in black and red appears like recovery wearing danger’s jacket.",
+      "description": "The woman in black and red appears.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -1755,9 +1793,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 2.0,
-      "zValue": 5.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 8.0
     },
     {
       "id": "62",
@@ -1765,7 +1803,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "The finale sends what is left back to stardust, which is poetic and absolutely not fine.",
+      "description": "The finale sends what is left back to stardust.",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1777,8 +1815,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 8.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 5.0
     },
     {
@@ -1787,7 +1825,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "A silver ribbon tries to hold memory together with the least adequate possible materials.",
+      "description": "A silver ribbon tries to hold memory together.",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1798,8 +1836,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 7.0
     },
     {
@@ -1820,9 +1858,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 7.0,
+      "xValue": 1.0,
       "yValue": 1.0,
-      "zValue": 6.0
+      "zValue": 7.0
     },
     {
       "id": "65",
@@ -1830,7 +1868,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "Words freeze before they wound, which does not make them gentler.",
+      "description": "Words freeze before they wound.",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1841,9 +1879,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 8.0,
+      "xValue": 1.0,
       "yValue": 1.0,
-      "zValue": 8.0
+      "zValue": 7.0
     },
     {
       "id": "66",
@@ -1851,7 +1889,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "The pressure finally wins, and no one gets to call it sudden.",
+      "description": "The pressure finally wins.",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -1862,9 +1900,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 10.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 8.0
     },
     {
       "id": "67",
@@ -1883,9 +1921,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
+      "xValue": 1.0,
       "yValue": 1.0,
-      "zValue": 5.0
+      "zValue": 8.0
     },
     {
       "id": "68",
@@ -1904,31 +1942,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
+      "xValue": 1.0,
       "yValue": 1.0,
-      "zValue": 10.0
-    },
-    {
-      "id": "69",
-      "label": "[LILIUM CANDIDUM]: The Machine [v1] - Not Her",
-      "cluster": "the lilyverse",
-      "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#005eff",
-      "description": "The machine looks close enough to hurt and wrong enough to survive.",
-      "subparts": "",
-      "characters": [
-        "DONOR",
-        "PILOT",
-        "UNIT"
-      ],
-      "collisions": [],
-      "contentUrl": "https://inpoppyfields.tumblr.com/search/%5BLILIUM%20CANDIDUM%5D%3A%20The%20Machine%20%5Bv1%5D%20-%20Not%20Her",
-      "coverUrl": "",
-      "featured": false,
-      "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 3.0,
-      "zValue": 10.0
+      "zValue": 8.0
     },
     {
       "id": "70",
@@ -1936,20 +1952,20 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "The Machine thread asks whether resemblance is resurrection, replacement, or insult.",
+      "description": "Is resemblance a resurrection, replacement, or insult?",
       "subparts": "v1 / v2",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/lilium%20candidum%20-%20the%20machine/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 2.0,
+      "xValue": 1.0,
       "yValue": 2.0,
-      "zValue": 6.0
+      "zValue": 9.0
     },
     {
       "id": "71",
@@ -1957,7 +1973,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "The Lilyverse begins before anyone understands how expensive tenderness will become.",
+      "description": "The Lilyverse begins before anyone understands how expensive gentleness will become.",
       "subparts": "p1 / p2",
       "characters": [
         "DONOR",
@@ -1969,9 +1985,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 3.0,
+      "xValue": 1.0,
       "yValue": 3.0,
-      "zValue": 6.0
+      "zValue": 5.0
     },
     {
       "id": "72",
@@ -1983,16 +1999,16 @@
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764813912121262080/sick-call-a-band-aid-for-a-tank",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
+      "xValue": 1.0,
       "yValue": 4.0,
-      "zValue": 5.0
+      "zValue": 3.0
     },
     {
       "id": "73",
@@ -2000,20 +2016,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A sick-call turns into a sleepover, because even impossible bodies need company.",
+      "description": "A sick-call turns into a sleepover.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764813728693862401/sick-call-sleepover",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
+      "xValue": 1.0,
       "yValue": 5.0,
-      "zValue": 4.0
+      "zValue": 3.0
     },
     {
       "id": "74",
@@ -2021,18 +2037,18 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "Pain relief gets complicated when the patient is a machine, an avatar, and a person.",
+      "description": "Pain relief gets complicated.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764813679931850752/sick-call-pain-relief",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
+      "xValue": 1.0,
       "yValue": 3.0,
       "zValue": 3.0
     },
@@ -2042,20 +2058,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "Daughterhood enters the machine-body problem and makes it worse in the gentlest way.",
+      "description": "Daughterhood enters the machine-body problem.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764812924982362112/the-daughter",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
+      "xValue": 1.0,
       "yValue": 3.0,
-      "zValue": 9.0
+      "zValue": 3.0
     },
     {
       "id": "76",
@@ -2063,7 +2079,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A lock-screen nap becomes archaeological evidence of exhaustion with push notifications.",
+      "description": "A lock-screen nap becomes archaeological evidence.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -2073,9 +2089,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 2.0,
-      "yValue": 3.0,
-      "zValue": 5.0
+      "xValue": 1.0,
+      "yValue": 6.0,
+      "zValue": 1.0
     },
     {
       "id": "77",
@@ -2083,7 +2099,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A midnight Costco run becomes found footage from the domestic uncanny.",
+      "description": "A midnight Costco run becomes found footage from the uncanny.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -2093,9 +2109,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 2.0,
+      "xValue": 1.0,
       "yValue": 5.0,
-      "zValue": 2.0
+      "zValue": 1.0
     },
     {
       "id": "78",
@@ -2103,7 +2119,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "Space Base life appears as calendar blocks, because even anomalies need scheduling.",
+      "description": "Space base life appears as calendar blocks, because even anomalies need scheduling.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -2113,9 +2129,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 4.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 5.0,
+      "zValue": 1.0
     },
     {
       "id": "79",
@@ -2123,7 +2139,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "Earth Base gets the calendar treatment, and the normal meetings are somehow the suspicious part.",
+      "description": "“Checking calendar for availability…”",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -2133,9 +2149,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 4.0,
-      "zValue": 4.0
+      "xValue": 1.0,
+      "yValue": 5.0,
+      "zValue": 1.0
     },
     {
       "id": "80",
@@ -2143,7 +2159,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "The archive recovers feeling from exported Instagram debris, which is upsettingly plausible.",
+      "description": "#JustDimensionalRiftThings",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -2153,9 +2169,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
+      "xValue": 1.0,
       "yValue": 5.0,
-      "zValue": 0.0
+      "zValue": 1.0
     },
     {
       "id": "81",
@@ -2163,7 +2179,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "The first social-media artifact proves the Poppyverse would absolutely survive as platform trash.",
+      "description": "Even glitches in reality need an Instagram filter.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -2173,9 +2189,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
+      "xValue": 1.0,
       "yValue": 5.0,
-      "zValue": 2.0
+      "zValue": 1.0
     },
     {
       "id": "82",
@@ -2183,20 +2199,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "GAMMA’s holomatter disguise collides with skateboarding, because some machines apparently need both speed and plausible deniability.",
+      "description": "Some machines apparently need both speed and plausible deniability.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/763714439880065024/more-than-meets-the-eye-gamma-and-the",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 10.0,
-      "yValue": 4.0,
-      "zValue": 4.0
+      "xValue": 1.0,
+      "yValue": 5.0,
+      "zValue": 1.0
     },
     {
       "id": "83",
@@ -2204,7 +2220,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "UNIT’s holomatter presence meets red poppies, folding memorial symbolism into something warmly, dangerously alive.",
+      "description": "UNIT picks flowers very gently, which is sweet until you remember what the flowers are usually about.",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -2216,9 +2232,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 5.0,
+      "zValue": 1.0
     },
     {
       "id": "84",
@@ -2226,20 +2242,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "TITAN’s softness is refracted through a toy tank, making the biggest unit feel heartbreakingly small.",
+      "description": "TITAN has a child avatar with a tiny toy tank replica of itself, because apparently recursion can be a war crime.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/763714281102573568/more-than-meets-the-eye-the-toy-tank",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 4.0,
-      "zValue": 9.0
+      "xValue": 1.0,
+      "yValue": 5.0,
+      "zValue": 1.0
     },
     {
       "id": "85",
@@ -2247,20 +2263,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A holomatter index of machine avatars, disguise logic, and the emotional consequences of giving war machines human-scale bodies.",
+      "description": "Clearly very important matters.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/holomatter%20matters/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 30.0,
-      "xValue": 9.0,
-      "yValue": 2.0,
-      "zValue": 6.0
+      "xValue": 1.0,
+      "yValue": 5.0,
+      "zValue": 1.0
     },
     {
       "id": "86",
@@ -2268,20 +2284,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A compilation of unauthorized visitor incidents proving that Earth Base security is mostly vibes, paperwork, and disbelief.",
+      "description": "A helpful incident roundup suggesting security may have briefly left reality unattended.",
       "subparts": "p1 / p2 / The Siblings",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/unauthorized%20visitors/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 4.0,
-      "yValue": 4.0,
-      "zValue": 8.0
+      "xValue": 9.0,
+      "yValue": 5.0,
+      "zValue": 1.0
     },
     {
       "id": "87",
@@ -2289,20 +2305,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "The Poppyverse becomes plushie-craftable, which is somehow adorable, alarming, and probably against several safety policies.",
+      "description": "Save pin to board?",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764811516885286912/pinterest-diy-plushies",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 3.0,
-      "zValue": 0.0
+      "xValue": 1.0,
+      "yValue": 5.0,
+      "zValue": 1.0
     },
     {
       "id": "88",
@@ -2310,20 +2326,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A toasted CPU turns hardware failure into snack comedy and tiny electrical tragedy.",
+      "description": "isToaster == true, somehow not a bug.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764811082799939584/the-toasted-cpu",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 5.0,
-      "zValue": 3.0
+      "xValue": 1.0,
+      "yValue": 2.0,
+      "zValue": 1.0
     },
     {
       "id": "89",
@@ -2331,20 +2347,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A physics-defying race logic gag where speed, scale, and mechanical bodies make the fable deeply unfair.",
+      "description": "Speed, scale, and mechanical bodies make the fable deeply unfair.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764471122494390272/defying-physics-blazing-fast",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 2.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "90",
@@ -2352,20 +2368,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A gigantic mechanical problem challenges scale, motion, and the assumption that physics will behave politely.",
+      "description": "Titanic problems require titanic measures and a very eager TITAN.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764470921888186368/defying-physics-a-titanic-problem",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 3.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "91",
@@ -2373,20 +2389,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "The sheep fly. The laws of nature file a complaint.",
+      "description": "The pigs did not get the memo, sadly.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/764434769923784704/defying-physics-when-sheep-fly",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 4.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "92",
@@ -2394,11 +2410,11 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A morning routine proves that war machines can still be terrible at mornings.",
+      "description": "The sun isn’t even fully clocked in.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/760136746593894400/mornings",
@@ -2406,8 +2422,8 @@
       "featured": false,
       "size": 1.0,
       "xValue": 1.0,
-      "yValue": 4.0,
-      "zValue": 3.0
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "93",
@@ -2415,20 +2431,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A thread about limited vision, literal and emotional, because nobody here sees enough soon enough.",
+      "description": "UNIT has 20/20 vision, assuming the second 20 is measured in city blocks.",
       "subparts": "p1 / p2",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/myopia/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 6.0,
-      "yValue": 5.0,
-      "zValue": 8.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "94",
@@ -2436,20 +2452,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "The opening thesis: every machine is more than its silhouette, which is rude of them.",
+      "description": "Units, units, robots in the disguise. Units, units more than meets the eye!",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/760135569815764992/more-than-meets-the-eye",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 4.0,
-      "zValue": 2.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "95",
@@ -2457,20 +2473,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "Something important slips under the radar, and the radar is probably personally offended.",
+      "description": "UNIT and GAMMA attempt low-observable flight, with only moderate disrespect toward air traffic control.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/760135412338638848/under-the-radar",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 2.0,
-      "zValue": 9.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "96",
@@ -2478,20 +2494,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A communications-focused machine-learning entry about signals, proximity, and being impossible to ignore once detected.",
+      "description": "UNIT and GAMMA attempt high-observable flight, which is just regular flying but louder and worse for paperwork.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/760135131164999680/close-communications",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 3.0,
-      "zValue": 4.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "97",
@@ -2499,20 +2515,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "Flight gets tiny, busy, impossible, and emotionally overqualified.",
+      "description": "\"According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible.”",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/760134715439185920/fly-like-a-bee",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 2.0,
-      "yValue": 5.0,
-      "zValue": 6.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "98",
@@ -2520,19 +2536,19 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "An automated-absurdity entry about a machine solving problems with exactly the wrong body part and too much commitment.",
+      "description": "Literally.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/760134640638050304/pile-bunked",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 1.0
     },
     {
@@ -2541,20 +2557,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A hangar-observation fashion log for machines and avatars, because even impossible bodies apparently have looks.",
+      "description": "A hangar-observation fashion log for machines and avatars.",
       "subparts": "",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/760132988417769472/hangar-observations",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 3.0,
-      "zValue": 4.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "100",
@@ -2562,20 +2578,20 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A thread of units or avatars having the kind of night out that makes after-action reports emotionally unusable.",
+      "description": "So, about last night…",
       "subparts": "v1 / v2",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/wild%20nights%20out/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 4.0,
-      "yValue": 5.0,
-      "zValue": 4.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "101",
@@ -2583,7 +2599,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "The valley gets crowded with almost-human things and absolutely no emotional zoning laws.",
+      "description": "The valley gets crowded with almost-human beings and absolutely no emotional zoning laws.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6 / p7 / p8 / p9",
       "characters": [
         "AUTOPILOT",
@@ -2594,9 +2610,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 6.0,
-      "yValue": 3.0,
-      "zValue": 10.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 8.0
     },
     {
       "id": "102",
@@ -2616,9 +2632,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 2.0,
-      "yValue": 2.0,
-      "zValue": 5.0
+      "xValue": 3.0,
+      "yValue": 10.0,
+      "zValue": 4.0
     },
     {
       "id": "103",
@@ -2626,7 +2642,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "Pink-coded sisterhood arrives soft, bright, and emotionally armed.",
+      "description": "Sisterhood arrives soft, bright, and emotionally armed.",
       "subparts": "p1 / p2",
       "characters": [
         "UNIT",
@@ -2637,9 +2653,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 8.0,
-      "yValue": 2.0,
-      "zValue": 9.0
+      "xValue": 5.0,
+      "yValue": 8.0,
+      "zValue": 1.0
     },
     {
       "id": "104",
@@ -2647,7 +2663,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "The poppy and lily symbol systems collide, bringing two flower-coded strands of grief and recognition into the same frame.",
+      "description": "Stop and smell the flowers…",
       "subparts": "",
       "characters": [
         "DONOR",
@@ -2659,9 +2675,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
+      "xValue": 5.0,
       "yValue": 1.0,
-      "zValue": 10.0
+      "zValue": 3.0
     },
     {
       "id": "105",
@@ -2669,7 +2685,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "The archive attempts to measure units and discovers the units are measuring back.",
+      "description": "The tape measure is too short.",
       "subparts": "p1 / p2",
       "characters": [
         "UNIT",
@@ -2680,9 +2696,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 7.0,
-      "yValue": 2.0,
-      "zValue": 10.0
+      "xValue": 5.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "106",
@@ -2690,7 +2706,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "A pink-dream sequence set in a cupola, where vision, height, and memory become unnervingly tender.",
+      "description": "Set in the space base cupola, where vision, height, and memory become unnervingly tender.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -2701,9 +2717,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 3.0,
-      "zValue": 5.0
+      "xValue": 6.0,
+      "yValue": 1.0,
+      "zValue": 8.0
     },
     {
       "id": "107",
@@ -2711,7 +2727,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "A corridor dream in pink, all liminal architecture and emotional pursuit through a space that will not stay neutral.",
+      "description": "Liminal architecture and emotional pursuit mingle in a space that will not stay neutral.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -2722,9 +2738,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 2.0,
-      "zValue": 5.0
+      "xValue": 6.0,
+      "yValue": 1.0,
+      "zValue": 8.0
     },
     {
       "id": "108",
@@ -2732,7 +2748,7 @@
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "color": "#005eff",
-      "description": "Pink becomes weather, warning, and emotional pressure system.",
+      "description": "Not the pink of blush and bows, but the pink of exposed flesh learning how to close.",
       "subparts": "p1 / p2 / p3 / p4 / p5",
       "characters": [
         "PILOT",
@@ -2745,9 +2761,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 10.0,
+      "xValue": 6.0,
       "yValue": 1.0,
-      "zValue": 10.0
+      "zValue": 5.0
     },
     {
       "id": "109",
@@ -2755,7 +2771,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "Merging stops being a technical term and starts being a personal threat.",
+      "description": "PILOT and UNIT become one entity. Permanently. This is not a metaphor.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6 / p7 / p8 / p9",
       "characters": [
         "PILOT",
@@ -2766,9 +2782,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 5.0,
-      "yValue": 4.0,
-      "zValue": 6.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 3.0
     },
     {
       "id": "110",
@@ -2776,7 +2792,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A ghost-in-the-machine piece where a beloved face appears everywhere, turning recognition into a haunting.",
+      "description": "A beloved face appears everywhere.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -2788,9 +2804,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
-      "yValue": 4.0,
-      "zValue": 8.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "111",
@@ -2810,9 +2826,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 2.0,
-      "zValue": 9.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "112",
@@ -2832,9 +2848,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 4.0,
-      "zValue": 4.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 3.0
     },
     {
       "id": "113",
@@ -2853,8 +2869,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 8.0,
-      "yValue": 4.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 8.0
     },
     {
@@ -2874,8 +2890,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 8.0,
-      "yValue": 3.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -2894,8 +2910,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 10.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 8.0
     },
     {
@@ -2909,15 +2925,13 @@
       "characters": [
         "Commander PILOT"
       ],
-      "collisions": [
-        "115"
-      ],
+      "collisions": [],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/commander%20pilot/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 10.0,
-      "yValue": 3.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 8.0
     },
     {
@@ -2926,7 +2940,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "Together forever, in this universe, is less romance than threat assessment.",
+      "description": "Happily ever after, right?",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
         "PILOT",
@@ -2937,8 +2951,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 4.0,
-      "xValue": 8.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 6.0
     },
     {
@@ -2958,8 +2972,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 10.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -2979,7 +2993,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 4.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 8.0
     },
@@ -2999,7 +3013,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 10.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -3019,7 +3033,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 7.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 9.0
     },
@@ -3040,8 +3054,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 5.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -3061,7 +3075,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 10.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -3081,7 +3095,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 2.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -3101,8 +3115,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 3.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -3122,8 +3136,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -3132,7 +3146,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "Reused parts make survival possible and emotionally disgusting.",
+      "description": "Reused parts make survival possible and emotionally devastating.",
       "subparts": "",
       "characters": [
         "UNIT"
@@ -3142,7 +3156,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -3162,8 +3176,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -3182,7 +3196,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -3202,7 +3216,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -3222,7 +3236,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -3232,7 +3246,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "The poppies keep blooming through memorials, machines, and whatever the archive refuses to bury.",
+      "description": "The poppies keep blooming through memories, machines, and whatever the archive refuses to bury.",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
         "DONOR",
@@ -3244,9 +3258,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 4.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 9.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "133",
@@ -3265,9 +3279,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 3.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 5.0
     },
     {
       "id": "134",
@@ -3275,7 +3289,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "A war machine sleeps, and the room has the decency to become holy about it.",
+      "description": "A pilot sleeps, and the room has the decency to become holy about it.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -3286,9 +3300,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 4.0,
-      "zValue": 6.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 4.0
     },
     {
       "id": "135",
@@ -3296,7 +3310,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "UNIT is introduced as massive, dangerous, and built around a tenderness problem.",
+      "description": "“Be strong enough to be gentle.”",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -3307,9 +3321,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 0.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 4.0
     },
     {
       "id": "136",
@@ -3328,9 +3342,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 4.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 4.0
     },
     {
       "id": "137",
@@ -3349,9 +3363,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 3.0,
-      "zValue": 6.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "138",
@@ -3370,9 +3384,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 7.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "139",
@@ -3391,8 +3405,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 5.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 1.0
     },
     {
@@ -3412,9 +3426,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 2.0,
-      "zValue": 2.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "141",
@@ -3433,9 +3447,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 3.0,
-      "zValue": 9.0
+      "xValue": 1.0,
+      "yValue": 1.0,
+      "zValue": 1.0
     },
     {
       "id": "142",
@@ -3443,7 +3457,7 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "Internal messages reveal the machines are painfully alive and absolutely gossip-capable.",
+      "description": "Slack, but in zero gravity and with a suspicious amount of trauma.",
       "subparts": "#wrecked_recruits / #generic_generals / #lots_of_pilots / #private_matters / #did_ensign_up_for_this / #colonels_on_a_cob / TAGGING GHOSTS",
       "characters": [
         "PILOT",
@@ -3454,9 +3468,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 4.0,
+      "xValue": 1.0,
       "yValue": 4.0,
-      "zValue": 6.0
+      "zValue": 1.0
     },
     {
       "id": "143",
@@ -3475,9 +3489,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 6.0,
+      "xValue": 1.0,
       "yValue": 3.0,
-      "zValue": 6.0
+      "zValue": 1.0
     },
     {
       "id": "144",
@@ -3485,11 +3499,11 @@
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
       "color": "#ff1447",
-      "description": "The machines text, signal, and accidentally confess through comms like professionals with no boundaries.",
+      "description": "The machines are painfully alive and absolutely gossip-capable.",
       "subparts": "#tank_tread_carefully / #computationally_commanding / #robots_in_disguise / #holomatter_help_hubub [1] / #holomatter_help_hubub [2]",
       "characters": [
         "UNIT",
-        "Various other units"
+        "various other units"
       ],
       "collisions": [
         "142"
@@ -3498,9 +3512,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 8.0,
+      "xValue": 1.0,
       "yValue": 3.0,
-      "zValue": 3.0
+      "zValue": 1.0
     },
     {
       "id": "145",
@@ -3508,7 +3522,7 @@
       "cluster": "found files",
       "clusterDescription": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
       "color": "#d9d9d9",
-      "description": "Earth Base is introduced as a file, which immediately makes the building look guilty.",
+      "description": "",
       "subparts": "HUMAN PERSONNEL / UNIT SPECS / EARTH BASE / SPACE BASE",
       "characters": [
         "various personnel",
@@ -3522,7 +3536,7 @@
       "size": 4.0,
       "xValue": 0.0,
       "yValue": 0.0,
-      "zValue": 0.0
+      "zValue": 1.0
     },
     {
       "id": "146",
@@ -3542,8 +3556,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 11.0,
-      "xValue": 4.0,
-      "yValue": 5.0,
+      "xValue": 3.0,
+      "yValue": 2.0,
       "zValue": 5.0
     },
     {
@@ -3552,7 +3566,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "Cold blood is still blood; the story refuses to let temperature decide personhood.",
+      "description": "This story refuses to let temperature decide personhood.",
       "subparts": "",
       "characters": [
         "AUTOPILOT"
@@ -3562,9 +3576,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
+      "xValue": 1.0,
       "yValue": 1.0,
-      "zValue": 10.0
+      "zValue": 7.0
     },
     {
       "id": "148",
@@ -3572,7 +3586,7 @@
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
       "color": "#ff00a1",
-      "description": "The sisters understand each other in frequencies humans can barely hear.",
+      "description": "They’re on the same one.",
       "subparts": "",
       "characters": [
         "UNIT",
@@ -3583,9 +3597,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
+      "xValue": 1.0,
       "yValue": 1.0,
-      "zValue": 10.0
+      "zValue": 7.0
     },
     {
       "id": "149",
@@ -3593,21 +3607,23 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A NASA family portrait captures impossible kinship pretending to be ordinary.",
+      "description": "A family photo taken from light-years away.",
       "subparts": "",
       "characters": [
         "DONOR the anomalous extreterrestrial interdimensional entity",
         "Director PILOT",
         "UNIT is a cat"
       ],
-      "collisions": [],
+      "collisions": [
+        "71"
+      ],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/810503484922281984/family-portrait",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 4.0,
-      "zValue": 6.0
+      "xValue": 8.0,
+      "yValue": 3.0,
+      "zValue": 5.0
     },
     {
       "id": "150",
@@ -3627,9 +3643,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 5.0,
-      "zValue": 4.0
+      "xValue": 7.0,
+      "yValue": 4.0,
+      "zValue": 1.0
     },
     {
       "id": "151",
@@ -3648,9 +3664,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 7.0,
-      "yValue": 3.0,
-      "zValue": 4.0
+      "xValue": 8.0,
+      "yValue": 2.0,
+      "zValue": 3.0
     },
     {
       "id": "152",
@@ -3668,9 +3684,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 6.0,
+      "xValue": 8.0,
       "yValue": 2.0,
-      "zValue": 1.0
+      "zValue": 4.0
     },
     {
       "id": "153",
@@ -3689,9 +3705,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 6.0,
-      "xValue": 9.0,
+      "xValue": 8.0,
       "yValue": 2.0,
-      "zValue": 2.0
+      "zValue": 5.0
     },
     {
       "id": "154",
@@ -3699,7 +3715,7 @@
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "The quiet one says little, which is generally how the worst file starts.",
+      "description": "The quiet one says nothing, which is generally how the worst file starts.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6",
       "characters": [
         "various units"
@@ -3709,7 +3725,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 6.0,
-      "xValue": 6.0,
+      "xValue": 8.0,
       "yValue": 2.0,
       "zValue": 5.0
     },
@@ -3719,7 +3735,7 @@
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "Area Fifty-DONE’s buildings are not passive structures; they are accomplices.",
+      "description": "The windows are alarmed, the bathrooms are suspicious, the doors are rude, and the floor plan may be legally haunted.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -3732,9 +3748,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 10.0,
-      "yValue": 4.0,
-      "zValue": 3.0
+      "xValue": 8.0,
+      "yValue": 2.0,
+      "zValue": 5.0
     },
     {
       "id": "156",
@@ -3742,7 +3758,7 @@
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "The sentient mechs are somehow not the weird part, which is HR’s problem now.",
+      "description": "The giant thinking war robots are somehow the normal coworkers, which says terrible things about the rest of the base.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -3756,8 +3772,8 @@
       "featured": false,
       "size": 1.0,
       "xValue": 9.0,
-      "yValue": 5.0,
-      "zValue": 2.0
+      "yValue": 2.0,
+      "zValue": 5.0
     },
     {
       "id": "157",
@@ -3765,7 +3781,7 @@
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "The haunting is too advanced for consumer-grade ghost interfaces.",
+      "description": "Planchettes are for amateurs; this haunting prefers SMS.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -3778,8 +3794,8 @@
       "featured": false,
       "size": 1.0,
       "xValue": 10.0,
-      "yValue": 4.0,
-      "zValue": 7.0
+      "yValue": 2.0,
+      "zValue": 5.0
     },
     {
       "id": "158",
@@ -3787,20 +3803,22 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A coffin appears in public, and DC’s ceremonial instincts make everything worse.",
+      "description": "One pedestrian does not look like the others. Please do not open it.",
       "subparts": "",
       "characters": [
         "Linguist PILOT",
-        "Various DC housemates"
+        "various DC housemates"
       ],
-      "collisions": [],
+      "collisions": [
+        "160"
+      ],
       "contentUrl": "https://inpoppyfields.tumblr.com/post/809323503418474496/the-coffin-in-the-crowd",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 5.0,
-      "zValue": 8.0
+      "xValue": 10.0,
+      "yValue": 2.0,
+      "zValue": 5.0
     },
     {
       "id": "159",
@@ -3808,20 +3826,22 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The Hill becomes terrain, institution, symbol, and bad omen.",
+      "description": "A figure walks uphill. PILOT follows. Something waits above them both.",
       "subparts": "p1 / p2 / p3",
       "characters": [
         "Linguist PILOT",
-        "Various DC housemates"
+        "various DC housemates"
       ],
-      "collisions": [],
+      "collisions": [
+        "160"
+      ],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/the%20hill/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 2.0,
-      "yValue": 5.0,
-      "zValue": 4.0
+      "xValue": 10.0,
+      "yValue": 4.0,
+      "zValue": 5.0
     },
     {
       "id": "160",
@@ -3829,7 +3849,7 @@
       "cluster": "found files",
       "clusterDescription": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
       "color": "#d9d9d9",
-      "description": "The archive catalogs the forces underneath the stories: drives, engines, and reusable dread.",
+      "description": "",
       "subparts": "WHO AND WHAT ARE DRIVES & ENGINES / WHY THEY ARE DRAWN TO CERTAIN PLACES / UNRESOLVED / UNBOWED / FIRST / ULTRAVIOLET / CLINGER",
       "characters": [
         "various personnel",
@@ -3842,8 +3862,8 @@
       "featured": false,
       "size": 7.0,
       "xValue": 0.0,
-      "yValue": 0.0,
-      "zValue": 0.0
+      "yValue": 4.0,
+      "zValue": 5.0
     },
     {
       "id": "161",
@@ -3851,20 +3871,22 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A pet rock enters the archive without permission and immediately becomes suspiciously important.",
+      "description": "Please clean up after your pet rock.",
       "subparts": "p0 / p1 / p2 / p3 / p4 / p5 / EPILOGUE",
       "characters": [
         "Linguist PILOT",
-        "Various DC housemates"
+        "various DC housemates"
       ],
-      "collisions": [],
+      "collisions": [
+        "160"
+      ],
       "contentUrl": "https://inpoppyfields.tumblr.com/tagged/the%20unauthorized%20pet%20rock/chrono",
       "coverUrl": "",
       "featured": false,
       "size": 7.0,
-      "xValue": 4.0,
-      "yValue": 5.0,
-      "zValue": 4.0
+      "xValue": 7.0,
+      "yValue": 4.0,
+      "zValue": 5.0
     },
     {
       "id": "162",
@@ -3884,8 +3906,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 11.0,
-      "xValue": 10.0,
-      "yValue": 3.0,
+      "xValue": 5.0,
+      "yValue": 4.0,
       "zValue": 10.0
     },
     {
@@ -3894,7 +3916,7 @@
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "color": "#4dff00",
-      "description": "Past the heat is not safety, just a different kind of exposure.",
+      "description": "The desert shows something it has no intention of giving back.",
       "subparts": "The woman in the sun / The white house with the blue shutters",
       "characters": [
         "PILOT",
@@ -3906,9 +3928,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 8.0,
-      "yValue": 5.0,
-      "zValue": 6.0
+      "xValue": 10.0,
+      "yValue": 4.0,
+      "zValue": 8.0
     },
     {
       "id": "164",
@@ -3916,7 +3938,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A practical reminder to bring a jacket, possibly two, because the forecast is doing character development.",
+      "description": "Dress for the weather and emergency triage.",
       "subparts": "",
       "characters": [
         "SANTOS the medic"
@@ -3926,8 +3948,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
-      "xValue": 2.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -3936,7 +3958,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "Someone stands around in normal-person mode and makes the mistake of being available for plot errands.",
+      "description": "She's just here to observe. Totally just observing.",
       "subparts": "",
       "characters": [
         "DONOR"
@@ -3948,8 +3970,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 15.0,
-      "xValue": 3.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -3958,7 +3980,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A benchwarmer observes the game and discovers the sidelines are also part of the field, rude.",
+      "description": "Benchwarmers have the best view of the game.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -3970,7 +3992,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 20.0,
-      "xValue": 3.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -3980,17 +4002,19 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A paperwork-intensive afterparty where nobody remembers the guest list correctly.",
+      "description": "DONOR's used to patients who don't talk back. These ones won't shut up, and that’s beautiful.",
       "subparts": "",
       "characters": [
         "Mortician DONOR"
       ],
-      "collisions": [],
+      "collisions": [
+        "179"
+      ],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 15.0,
-      "xValue": 2.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -4000,7 +4024,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A beginner’s guide to sitting in the special chair and immediately regretting the seating arrangement.",
+      "description": "The haunting, but make it specifically PILOT.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4011,7 +4035,7 @@
       "featured": false,
       "size": 1.0,
       "xValue": 1.0,
-      "yValue": 2.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4020,7 +4044,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A deeply relatable complaint about legroom, seating zones, and the emotional cost of boarding group nonsense.",
+      "description": "The legroom is genuinely terrible. This is the least of everyone's problems.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4032,8 +4056,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 8.0,
       "zValue": 9.0
     },
     {
@@ -4042,7 +4066,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "Some containers are having a normal one; the lids are not cooperating and neither is anyone else.",
+      "description": "The lids in question will be explained. The minds in question will not.",
       "subparts": "",
       "characters": [
         "Rusted PILOT"
@@ -4052,8 +4076,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 2.0,
-      "yValue": 3.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -4062,7 +4086,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "Houston receives an oopsie of impressive size and everyone updates the group chat accordingly.",
+      "description": "Yes you do. Yes it is massive. Houston cannot help.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -4072,9 +4096,9 @@
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
-      "size": 1.0,
+      "size": 5.0,
       "xValue": 1.0,
-      "yValue": 3.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -4083,7 +4107,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "The oopsie gets a sequel, because apparently Houston subscribed to the deluxe problem package.",
+      "description": "If you thought the previous crew had it bad, this new crew has escalated it.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -4095,9 +4119,9 @@
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
-      "size": 1.0,
+      "size": 5.0,
       "xValue": 1.0,
-      "yValue": 3.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -4106,7 +4130,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A grading incident where the rubric is unclear, the stakes are suspicious, and extra credit is not available.",
+      "description": "The F actually stands for failure.",
       "subparts": "",
       "characters": [
         "PILOT the civilian test pilot"
@@ -4117,7 +4141,7 @@
       "featured": false,
       "size": 1.0,
       "xValue": 1.0,
-      "yValue": 3.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -4126,7 +4150,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "Someone is politely informed that the universe has reached their number at the deli counter.",
+      "description": "Congratulations. You've been selected.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4142,8 +4166,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 40.0,
-      "xValue": 2.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4152,7 +4176,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A near-miss with the cosmic ticket dispenser, which is somehow not comforting.",
+      "description": "Congratulations. You were almost selected.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4164,8 +4188,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 0.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -4174,7 +4198,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A sticker-based reward system appears, and absolutely everyone should be worried about that.",
+      "description": "Congratulations. That is all.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4184,7 +4208,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 2.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -4194,7 +4218,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A little counting exercise for anyone who enjoys astronomy, arithmetic, and making themselves sad by accident.",
+      "description": "Everyone is counting stars. Way, way too many stars. No one is stopping.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4204,8 +4228,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 15.0,
-      "xValue": 3.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4214,7 +4238,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A measurement lesson involving length, depth, and why rulers should mind their business.",
+      "description": "Human-length. Human-width. The math on this one is deliberately uncomfortable.",
       "subparts": "",
       "characters": [
         "PILOT",
@@ -4225,8 +4249,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 2.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4235,7 +4259,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A freelancer develops professional jealousy over someone else’s suspiciously stable career trajectory.",
+      "description": "DONOR works in the morgue. The dead don't complain. The living do. She prefers the dead, sometimes.",
       "subparts": "",
       "characters": [
         "Mortician DONOR"
@@ -4245,8 +4269,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 50.0,
-      "xValue": 3.0,
-      "yValue": 3.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4255,7 +4279,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "Sleep brings another charming little slideshow from the brain’s least customer-friendly department.",
+      "description": "PILOT dreams. They are not good dreams.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4265,8 +4289,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 3.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4275,7 +4299,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "Someone gets a little too familiar with the office goth and HR has questions.",
+      "description": "Not metaphorically. Literally circling the drain and making eye contact with it.",
       "subparts": "",
       "characters": [
         "Mortician DONOR",
@@ -4289,7 +4313,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 2.0,
+      "xValue": 1.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -4299,7 +4323,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "The workplace situationship continues past normal business hours and possibly several other boundaries.",
+      "description": "Death hasn't stopped anyone's game. If anything, it's improved it.",
       "subparts": "",
       "characters": [
         "various other fleet personnel"
@@ -4310,7 +4334,7 @@
       "featured": false,
       "size": 5.0,
       "xValue": 1.0,
-      "yValue": 2.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4319,7 +4343,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "A wall gets decorated with stars, because interior design is cheaper than emotional processing.",
+      "description": "PILOT counts stars. There are still too many. She also keeps going.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4329,8 +4353,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 3.0,
-      "yValue": 3.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4339,7 +4363,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "An arts-and-crafts session attempts to turn too many stars into something wall-safe.",
+      "description": "DONOR counts stars. There are too many. She keeps going anyway.",
       "subparts": "",
       "characters": [
         "DONOR"
@@ -4351,8 +4375,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 3.0,
-      "yValue": 2.0,
+      "xValue": 1.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4361,7 +4385,7 @@
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "color": "#c40000",
-      "description": "Before the big chair, there is paperwork, vibes, and a suspicious amount of foreshadowing.",
+      "description": "Before PILOT was PILOT, she was something else.",
       "subparts": "",
       "characters": [
         "PILOT"
@@ -4381,19 +4405,19 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Typography becomes the gap between memorial polish and what actually happened.",
+      "description": "The gap between what got written down and what actually happened . It’s a canyon.",
       "subparts": "",
       "characters": [
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 5.0,
-      "yValue": 4.0,
+      "xValue": 1.0,
+      "yValue": 3.0,
       "zValue": 2.0
     },
     {
@@ -4402,20 +4426,20 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Christmas arrives with stickerbomb vandalism and domestic multiverse vandalism.",
+      "description": "The house has been stickerbombed. The house did not consent to being stickerbombed. Merry Christmas.",
       "subparts": "",
       "characters": [
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 9.0,
-      "yValue": 5.0,
-      "zValue": 5.0
+      "xValue": 10.0,
+      "yValue": 9.0,
+      "zValue": 4.0
     },
     {
       "id": "188",
@@ -4423,7 +4447,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Thanksgiving proceeds under a pink sky, which is not the strangest emergency.",
+      "description": "The pink sky is not the emergency. The pink sky is just atmosphere. Everything else is the emergency.",
       "subparts": "",
       "characters": [
         "Captain PILOT",
@@ -4437,9 +4461,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 15.0,
-      "xValue": 4.0,
-      "yValue": 4.0,
-      "zValue": 5.0
+      "xValue": 10.0,
+      "yValue": 9.0,
+      "zValue": 4.0
     },
     {
       "id": "189",
@@ -4447,20 +4471,20 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A cemetery section number becomes a whole geography of grief.",
+      "description": "That is a large section number. Someone has been busy.",
       "subparts": "",
       "characters": [
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 5.0,
-      "zValue": 8.0
+      "xValue": 8.0,
+      "yValue": 7.0,
+      "zValue": 5.0
     },
     {
       "id": "190",
@@ -4468,19 +4492,19 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Techie PILOT commits fashion repetition; the timeline survives, barely.",
+      "description": "The audacity. The nerve. The repeat.",
       "subparts": "",
       "characters": [
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 4.0,
+      "xValue": 8.0,
+      "yValue": 7.0,
       "zValue": 3.0
     },
     {
@@ -4489,19 +4513,19 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Career progress turns into a directionless platformer with emotional fall damage.",
+      "description": "Progress is relative. So is direction. So, honestly, is the floor.",
       "subparts": "",
       "characters": [
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 6.0,
-      "yValue": 5.0,
+      "xValue": 4.0,
+      "yValue": 7.0,
       "zValue": 5.0
     },
     {
@@ -4510,11 +4534,11 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Techie PILOT brings sass to economy class because legroom cannot have the last word.",
+      "description": "Complimentary snacks will not be served. Neither will sympathy.",
       "subparts": "",
       "characters": [
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [
         "198"
@@ -4523,9 +4547,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 2.0,
-      "yValue": 5.0,
-      "zValue": 1.0
+      "xValue": 3.0,
+      "yValue": 7.0,
+      "zValue": 5.0
     },
     {
       "id": "193",
@@ -4533,12 +4557,12 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Tech work, domestic fantasy, and software updates collide in one suspiciously shiny ending.",
+      "description": "Your software will update tonight.",
       "subparts": "",
       "characters": [
         "Techie DONOR",
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
@@ -4546,8 +4570,8 @@
       "featured": false,
       "size": 1.0,
       "xValue": 3.0,
-      "yValue": 3.0,
-      "zValue": 3.0
+      "yValue": 7.0,
+      "zValue": 5.0
     },
     {
       "id": "194",
@@ -4555,21 +4579,21 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The hero question lands quietly and refuses to leave.",
+      "description": "A question posed quietly. No pressure. Really.",
       "subparts": "",
       "characters": [
         "Techie DONOR",
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 2.0,
-      "yValue": 4.0,
-      "zValue": 8.0
+      "xValue": 3.0,
+      "yValue": 7.0,
+      "zValue": 6.0
     },
     {
       "id": "195",
@@ -4577,7 +4601,7 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Four steps are enough to prove the destination was never the point.",
+      "description": "Watch your step. The destination is not a place.",
       "subparts": "",
       "characters": [
         "Techie DONOR",
@@ -4588,9 +4612,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 1.0,
-      "yValue": 5.0,
-      "zValue": 7.0
+      "xValue": 4.0,
+      "yValue": 7.0,
+      "zValue": 6.0
     },
     {
       "id": "196",
@@ -4598,21 +4622,21 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "A long weekend meets memorial grief and absolutely loses.",
+      "description": "A long weekend of trauma. The grill is not involved.",
       "subparts": "",
       "characters": [
         "Techie DONOR",
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 7.0,
-      "yValue": 3.0,
-      "zValue": 3.0
+      "xValue": 4.0,
+      "yValue": 7.0,
+      "zValue": 6.0
     },
     {
       "id": "197",
@@ -4620,20 +4644,20 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Language fails, and the failure brings receipts.",
+      "description": "Hopelessly, utterly, irretrievably lost. And that's just the vocabulary.",
       "subparts": "",
       "characters": [
         "Linguist PILOT",
-        "Various expat PILOTs"
+        "various expat PILOTs"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 4.0,
-      "yValue": 3.0,
-      "zValue": 1.0
+      "xValue": 10.0,
+      "yValue": 7.0,
+      "zValue": 6.0
     },
     {
       "id": "198",
@@ -4641,21 +4665,21 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "Fireworks, patriotism, and trauma share one very loud night.",
+      "description": "A single night. A lifetime of damage.",
       "subparts": "",
       "characters": [
         "Techie DONOR",
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 1.0,
-      "yValue": 5.0,
-      "zValue": 0.0
+      "xValue": 4.0,
+      "yValue": 7.0,
+      "zValue": 6.0
     },
     {
       "id": "199",
@@ -4663,21 +4687,21 @@
       "cluster": "the orange poppyverse",
       "clusterDescription": "Everyday life, Trader Joe’s burnout, and too-real modern mundanity holding hands.",
       "color": "#ff772b",
-      "description": "The plaque simplifies what the person could not survive.",
+      "description": "The gap between the monument and the person. It's a canyon.",
       "subparts": "",
       "characters": [
         "Techie DONOR",
         "Techie PILOT",
-        "Various Bay Area housemates"
+        "various Bay Area housemates"
       ],
       "collisions": [],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 7.0,
-      "yValue": 5.0,
-      "zValue": 1.0
+      "xValue": 3.0,
+      "yValue": 7.0,
+      "zValue": 6.0
     },
     {
       "id": "200",
@@ -4699,9 +4723,9 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 6.0,
-      "yValue": 2.0,
-      "zValue": 10.0
+      "xValue": 4.0,
+      "yValue": 1.0,
+      "zValue": 8.0
     },
     {
       "id": "201",
@@ -4720,7 +4744,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 10.0,
+      "xValue": 4.0,
       "yValue": 1.0,
       "zValue": 8.0
     },
@@ -4745,7 +4769,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 8.0,
+      "xValue": 10.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -4765,7 +4789,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 8.0,
+      "xValue": 2.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -4786,8 +4810,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 2.0,
+      "xValue": 10.0,
+      "yValue": 1.0,
       "zValue": 10.0
     },
     {
@@ -4809,8 +4833,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 7.0,
-      "yValue": 3.0,
+      "xValue": 8.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -4833,7 +4857,7 @@
       "featured": false,
       "size": 5.0,
       "xValue": 9.0,
-      "yValue": 2.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -4853,8 +4877,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 10.0,
-      "xValue": 10.0,
-      "yValue": 3.0,
+      "xValue": 7.0,
+      "yValue": 1.0,
       "zValue": 9.0
     },
     {
@@ -4876,7 +4900,7 @@
       "coverUrl": "",
       "featured": false,
       "size": 5.0,
-      "xValue": 10.0,
+      "xValue": 7.0,
       "yValue": 1.0,
       "zValue": 10.0
     },
@@ -4893,15 +4917,16 @@
         "Techie PILOT"
       ],
       "collisions": [
-        "195"
+        "195",
+        "38"
       ],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 2.0,
       "xValue": 9.0,
-      "yValue": 2.0,
-      "zValue": 3.0
+      "yValue": 5.0,
+      "zValue": 5.0
     },
     {
       "id": "210",
@@ -4921,7 +4946,7 @@
       "featured": false,
       "size": 1.0,
       "xValue": 8.0,
-      "yValue": 3.0,
+      "yValue": 5.0,
       "zValue": 8.0
     },
     {
@@ -4941,8 +4966,8 @@
       "coverUrl": "",
       "featured": false,
       "size": 1.0,
-      "xValue": 3.0,
-      "yValue": 1.0,
+      "xValue": 6.0,
+      "yValue": 5.0,
       "zValue": 9.0
     },
     {
@@ -4957,13 +4982,15 @@
         "Older PILOT the CIA operator",
         "Techie PILOT"
       ],
-      "collisions": [],
+      "collisions": [
+        "197"
+      ],
       "contentUrl": "",
       "coverUrl": "",
       "featured": false,
       "size": 3.0,
-      "xValue": 7.0,
-      "yValue": 4.0,
+      "xValue": 1.0,
+      "yValue": 5.0,
       "zValue": 10.0
     },
     {
@@ -4990,20 +5017,68 @@
   ],
   "links": [
     {
+      "source": "6",
+      "target": "5",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "27",
+      "target": "139",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "30",
+      "target": "32",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "30",
+      "target": "71",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "32",
+      "target": "71",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
       "source": "102",
       "target": "64",
       "color": "#FFFFFF",
       "width": 1.3
     },
     {
-      "source": "116",
-      "target": "115",
+      "source": "144",
+      "target": "142",
       "color": "#FFFFFF",
       "width": 1.3
     },
     {
-      "source": "144",
-      "target": "142",
+      "source": "149",
+      "target": "71",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "158",
+      "target": "160",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "159",
+      "target": "160",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "161",
+      "target": "160",
       "color": "#FFFFFF",
       "width": 1.3
     },
@@ -5016,6 +5091,12 @@
     {
       "source": "166",
       "target": "174",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "167",
+      "target": "179",
       "color": "#FFFFFF",
       "width": 1.3
     },
@@ -5136,6 +5217,18 @@
     {
       "source": "209",
       "target": "195",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "209",
+      "target": "38",
+      "color": "#FFFFFF",
+      "width": 1.3
+    },
+    {
+      "source": "212",
+      "target": "197",
       "color": "#FFFFFF",
       "width": 1.3
     }
@@ -5363,6 +5456,17 @@
           .filter(Boolean);
       });
 
+      // Resolve link endpoints from string ids to node-object references.
+      // The layout's "link" force (which normally does this) is disabled to
+      // keep the fixed fx/fy/fz layout frozen, so we must resolve manually or
+      // the renderer skips any link whose endpoints aren't objects.
+      DATA.links.forEach(link => {
+        const source = nodeById.get(String(link.source));
+        const target = nodeById.get(String(link.target));
+        if (source) link.source = source;
+        if (target) link.target = target;
+      });
+
       return {
         nodes: DATA.nodes,
         links: DATA.links
@@ -5430,9 +5534,9 @@
 
           return core;
         })
-        .linkColor(link => link.color || "#ffffff")
-        .linkWidth(link => link.width || 1.3)
-        .linkOpacity(0.42);
+        .linkColor(() => "#FFFFFF")
+        .linkWidth(0)
+        .linkOpacity(1);
 
       const renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -5524,6 +5628,71 @@
         },
         1200
       );
+
+      // --- Axes overlay (hidden by default; toggled via the "Show axes" switch) ---
+      // Axes are labeled with the three source columns: X = Depth,
+      // Y (up) = Relatability, Z = Relativity.
+      const axesGroup = new THREE.Group();
+      axesGroup.visible = false;
+
+      function makeAxisLabel(text, colorHex) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 256;
+        canvas.height = 64;
+
+        const ctx = canvas.getContext("2d");
+        ctx.font = "600 32px Michroma, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = colorHex;
+        ctx.fillText(text, 128, 34);
+
+        const tex = new THREE.CanvasTexture(canvas);
+
+        const sprite = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: tex,
+            transparent: true,
+            depthWrite: false,
+            depthTest: false
+          })
+        );
+
+        sprite.scale.set(150, 37, 1);
+        sprite.renderOrder = 20;
+        return sprite;
+      }
+
+      function addAxis(from, to, colorHex, labelText) {
+        const geom = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(from.x, from.y, from.z),
+          new THREE.Vector3(to.x, to.y, to.z)
+        ]);
+
+        const line = new THREE.Line(
+          geom,
+          new THREE.LineBasicMaterial({ color: colorHex, transparent: true, opacity: 0.8 })
+        );
+        axesGroup.add(line);
+
+        const label = makeAxisLabel(labelText, colorHex);
+        label.position.set(to.x, to.y, to.z);
+        axesGroup.add(label);
+      }
+
+      const axisOrigin = { x: bounds.minX, y: bounds.minY, z: bounds.minZ };
+      addAxis(axisOrigin, { x: bounds.maxX, y: bounds.minY, z: bounds.minZ }, "#FF6B6B", "Depth");
+      addAxis(axisOrigin, { x: bounds.minX, y: bounds.maxY, z: bounds.minZ }, "#6BCB77", "Relatability");
+      addAxis(axisOrigin, { x: bounds.minX, y: bounds.minY, z: bounds.maxZ }, "#4D96FF", "Relativity");
+
+      scene.add(axesGroup);
+
+      const axesToggle = document.getElementById("axesToggle");
+      axesToggle.checked = false;
+      axesGroup.visible = false;
+      axesToggle.addEventListener("change", () => {
+        axesGroup.visible = axesToggle.checked;
+      });
 
       Graph.onNodeHover((node, prev) => {
         const prevNode = prev || hoveredNode;
