@@ -17,6 +17,8 @@ Output:
 - Keep Multiverse Color Legend.
 - Do NOT show axes.
 - Do NOT show axis labels.
+  (Both axes and axis labels are hidden by default, but can be revealed via
+  the "Show axes" toggle at the bottom-left of the page.)
 - Do NOT show hover labels.
 - Do NOT show HUD title/subtitle.
 - Do NOT show content ratings in clicked cards.
@@ -449,7 +451,7 @@ def build_html(data: dict[str, Any]) -> str:
       top: calc(var(--nav-height) + 20px);
       right: 18px;
       z-index: 22;
-      width: min(360px, calc(100vw - 36px));
+      width: min(320px, calc(100vw - 36px));
       max-height: calc(100vh - var(--nav-height) - 40px);
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.18);
@@ -513,6 +515,73 @@ def build_html(data: dict[str, Any]) -> str:
       color: rgba(255, 255, 255, 0.66);
       font-size: 11px;
       line-height: 1.45;
+    }}
+
+    .axes-toggle {{
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      z-index: 22;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.54);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
+      cursor: pointer;
+      user-select: none;
+    }}
+
+    .axes-toggle input {{
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }}
+
+    .axes-toggle-track {{
+      position: relative;
+      width: 34px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      transition: background 0.18s ease;
+      flex: none;
+    }}
+
+    .axes-toggle-thumb {{
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.18s ease;
+    }}
+
+    .axes-toggle input:checked + .axes-toggle-track {{
+      background: var(--poppy-pink);
+    }}
+
+    .axes-toggle input:checked + .axes-toggle-track .axes-toggle-thumb {{
+      transform: translateX(16px);
+    }}
+
+    .axes-toggle input:focus-visible + .axes-toggle-track {{
+      outline: 2px solid rgba(255, 255, 255, 0.6);
+      outline-offset: 2px;
+    }}
+
+    .axes-toggle-label {{
+      color: #fff;
+      font-family: "Michroma", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }}
 
     .drawer-backdrop {{
@@ -695,6 +764,12 @@ def build_html(data: dict[str, Any]) -> str:
     </header>
     <div id="drawerBody" class="drawer-body"></div>
   </aside>
+
+  <label class="axes-toggle" for="axesToggle">
+    <input type="checkbox" id="axesToggle" />
+    <span class="axes-toggle-track"><span class="axes-toggle-thumb"></span></span>
+    <span class="axes-toggle-label">Show axes</span>
+  </label>
 
   {data_blob}
 
@@ -918,6 +993,17 @@ def build_html(data: dict[str, Any]) -> str:
           .filter(Boolean);
       }});
 
+      // Resolve link endpoints from string ids to node-object references.
+      // The layout's "link" force (which normally does this) is disabled to
+      // keep the fixed fx/fy/fz layout frozen, so we must resolve manually or
+      // the renderer skips any link whose endpoints aren't objects.
+      DATA.links.forEach(link => {{
+        const source = nodeById.get(String(link.source));
+        const target = nodeById.get(String(link.target));
+        if (source) link.source = source;
+        if (target) link.target = target;
+      }});
+
       return {{
         nodes: DATA.nodes,
         links: DATA.links
@@ -985,9 +1071,9 @@ def build_html(data: dict[str, Any]) -> str:
 
           return core;
         }})
-        .linkColor(link => link.color || "#ffffff")
-        .linkWidth(link => link.width || 1.3)
-        .linkOpacity(0.42);
+        .linkColor(() => "#FFFFFF")
+        .linkWidth(0)
+        .linkOpacity(1);
 
       const renderer = new THREE.WebGLRenderer({{
         antialias: true,
@@ -1079,6 +1165,71 @@ def build_html(data: dict[str, Any]) -> str:
         }},
         1200
       );
+
+      // --- Axes overlay (hidden by default; toggled via the "Show axes" switch) ---
+      // Axes are labeled with the three source columns: X = Depth,
+      // Y (up) = Relatability, Z = Relativity.
+      const axesGroup = new THREE.Group();
+      axesGroup.visible = false;
+
+      function makeAxisLabel(text, colorHex) {{
+        const canvas = document.createElement("canvas");
+        canvas.width = 256;
+        canvas.height = 64;
+
+        const ctx = canvas.getContext("2d");
+        ctx.font = "600 32px Michroma, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = colorHex;
+        ctx.fillText(text, 128, 34);
+
+        const tex = new THREE.CanvasTexture(canvas);
+
+        const sprite = new THREE.Sprite(
+          new THREE.SpriteMaterial({{
+            map: tex,
+            transparent: true,
+            depthWrite: false,
+            depthTest: false
+          }})
+        );
+
+        sprite.scale.set(150, 37, 1);
+        sprite.renderOrder = 20;
+        return sprite;
+      }}
+
+      function addAxis(from, to, colorHex, labelText) {{
+        const geom = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(from.x, from.y, from.z),
+          new THREE.Vector3(to.x, to.y, to.z)
+        ]);
+
+        const line = new THREE.Line(
+          geom,
+          new THREE.LineBasicMaterial({{ color: colorHex, transparent: true, opacity: 0.8 }})
+        );
+        axesGroup.add(line);
+
+        const label = makeAxisLabel(labelText, colorHex);
+        label.position.set(to.x, to.y, to.z);
+        axesGroup.add(label);
+      }}
+
+      const axisOrigin = {{ x: bounds.minX, y: bounds.minY, z: bounds.minZ }};
+      addAxis(axisOrigin, {{ x: bounds.maxX, y: bounds.minY, z: bounds.minZ }}, "#FF6B6B", "Depth");
+      addAxis(axisOrigin, {{ x: bounds.minX, y: bounds.maxY, z: bounds.minZ }}, "#6BCB77", "Relatability");
+      addAxis(axisOrigin, {{ x: bounds.minX, y: bounds.minY, z: bounds.maxZ }}, "#4D96FF", "Relativity");
+
+      scene.add(axesGroup);
+
+      const axesToggle = document.getElementById("axesToggle");
+      axesToggle.checked = false;
+      axesGroup.visible = false;
+      axesToggle.addEventListener("change", () => {{
+        axesGroup.visible = axesToggle.checked;
+      }});
 
       Graph.onNodeHover((node, prev) => {{
         const prevNode = prev || hoveredNode;
