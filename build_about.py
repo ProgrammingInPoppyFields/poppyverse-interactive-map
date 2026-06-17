@@ -305,7 +305,7 @@ def build_html() -> str:
 
   <main class="page">
     <section class="shell">
-      <h1 class="page-title">ABOUT THE POPPYVERSE</h1>
+      <h1 class="page-title">ABOUT</h1>
 
       <article class="card">
         {ABOUT_HTML}
