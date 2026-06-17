@@ -383,6 +383,17 @@
       line-height: 1.65;
     }
 
+    .collision-link {
+      color: var(--active-color);
+      text-decoration: none;
+      border-bottom: 1px solid color-mix(in srgb, var(--active-color) 45%, transparent);
+      transition: border-color 0.15s ease;
+    }
+
+    .collision-link:hover {
+      border-bottom-color: var(--active-color);
+    }
+
     .read-link {
       display: inline-flex;
       align-items: center;
@@ -5334,6 +5345,17 @@
       return `<p>${items.map(escapeHtml).join(", ")}</p>`;
     }
 
+    function renderCollisions(items) {
+      if (!items || !items.length) return "<p>—</p>";
+      const parts = items.map(item => {
+        const label = escapeHtml(item.label || "");
+        return item.url
+          ? `<a class="collision-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${label}</a>`
+          : label;
+      });
+      return `<p>${parts.join(", ")}</p>`;
+    }
+
     function openDrawer(node) {
       selectedNode = node;
       setHighlightedNode(node);
@@ -5378,7 +5400,7 @@
 
         <section class="drawer-section">
           <h3>Collisions</h3>
-          ${renderList(node.collisionNames || [])}
+          ${renderCollisions(node.collisionLinks || [])}
         </section>
 
         <section class="drawer-section">
@@ -5447,15 +5469,6 @@
         node.val = node.size;
       });
 
-      DATA.nodes.forEach(node => {
-        node.collisionNames = (node.collisions || [])
-          .map(raw => {
-            const target = nodeById.get(String(raw));
-            return target ? target.label : null;
-          })
-          .filter(Boolean);
-      });
-
       // Resolve link endpoints from string ids to node-object references.
       // The layout's "link" force (which normally does this) is disabled to
       // keep the fixed fx/fy/fz layout frozen, so we must resolve manually or
@@ -5465,6 +5478,19 @@
         const target = nodeById.get(String(link.target));
         if (source) link.source = source;
         if (target) link.target = target;
+      });
+
+      // Build each node's collision list from the (already de-duped, undirected)
+      // links so the drawer shows a collision on BOTH endpoints, not just the
+      // node whose CSV cell happened to name the other. Each entry carries the
+      // partner's title and story URL for a clickable link.
+      DATA.nodes.forEach(node => { node.collisionLinks = []; });
+      DATA.links.forEach(link => {
+        const a = link.source;
+        const b = link.target;
+        if (typeof a !== "object" || typeof b !== "object") return;
+        a.collisionLinks.push({ label: b.label, url: b.contentUrl });
+        b.collisionLinks.push({ label: a.label, url: a.contentUrl });
       });
 
       return {
