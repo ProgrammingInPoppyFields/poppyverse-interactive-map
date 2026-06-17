@@ -448,9 +448,11 @@ def build_html(data: dict[str, Any]) -> str:
 
     .legend {{
       position: fixed;
-      top: calc(var(--nav-height) + 20px);
+      bottom: 18px;
       right: 18px;
       z-index: 22;
+      display: flex;
+      flex-direction: column-reverse;
       width: min(320px, calc(100vw - 36px));
       max-height: calc(100vh - var(--nav-height) - 40px);
       overflow: hidden;
@@ -761,7 +763,7 @@ def build_html(data: dict[str, Any]) -> str:
   <div id="graph"></div>
 
   <aside id="legend" class="legend">
-    <button id="legendToggle" class="legend-toggle" type="button">Multiverse Color Legend ▸</button>
+    <button id="legendToggle" class="legend-toggle" type="button">Multiverse Color Legend ▴</button>
     <div id="legendRows" class="legend-rows"></div>
   </aside>
 
@@ -1043,7 +1045,7 @@ def build_html(data: dict[str, Any]) -> str:
         const isOpen = legend.classList.toggle("open");
         legendToggle.textContent = isOpen
           ? "Multiverse Color Legend ▾"
-          : "Multiverse Color Legend ▸";
+          : "Multiverse Color Legend ▴";
       }});
 
       drawerClose.addEventListener("click", closeDrawer);
