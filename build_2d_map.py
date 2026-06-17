@@ -345,25 +345,18 @@ def build_html(data: dict[str, Any]) -> str:
       text-align: center;
     }}
 
-    .eyebrow {{
-      margin: 0 0 12px;
-      color: var(--poppy-pink);
-      font-family: "Michroma", sans-serif;
-      font-size: 12px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      text-shadow: 0 0 14px rgba(255, 20, 71, 0.42);
-    }}
-
     h1 {{
       margin: 0;
-      color: #fff;
+      color: var(--poppy-pink);
       font-family: "Michroma", sans-serif;
-      font-size: clamp(30px, 5vw, 64px);
+      font-size: clamp(34px, 6vw, 72px);
       line-height: 1.05;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.055em;
       text-transform: uppercase;
-      text-shadow: 0 0 28px rgba(255, 20, 71, 0.22);
+      text-shadow:
+        0 0 12px rgba(255, 20, 71, 0.68),
+        0 0 36px rgba(255, 20, 71, 0.38),
+        0 0 70px rgba(0, 0, 0, 0.92);
     }}
 
     .subtitle {{
@@ -664,8 +657,7 @@ def build_html(data: dict[str, Any]) -> str:
 
   <main class="page">
     <section class="hero">
-      <p class="eyebrow">Static Story Map</p>
-      <h1>THE POPPYVERSE</h1>
+      <h1>2D STORY MAP</h1>
       <p class="subtitle">
         A calmer, saner cluster-first table of contents for a multiverse that remains,
         despite best efforts, profoundly unserious about linear structure.
