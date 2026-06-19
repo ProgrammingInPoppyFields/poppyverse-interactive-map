@@ -343,6 +343,7 @@ def build_html(data: dict[str, Any]) -> str:
       --poppy-pink: {POPPY_PINK};
       --active-color: {POPPY_PINK};
       --nav-height: 58px;
+      --control-height: 42px;
       --text: rgba(255, 255, 255, 0.94);
       --muted: rgba(255, 255, 255, 0.68);
       --line: rgba(255, 255, 255, 0.14);
@@ -465,7 +466,11 @@ def build_html(data: dict[str, Any]) -> str:
 
     .legend-toggle {{
       width: 100%;
-      padding: 12px 14px;
+      height: calc(var(--control-height) - 2px);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
       border: 0;
       background: transparent;
       color: #fff;
@@ -527,7 +532,9 @@ def build_html(data: dict[str, Any]) -> str:
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 9px 14px;
+      height: var(--control-height);
+      box-sizing: border-box;
+      padding: 0 16px;
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 999px;
       background: rgba(0, 0, 0, 0.54);
@@ -592,7 +599,12 @@ def build_html(data: dict[str, Any]) -> str:
       left: 50%;
       transform: translateX(-50%);
       z-index: 22;
-      padding: 11px 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--control-height);
+      box-sizing: border-box;
+      padding: 0 22px;
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 999px;
       background: rgba(0, 0, 0, 0.54);
@@ -612,6 +624,35 @@ def build_html(data: dict[str, Any]) -> str:
       color: var(--poppy-pink);
       border-color: color-mix(in srgb, var(--poppy-pink) 60%, transparent);
       box-shadow: 0 0 28px color-mix(in srgb, var(--poppy-pink) 30%, transparent);
+    }}
+
+    /* Narrow viewports: the three bottom controls can't sit side by side
+       (the legend bar alone is 320px), so stack them centered, with the
+       legend on top, the wormhole in the middle, and the axes toggle on
+       the bottom. Each step is one control-height plus a 10px gap. */
+    @media (max-width: 820px) {{
+      .axes-toggle {{
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        bottom: 18px;
+      }}
+
+      .wormhole-btn {{
+        bottom: calc(18px + (var(--control-height) + 10px));
+      }}
+
+      .legend {{
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        bottom: calc(18px + 2 * (var(--control-height) + 10px));
+        max-height: calc(100vh - var(--nav-height) - 138px);
+      }}
+
+      .legend-rows {{
+        max-height: calc(100vh - var(--nav-height) - 178px);
+      }}
     }}
 
     .drawer-backdrop {{
@@ -769,10 +810,6 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     @media (max-width: 760px) {{
-      .legend {{
-        display: none;
-      }}
-
       .top-nav {{
         padding-left: 8px;
         padding-right: 8px;
