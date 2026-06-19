@@ -258,6 +258,34 @@
       text-transform: uppercase;
     }
 
+    .wormhole-btn {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 22;
+      padding: 11px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.54);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
+      color: #fff;
+      font-family: "Michroma", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+    }
+
+    .wormhole-btn:hover {
+      color: var(--poppy-pink);
+      border-color: color-mix(in srgb, var(--poppy-pink) 60%, transparent);
+      box-shadow: 0 0 28px color-mix(in srgb, var(--poppy-pink) 30%, transparent);
+    }
+
     .drawer-backdrop {
       position: fixed;
       inset: 0;
@@ -459,6 +487,8 @@
     <span class="axes-toggle-track"><span class="axes-toggle-thumb"></span></span>
     <span class="axes-toggle-label">Show axes</span>
   </label>
+
+  <a class="wormhole-btn" href="https://programminginpoppyfields.github.io/engine-codex/" target="_blank" rel="noopener">Wormhole</a>
 
   <script id="poppy-data" type="application/json">
 {
