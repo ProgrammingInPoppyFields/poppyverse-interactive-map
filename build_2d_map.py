@@ -349,7 +349,7 @@ def build_html(data: dict[str, Any]) -> str:
       margin: 0;
       color: var(--poppy-pink);
       font-family: "Michroma", sans-serif;
-      font-size: clamp(34px, 6vw, 72px);
+      font-size: clamp(30px, 5.4vw, 64px);
       line-height: 1.05;
       letter-spacing: 0.055em;
       text-transform: uppercase;
@@ -453,7 +453,7 @@ def build_html(data: dict[str, Any]) -> str:
     color: white;
       margin: 0;
       font-family: "Michroma", sans-serif;
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1.18;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -536,7 +536,7 @@ def build_html(data: dict[str, Any]) -> str:
       margin: 0;
       color: var(--active-color);
       font-family: "Michroma", sans-serif;
-      font-size: clamp(22px, 3vw, 36px);
+      font-size: clamp(20px, 2.7vw, 32px);
       line-height: 1.18;
       letter-spacing: 0.08em;
       text-transform: uppercase;
