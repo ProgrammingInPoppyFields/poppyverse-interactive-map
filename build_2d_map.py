@@ -607,7 +607,7 @@ def build_html(data: dict[str, Any]) -> str:
       display: inline-block;
       padding: 7px 10px;
       border-radius: 999px;
-      background: var(--active-color);
+      background: color-mix(in srgb, var(--active-color) 55%, #000);
       color: #fff;
       text-decoration: none;
       font-size: 11px;
@@ -642,6 +642,7 @@ def build_html(data: dict[str, Any]) -> str:
       letter-spacing: 0.08em;
       line-height: 1.3;
       text-transform: uppercase;
+      text-decoration: none;
       white-space: nowrap;
     }}
 
@@ -744,6 +745,15 @@ def build_html(data: dict[str, Any]) -> str:
         const tags = text.split(",").map(t => t.trim()).filter(Boolean);
         if (!tags.length) return '<span class="empty">—</span>';
         const chips = tags
+          .map(t => `<span class="tag-chip">${{escapeHtml(t)}}</span>`)
+          .join("");
+        return `<div class="tag-chips">${{chips}}</div>`;
+      }}
+
+      if (column === "Sub-parts") {{
+        const parts = text.split("/").map(t => t.trim()).filter(Boolean);
+        if (!parts.length) return '<span class="empty">—</span>';
+        const chips = parts
           .map(t => `<span class="tag-chip">${{escapeHtml(t)}}</span>`)
           .join("");
         return `<div class="tag-chips">${{chips}}</div>`;
