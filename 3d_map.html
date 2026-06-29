@@ -465,6 +465,28 @@
       border-bottom-color: var(--active-color);
     }
 
+    .tag-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 0;
+    }
+
+    .tag-chip {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--active-color) 18%, transparent);
+      border: 1px solid color-mix(in srgb, var(--active-color) 45%, transparent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
     .read-link {
       display: inline-flex;
       align-items: center;
@@ -532,105 +554,105 @@
   "clusters": [
     {
       "name": "found files",
-      "color": "#d9d9d9",
+      "color": "#6F6457",
       "description": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
       "coverUrl": "https://images.unsplash.com/photo-1583521214690-73421a1829a9?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 0
     },
     {
       "name": "welcome to the poppyverse",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Where it all begins. Your first step into this mess.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 1
     },
     {
       "name": "deeper into the poppyverse",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Same multiverse branch, deeper layers, fewer safety rails.",
       "coverUrl": "https://images.unsplash.com/photo-1457364887197-9150188c107b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 2
     },
     {
       "name": "the red poppyverse",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "coverUrl": "https://images.unsplash.com/photo-1643537243683-a61ba2e77cf1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 3
     },
     {
       "name": "the desert roseverse",
-      "color": "#c98263",
+      "color": "#9E5B43",
       "description": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
       "coverUrl": "https://images.unsplash.com/photo-1488197047962-b48492212cda?q=80&w=2334&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==",
       "order": 4
     },
     {
       "name": "the ultravioletverse",
-      "color": "#7b2cff",
+      "color": "#6D28D9",
       "description": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
       "coverUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 5
     },
     {
       "name": "the lilyverse",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "coverUrl": "https://images.unsplash.com/photo-1446941611757-91d2c3bd3d45?q=80&w=802&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 6
     },
     {
       "name": "the spider lilyverse",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
       "coverUrl": "https://images.unsplash.com/photo-1708112292872-fd5612affa79?q=80&w=1809&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 7
     },
     {
       "name": "the fireweedverse",
-      "color": "#ff5a1f",
+      "color": "#C8430F",
       "description": "Fireweed is a Poppyverse branch grown in the burn scar of Fire Force: spontaneous human combustion, Infernals, Company 8, and the terrible things that grow from bodies the fire did not finish.",
       "coverUrl": "https://images.unsplash.com/photo-1583248352195-d3a8e766edf2?q=80&w=1744&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 8
     },
     {
       "name": "by the bay",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
       "coverUrl": "https://images.unsplash.com/photo-1575500596523-d625dd041614?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 9
     },
     {
       "name": "do in dc",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
       "coverUrl": "https://images.unsplash.com/photo-1501466044931-62695aada8e9?q=80&w=1574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 10
     },
     {
       "name": "houston, houston",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
       "coverUrl": "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1908&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 11
     },
     {
       "name": "counting sheep",
-      "color": "#b9d8a6",
+      "color": "#507A2F",
       "description": "PILOT and DONOR grow old on a NorCal sheep farm, where peace is warm, woolly, and not even pretending the ram symbolism is subtle.",
       "coverUrl": "https://images.unsplash.com/photo-1744172246156-f35b958401b3?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 12
     },
     {
       "name": "area fifty-done",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "coverUrl": "https://images.unsplash.com/photo-1549313861-33587f3d2956?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==",
       "order": 13
     },
     {
       "name": "beyond the poppyverse",
-      "color": "#111827",
+      "color": "#534A82",
       "description": "Where the fourth wall gets thin and the author starts pacing.",
       "coverUrl": "https://images.unsplash.com/photo-1538370965046-79c0d6907d47?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 14
@@ -642,7 +664,7 @@
       "label": "Do Units Dream Sweetly?",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "The units dream of laundry, drive-thrus, wrong rooms, and other suspiciously human system errors.",
       "subparts": "",
       "characters": [
@@ -662,7 +684,7 @@
       "label": "The Poppyverse Becomes a Manga and Doesn’t Even Make It to The Boss Fight",
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
-      "color": "#111827",
+      "color": "#534A82",
       "description": "War gets manga-filtered into kanji, speed lines, and marketable grief.",
       "subparts": "",
       "characters": [
@@ -682,7 +704,7 @@
       "label": "The Poppyverse Becomes a Manga and Doesn’t Even Make It to Breakfast",
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
-      "color": "#111827",
+      "color": "#534A82",
       "description": "The Poppyverse gets anime animated before breakfast, which is somehow both funnier and more damning than combat.",
       "subparts": "",
       "characters": [
@@ -702,7 +724,7 @@
       "label": "Signature",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "An office-signature problem.",
       "subparts": "",
       "characters": [
@@ -723,7 +745,7 @@
       "label": "The Drill That Holds",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "It does it well.",
       "subparts": "",
       "characters": [
@@ -744,7 +766,7 @@
       "label": "The Driller",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "It knows its job.",
       "subparts": "",
       "characters": [
@@ -766,7 +788,7 @@
       "label": "“Are those kids allowed here?”",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "Seriously, are they?",
       "subparts": "",
       "characters": [
@@ -786,7 +808,7 @@
       "label": "Work Voice vs. BBQ Voice",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "Professionalism. It matters.",
       "subparts": "",
       "characters": [
@@ -806,7 +828,7 @@
       "label": "Welcome to Area Fifty-DONE",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "A ranking system, because anomalies happen often enough that someone finally made them administratively sortable.",
       "subparts": "Here’s a Tier System / OK NVM",
       "characters": [
@@ -828,7 +850,7 @@
       "label": "Top 10 Unexplained: The Space Center",
       "cluster": "houston, houston",
       "clusterDescription": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "If you thought the visitor center was weird enough…",
       "subparts": "",
       "characters": [
@@ -850,7 +872,7 @@
       "label": "Top 10 Unexplained: The Visitors Center",
       "cluster": "houston, houston",
       "clusterDescription": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "The visitor center gets its own list of anomalies, because even the public-facing parts of the national space program cannot keep reality normal.",
       "subparts": "",
       "characters": [
@@ -872,7 +894,7 @@
       "label": "That’s Not in the Textbooks",
       "cluster": "houston, houston",
       "clusterDescription": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "What happened to the appendix?",
       "subparts": "",
       "characters": [
@@ -894,7 +916,7 @@
       "label": "More Than Meets the Cat",
       "cluster": "houston, houston",
       "clusterDescription": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "Orbital Debris the cat is either a cat, an omen, or a classified morale hazard.",
       "subparts": "",
       "characters": [
@@ -916,7 +938,7 @@
       "label": "Spaceships & Suburbia",
       "cluster": "houston, houston",
       "clusterDescription": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "PILOT is the director of NASA. UNIT is a cat. DONOR may or may not be an extraterrestrial ghost simply messing around.",
       "subparts": "",
       "characters": [
@@ -938,7 +960,7 @@
       "label": "[Houston, Houston, I’m the Problem] INTRO",
       "cluster": "houston, houston",
       "clusterDescription": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "",
       "subparts": "",
       "characters": [
@@ -960,7 +982,7 @@
       "label": "Mourning in Metal",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Grief refuses to stay organic.",
       "subparts": "v1 / v2 / v3",
       "characters": [
@@ -981,7 +1003,7 @@
       "label": "Subconscious Selections: Shorts",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "More growing pains",
       "subparts": "",
       "characters": [
@@ -1002,7 +1024,7 @@
       "label": "Subconscious Selections: Standard Issue",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "They grow up so fast.",
       "subparts": "",
       "characters": [
@@ -1024,7 +1046,7 @@
       "label": "She Feels",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "A thread for the terrifying proposition that the machine is not just responding; she is feeling.",
       "subparts": "",
       "characters": [
@@ -1044,7 +1066,7 @@
       "label": "One and the Same",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "A tech encounters UNIT’s wounded avatar beside its broken mech body and realizes the gentle girl and terrifying machine are not separate beings.",
       "subparts": "",
       "characters": [
@@ -1065,7 +1087,7 @@
       "label": "[Sisterhood in Steel & Skin]: The Frosty Sister",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "One sister carries coldness like armor, weapon, weather, and warning label.",
       "subparts": "",
       "characters": [
@@ -1086,7 +1108,7 @@
       "label": "[Sisterhood in Steel & Skin]: The Fiery Sister",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "One sister burns hot enough to make affection look like a containment risk.",
       "subparts": "",
       "characters": [
@@ -1107,7 +1129,7 @@
       "label": "[Celestial Bodies]",
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
-      "color": "#111827",
+      "color": "#534A82",
       "description": "PILOT is a neutron star. DONOR is a black hole. You're doing stellar, ladies.",
       "subparts": "v1 / v2 / v3",
       "characters": [
@@ -1128,7 +1150,7 @@
       "label": "[Celestial Bodies] [Intro]",
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
-      "color": "#111827",
+      "color": "#534A82",
       "description": "",
       "subparts": "",
       "characters": [
@@ -1150,7 +1172,7 @@
       "label": "[21 Pilots, Too Many Pilots]",
       "cluster": "beyond the poppyverse",
       "clusterDescription": "Where the fourth wall gets thin and the author starts pacing.",
-      "color": "#111827",
+      "color": "#534A82",
       "description": "All the PILOTs, from every fork and timeline and universe. No such thing as too many. Probably.",
       "subparts": "v1 / v2",
       "characters": [
@@ -1170,7 +1192,7 @@
       "label": "[Sheep Milk Latte]",
       "cluster": "counting sheep",
       "clusterDescription": "PILOT and DONOR grow old on a NorCal sheep farm, where peace is warm, woolly, and not even pretending the ram symbolism is subtle.",
-      "color": "#b9d8a6",
+      "color": "#507A2F",
       "description": "Retired, coastal, vaguely cursed. The séance was not on the schedule.",
       "subparts": "p0 / p1",
       "characters": [
@@ -1194,7 +1216,7 @@
       "label": "[Sheep Milk Latte] INTRO",
       "cluster": "counting sheep",
       "clusterDescription": "PILOT and DONOR grow old on a NorCal sheep farm, where peace is warm, woolly, and not even pretending the ram symbolism is subtle.",
-      "color": "#b9d8a6",
+      "color": "#507A2F",
       "description": "",
       "subparts": "",
       "characters": [
@@ -1216,7 +1238,7 @@
       "label": "[ASSMAN OMELET]: The New Kid",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "Uh-oh…",
       "subparts": "",
       "characters": [
@@ -1240,7 +1262,7 @@
       "label": "[ASSMAN OMELET] [Farewell in Purple]",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "A purple-tinged farewell.",
       "subparts": "p1 / p2 / p3",
       "characters": [
@@ -1265,7 +1287,7 @@
       "label": "[ASSMAN OMELET]: Honey, the Kids *ARE* the Fridge",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "We’re not kidding around.",
       "subparts": "",
       "characters": [
@@ -1288,7 +1310,7 @@
       "label": "[ASSMAN OMELET] [Intermission in Purple]",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "A purple intermission where the joke-house pauses long enough for the grief in the walls to become audible.",
       "subparts": "p1 / p2 / p3",
       "characters": [
@@ -1312,7 +1334,7 @@
       "label": "[ASSMAN OMELET]: The Kids",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "They’re alright.",
       "subparts": "",
       "characters": [
@@ -1335,7 +1357,7 @@
       "label": "[ASSMAN OMELET]: The Fridge",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "The leftovers are the least of your concerns.",
       "subparts": "",
       "characters": [
@@ -1358,7 +1380,7 @@
       "label": "[In Another World… AKA Ours]: Frosty the Snowman",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "“Let’s run and we’ll have some fun before I melt away!”",
       "subparts": "",
       "characters": [
@@ -1379,7 +1401,7 @@
       "label": "[In Another World AKA Ours] INTRO ADDENDUM",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "",
       "subparts": "",
       "characters": [
@@ -1401,7 +1423,7 @@
       "label": "[In Another World AKA Ours] INTRO",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "",
       "subparts": "",
       "characters": [
@@ -1423,7 +1445,7 @@
       "label": "Modern Family",
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
-      "color": "#c98263",
+      "color": "#9E5B43",
       "description": "A cheerful family sitcom setup, except the family tree has been folded into an paradoxical origami crane and nobody should ask follow-up questions.",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
@@ -1446,7 +1468,7 @@
       "label": "Mirage Patrol",
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
-      "color": "#c98263",
+      "color": "#9E5B43",
       "description": "A patrol crosses heat, duty, and memory until the horizon starts editing itself.",
       "subparts": "v0 / v1 p1 / v1 p2 / v2",
       "characters": [
@@ -1468,7 +1490,7 @@
       "label": "Keep on Dreamin’ Kid",
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
-      "color": "#c98263",
+      "color": "#9E5B43",
       "description": "He’s annoyingly alive and hard to kill.",
       "subparts": "p1 / p2",
       "characters": [
@@ -1489,7 +1511,7 @@
       "label": "Ant-Sized Angels",
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
-      "color": "#c98263",
+      "color": "#9E5B43",
       "description": "From 10,000 feet, everyone looks like ants. At least ants have their lives together.",
       "subparts": "v1 / v2",
       "characters": [
@@ -1510,7 +1532,7 @@
       "label": "Meet LIANG, the wingman",
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
-      "color": "#c98263",
+      "color": "#9E5B43",
       "description": "He’s your wingman!",
       "subparts": "",
       "characters": [
@@ -1531,7 +1553,7 @@
       "label": "[Ants & Angels] INTRO",
       "cluster": "the desert roseverse",
       "clusterDescription": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
-      "color": "#c98263",
+      "color": "#9E5B43",
       "description": "",
       "subparts": "",
       "characters": [
@@ -1553,7 +1575,7 @@
       "label": "The house knows something that you do not",
       "cluster": "do in dc",
       "clusterDescription": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "Totally not creepy at all.",
       "subparts": "p1 / p2 / p3",
       "characters": [
@@ -1574,7 +1596,7 @@
       "label": "The city knows something that you do not",
       "cluster": "do in dc",
       "clusterDescription": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "When public grief grows teeth.",
       "subparts": "p1 / p2",
       "characters": [
@@ -1595,7 +1617,7 @@
       "label": "[Things To Do in DC]: INTRO",
       "cluster": "do in dc",
       "clusterDescription": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "",
       "subparts": "",
       "characters": [
@@ -1617,7 +1639,7 @@
       "label": "ERIEYE & TITAN - Sky & Earth",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "One watches the sky, one anchors the earth.",
       "subparts": "v1 / v2",
       "characters": [
@@ -1638,7 +1660,7 @@
       "label": "SERAPHIM - Angel",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Gone before the halo could cool.",
       "subparts": "",
       "characters": [
@@ -1658,7 +1680,7 @@
       "label": "VIGIL - Survivor",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Survival is less triumphant than it sounds and more sacred than it admits.",
       "subparts": "",
       "characters": [
@@ -1679,7 +1701,7 @@
       "label": "ERIEYE & TITAN - Heaven",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Heaven becomes radar, altitude, and the awful kindness of being watched over.",
       "subparts": "",
       "characters": [
@@ -1700,7 +1722,7 @@
       "label": "ERIEYE & TITAN - Heaven and Hell",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Protection and terror share an airspace.",
       "subparts": "p1 / p2",
       "characters": [
@@ -1721,7 +1743,7 @@
       "label": "ERIEYE",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Chirp chirp.",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
@@ -1741,7 +1763,7 @@
       "label": "RATCHET - Giants in Waiting",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "They wait…",
       "subparts": "",
       "characters": [
@@ -1761,7 +1783,7 @@
       "label": "SENTINEL - Sentience",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "SENTINEL crosses the line from guarding to knowing it is guarding.",
       "subparts": "",
       "characters": [
@@ -1782,7 +1804,7 @@
       "label": "PRISMA - Epitaph",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The epitaph reads like salvage, light, and identity refusing to die in one piece.",
       "subparts": "",
       "characters": [
@@ -1803,7 +1825,7 @@
       "label": "MIRA - Ocean",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "MIRA is oceanic: distant, immense, and probably deeper than anyone’s clearance level.",
       "subparts": "",
       "characters": [
@@ -1824,7 +1846,7 @@
       "label": "[LILY PONDERINGS]: Dream of an Old Flame",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "The universe never lets old flames stay past tense.",
       "subparts": "",
       "characters": [
@@ -1846,7 +1868,7 @@
       "label": "[LILY PONDERINGS]: Flame in the Dark",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "A tiny flame keeps burning in the dark, rude with hope and worse with memory.",
       "subparts": "",
       "characters": [
@@ -1868,7 +1890,7 @@
       "label": "[LILY PONDERINGS]: The Anomalous Cat",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "A strange cat arrives carrying the softest possible category of existential threat.",
       "subparts": "p1 / p2",
       "characters": [
@@ -1889,7 +1911,7 @@
       "label": "[REST AND RUST]: The Woman in Black and Red",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "The woman in black and red appears.",
       "subparts": "",
       "characters": [
@@ -1910,7 +1932,7 @@
       "label": "[LILIUM CANDIDUM] - FINALE - Back to Stardust",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "The finale sends what is left back to stardust.",
       "subparts": "",
       "characters": [
@@ -1932,7 +1954,7 @@
       "label": "[LILIUM CANDIDUM]: The Silver Ribbon",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "A silver ribbon tries to hold memory together.",
       "subparts": "",
       "characters": [
@@ -1953,7 +1975,7 @@
       "label": "[LILIUM CANDIDUM]: Silk and Steel",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Softness meets armor and neither one escapes unchanged.",
       "subparts": "p1 / p2 / p3",
       "characters": [
@@ -1975,7 +1997,7 @@
       "label": "[LILIUM CANDIDUM]: Cold Words",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Words freeze before they wound.",
       "subparts": "",
       "characters": [
@@ -1996,7 +2018,7 @@
       "label": "[LILIUM CANDIDUM]: Breaking Point",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "The pressure finally wins.",
       "subparts": "",
       "characters": [
@@ -2017,7 +2039,7 @@
       "label": "[LILIUM CANDIDUM]: Breaking the Broken",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Repair becomes another way to fracture what was already barely holding.",
       "subparts": "",
       "characters": [
@@ -2038,7 +2060,7 @@
       "label": "[LILIUM CANDIDUM]: Autopilot Mode",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Survival hits autopilot when the self can no longer stay in the cockpit.",
       "subparts": "",
       "characters": [
@@ -2059,7 +2081,7 @@
       "label": "[LILIUM CANDIDUM]: The Machine",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Is resemblance a resurrection, replacement, or insult?",
       "subparts": "v1 / v2",
       "characters": [
@@ -2080,7 +2102,7 @@
       "label": "[LILIUM CANDIDUM]: Beginnings",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "The Lilyverse begins before anyone understands how expensive gentleness will become.",
       "subparts": "p1 / p2",
       "characters": [
@@ -2102,7 +2124,7 @@
       "label": "Sick Call: A Band-Aid for a Tank",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Medical care meets tank-scale injury and produces an industrial-strength tenderness problem.",
       "subparts": "",
       "characters": [
@@ -2123,7 +2145,7 @@
       "label": "Sick Call: Sleepover",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "A sick-call turns into a sleepover.",
       "subparts": "",
       "characters": [
@@ -2144,7 +2166,7 @@
       "label": "Sick Call: Pain Relief",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Pain relief gets complicated.",
       "subparts": "",
       "characters": [
@@ -2165,7 +2187,7 @@
       "label": "The Daughter",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Daughterhood enters the machine-body problem.",
       "subparts": "",
       "characters": [
@@ -2186,7 +2208,7 @@
       "label": "Nap_With_Notifications_On.png",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "A lock-screen nap becomes archaeological evidence.",
       "subparts": "",
       "characters": [
@@ -2206,7 +2228,7 @@
       "label": "Costco_At_Midnight.heic",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "A midnight Costco run becomes found footage from the uncanny.",
       "subparts": "",
       "characters": [
@@ -2226,7 +2248,7 @@
       "label": "Calendar_SpaceBase.ics",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Space base life appears as calendar blocks, because even anomalies need scheduling.",
       "subparts": "",
       "characters": [
@@ -2246,7 +2268,7 @@
       "label": "Calendar_EarthBase.ics",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "“Checking calendar for availability…”",
       "subparts": "",
       "characters": [
@@ -2266,7 +2288,7 @@
       "label": "InstagramHistory_2.json",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "#JustDimensionalRiftThings",
       "subparts": "",
       "characters": [
@@ -2286,7 +2308,7 @@
       "label": "InstagramHistory_1.json",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Even glitches in reality need an Instagram filter.",
       "subparts": "",
       "characters": [
@@ -2306,7 +2328,7 @@
       "label": "Robots in Disguise: GAMMA and the Skateboarder",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Some machines apparently need both speed and plausible deniability.",
       "subparts": "",
       "characters": [
@@ -2327,7 +2349,7 @@
       "label": "Robots in Disguise: UNIT and the Red Poppies",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "UNIT picks flowers very gently, which is sweet until you remember what the flowers are usually about.",
       "subparts": "",
       "characters": [
@@ -2349,7 +2371,7 @@
       "label": "Robots in Disguise: TITAN and the Toy Tank",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "TITAN has a child avatar with a tiny toy tank replica of itself, because apparently recursion can be a war crime.",
       "subparts": "",
       "characters": [
@@ -2370,7 +2392,7 @@
       "label": "HOLOMATTER MATTERS",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Clearly very important matters.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6",
       "characters": [
@@ -2391,7 +2413,7 @@
       "label": "Unauthorized Visitors: Incident Compilation",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "A helpful incident roundup suggesting security may have briefly left reality unattended.",
       "subparts": "p1 / p2 / The Siblings",
       "characters": [
@@ -2412,7 +2434,7 @@
       "label": "Pinterest DIY: Plushies",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Save pin to board?",
       "subparts": "",
       "characters": [
@@ -2433,7 +2455,7 @@
       "label": "The Toasted CPU",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "isToaster == true, somehow not a bug.",
       "subparts": "",
       "characters": [
@@ -2454,7 +2476,7 @@
       "label": "Defying Physics: The Turtle and the Hare",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Speed, scale, and mechanical bodies make the fable deeply unfair.",
       "subparts": "",
       "characters": [
@@ -2475,7 +2497,7 @@
       "label": "Defying Physics: A Titanic Problem",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Titanic problems require titanic measures and a very eager TITAN.",
       "subparts": "",
       "characters": [
@@ -2496,7 +2518,7 @@
       "label": "Defying Physics: When Sheep Fly",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The pigs did not get the memo, sadly.",
       "subparts": "",
       "characters": [
@@ -2517,7 +2539,7 @@
       "label": "Mornings",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The sun isn’t even fully clocked in.",
       "subparts": "",
       "characters": [
@@ -2538,7 +2560,7 @@
       "label": "Myopia",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "UNIT has 20/20 vision, assuming the second 20 is measured in city blocks.",
       "subparts": "p1 / p2",
       "characters": [
@@ -2559,7 +2581,7 @@
       "label": "More Than Meets the Eye",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Units, units, robots in the disguise. Units, units more than meets the eye!",
       "subparts": "",
       "characters": [
@@ -2580,7 +2602,7 @@
       "label": "Under the Radar",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "UNIT and GAMMA attempt low-observable flight, with only moderate disrespect toward air traffic control.",
       "subparts": "",
       "characters": [
@@ -2601,7 +2623,7 @@
       "label": "Over the Radar",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "UNIT and GAMMA attempt high-observable flight, which is just regular flying but louder and worse for paperwork.",
       "subparts": "",
       "characters": [
@@ -2622,7 +2644,7 @@
       "label": "Fly Like a Bee",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "\"According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible.”",
       "subparts": "",
       "characters": [
@@ -2643,7 +2665,7 @@
       "label": "Using Its Head",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Literally.",
       "subparts": "",
       "characters": [
@@ -2664,7 +2686,7 @@
       "label": "Sartorial Sightings",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "A hangar-observation fashion log for machines and avatars.",
       "subparts": "",
       "characters": [
@@ -2685,7 +2707,7 @@
       "label": "Wild Night Out",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "So, about last night…",
       "subparts": "v1 / v2",
       "characters": [
@@ -2706,7 +2728,7 @@
       "label": "Uncanny Valley",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "The valley gets crowded with almost-human beings and absolutely no emotional zoning laws.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6 / p7 / p8 / p9",
       "characters": [
@@ -2727,7 +2749,7 @@
       "label": "Post-Piloting",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "After piloting, the body leaves the cockpit but the cockpit does not leave the body.",
       "subparts": "1 / 2 / 3 / Bumper Stickers / Extra Cheese Pizza / Sedentary Shift 1 / Sedentary Shift 2 / Bedroom Ceiling Galaxy / The Final Dream / The Final Recharge p1 / The Final Recharge p2 / After the Dream v1 / After the Dream v2 / After the Dream v3",
       "characters": [
@@ -2749,7 +2771,7 @@
       "label": "Sisters in Pink",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Sisterhood arrives soft, bright, and emotionally armed.",
       "subparts": "p1 / p2",
       "characters": [
@@ -2770,7 +2792,7 @@
       "label": "Poppies and Lilies",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Stop and smell the flowers…",
       "subparts": "",
       "characters": [
@@ -2792,7 +2814,7 @@
       "label": "Units for Measure",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "The tape measure is too short.",
       "subparts": "p1 / p2",
       "characters": [
@@ -2813,7 +2835,7 @@
       "label": "The Dream in the Cupola",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Set in the space base cupola, where vision, height, and memory become unnervingly tender.",
       "subparts": "",
       "characters": [
@@ -2834,7 +2856,7 @@
       "label": "The Dream in the Corridor",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Liminal architecture and emotional pursuit mingle in a space that will not stay neutral.",
       "subparts": "",
       "characters": [
@@ -2855,7 +2877,7 @@
       "label": "Storm in Pink",
       "cluster": "the lilyverse",
       "clusterDescription": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Not the pink of blush and bows, but the pink of exposed flesh learning how to close.",
       "subparts": "p1 / p2 / p3 / p4 / p5",
       "characters": [
@@ -2878,7 +2900,7 @@
       "label": "Mergence",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "PILOT and UNIT become one entity. Permanently. This is not a metaphor.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6 / p7 / p8 / p9",
       "characters": [
@@ -2899,7 +2921,7 @@
       "label": "Her Face in Every Sky",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "A beloved face appears everywhere.",
       "subparts": "",
       "characters": [
@@ -2921,7 +2943,7 @@
       "label": "Her Embrace",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "An embrace becomes shelter, trap, memory, and mercy all at once.",
       "subparts": "",
       "characters": [
@@ -2943,7 +2965,7 @@
       "label": "Sun and Moon",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Two presences orbit each other with the obviousness of myth and the subtlety of disaster.",
       "subparts": "",
       "characters": [
@@ -2965,7 +2987,7 @@
       "label": "Facial Recognition in the Garden",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "The garden recognizes a face it should not know, which is how peace gets compromised.",
       "subparts": "",
       "characters": [
@@ -2986,7 +3008,7 @@
       "label": "Bye Bye Bluebird",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Something small and blue leaves the frame, and the loss lands harder than expected.",
       "subparts": "",
       "characters": [
@@ -3007,7 +3029,7 @@
       "label": "Commander UNIT",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "UNIT in command is still gentle; this somehow makes it more dangerous.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6 / p7 / p8 / p9 / p10 / p11",
       "characters": [
@@ -3027,7 +3049,7 @@
       "label": "Commander PILOT",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "PILOT in command proves authority can be exhausted, haunted, and still correct.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6 / p7",
       "characters": [
@@ -3047,7 +3069,7 @@
       "label": "Together Forever",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Happily ever after, right?",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
@@ -3068,7 +3090,7 @@
       "label": "MECH Z",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "MECH Z arrives like a classification error with legs.",
       "subparts": "",
       "characters": [
@@ -3089,7 +3111,7 @@
       "label": "Ghost in My Bones",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "The haunting is no longer beside the body; it is load-bearing.",
       "subparts": "p1 / p2",
       "characters": [
@@ -3110,7 +3132,7 @@
       "label": "Gifts From the Grave",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "The dead keep giving gifts, and nobody knows the return policy.",
       "subparts": "",
       "characters": [
@@ -3130,7 +3152,7 @@
       "label": "Gifts From the Scrapyard",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "The scrapyard offers love in the shape of parts nobody asked to inherit.",
       "subparts": "p1 / p2",
       "characters": [
@@ -3150,7 +3172,7 @@
       "label": "Ghost in My Ship",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "The ship carries its ghost like cargo that cannot be offloaded.",
       "subparts": "p1 / p2 / p3",
       "characters": [
@@ -3171,7 +3193,7 @@
       "label": "Ghost in My Shell",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Armor becomes a shell, then a grave, then a self-shaped echo.",
       "subparts": "v1 / v2",
       "characters": [
@@ -3192,7 +3214,7 @@
       "label": "Reconfiguration in Two Ways",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "A rebuild can mean repair or erasure, and the body knows the difference.",
       "subparts": "p1 / p2",
       "characters": [
@@ -3212,7 +3234,7 @@
       "label": "The Crypt",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "The crypt stores machinery like remains and remains like machinery.",
       "subparts": "",
       "characters": [
@@ -3232,7 +3254,7 @@
       "label": "GAMMA 2.0",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "GAMMA comes back upgraded, which is not the same as coming back okay.",
       "subparts": "",
       "characters": [
@@ -3253,7 +3275,7 @@
       "label": "Refurbished Hardware",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Reused parts make survival possible and emotionally devastating.",
       "subparts": "",
       "characters": [
@@ -3273,7 +3295,7 @@
       "label": "Warpaint",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Paint becomes record, warning, armor, and a very bad coping mechanism.",
       "subparts": "",
       "characters": [
@@ -3293,7 +3315,7 @@
       "label": "Administering Vital Aid",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Battlefield medicine turns mechanical when the patient is too large to be fully human and too alive to be equipment.",
       "subparts": "",
       "characters": [
@@ -3313,7 +3335,7 @@
       "label": "Casualties",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Searching becomes counting, and counting becomes its own kind of injury.",
       "subparts": "",
       "characters": [
@@ -3333,7 +3355,7 @@
       "label": "Legacy Hardware",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "New parts arrive carrying old ghosts and terrible warranty implications.",
       "subparts": "",
       "characters": [
@@ -3353,7 +3375,7 @@
       "label": "Poppies",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The poppies keep blooming through memories, machines, and whatever the archive refuses to bury.",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
@@ -3375,7 +3397,7 @@
       "label": "Soft",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "UNIT is soft, which remains logistically absurd and emotionally nonnegotiable.",
       "subparts": "",
       "characters": [
@@ -3396,7 +3418,7 @@
       "label": "Sleep",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "A pilot sleeps, and the room has the decency to become holy about it.",
       "subparts": "",
       "characters": [
@@ -3417,7 +3439,7 @@
       "label": "Gentle",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "“Be strong enough to be gentle.”",
       "subparts": "",
       "characters": [
@@ -3438,7 +3460,7 @@
       "label": "Aries",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The ram imagery is not subtle; neither is the protectiveness.",
       "subparts": "",
       "characters": [
@@ -3459,7 +3481,7 @@
       "label": "Dirt Drawings",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "UNIT draws in dirt with the seriousness of a child and the scale of construction equipment.",
       "subparts": "",
       "characters": [
@@ -3480,7 +3502,7 @@
       "label": "Dirt Drawings of Doom",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The dirt drawings become ominous, because cute things here always unionize with doom.",
       "subparts": "",
       "characters": [
@@ -3501,7 +3523,7 @@
       "label": "The Lamb",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The lamb is softness with horns nearby.",
       "subparts": "",
       "characters": [
@@ -3522,7 +3544,7 @@
       "label": "SFW (Soft for Work)",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "UNIT’s softness remains workplace-safe only by the loosest possible definition.",
       "subparts": "",
       "characters": [
@@ -3543,7 +3565,7 @@
       "label": "NSFW (Not Soft for Work)",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The softness exits HR compliance and enters emotional hazard territory.",
       "subparts": "",
       "characters": [
@@ -3564,7 +3586,7 @@
       "label": "#internal_comms",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Slack, but in zero gravity and with a suspicious amount of trauma.",
       "subparts": "#wrecked_recruits / #generic_generals / #lots_of_pilots / #private_matters / #did_ensign_up_for_this / #colonels_on_a_cob / TAGGING GHOSTS",
       "characters": [
@@ -3585,7 +3607,7 @@
       "label": "The Piloting and the Piloted",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Pilot and machine blur into one control loop with feelings attached.",
       "subparts": "p1 / p2",
       "characters": [
@@ -3606,7 +3628,7 @@
       "label": "#mechanized_messaging",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The machines are painfully alive and absolutely gossip-capable.",
       "subparts": "#tank_tread_carefully / #computationally_commanding / #robots_in_disguise / #holomatter_help_hubub [1] / #holomatter_help_hubub [2]",
       "characters": [
@@ -3629,7 +3651,7 @@
       "label": "INITIAL FOUND FILES",
       "cluster": "found files",
       "clusterDescription": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
-      "color": "#d9d9d9",
+      "color": "#6F6457",
       "description": "",
       "subparts": "HUMAN PERSONNEL / UNIT SPECS / EARTH BASE / SPACE BASE",
       "characters": [
@@ -3651,7 +3673,7 @@
       "label": "Beginnings",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "The beginning begins innocently, which is how the archive tricks you.",
       "subparts": "1 / 2 / 3 / 4 / 5 / 6 / 7.1 / 7.2 / 8.1 / 8.2 / 9",
       "characters": [
@@ -3673,7 +3695,7 @@
       "label": "Cold Blood is Still Blood",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "This story refuses to let temperature decide personhood.",
       "subparts": "",
       "characters": [
@@ -3693,7 +3715,7 @@
       "label": "Wavelengths",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "They’re on the same one.",
       "subparts": "",
       "characters": [
@@ -3714,7 +3736,7 @@
       "label": "Family Portrait",
       "cluster": "houston, houston",
       "clusterDescription": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "A family photo taken from light-years away.",
       "subparts": "",
       "characters": [
@@ -3738,7 +3760,7 @@
       "label": "TOP MOST TRUSTED SPACE NEWS SOURCE, ACCORDING TO NASA DIRECTOR",
       "cluster": "houston, houston",
       "clusterDescription": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "PILOT’s media credibility ranking is either satire, propaganda, or a staffing emergency.",
       "subparts": "",
       "characters": [
@@ -3760,7 +3782,7 @@
       "label": "BLDG K BSMT",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "The basement has a name, which already means everyone is doomed.",
       "subparts": "1 / 2 / 3",
       "characters": [
@@ -3781,7 +3803,7 @@
       "label": "Perimeter Visitors Compendium",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "The perimeter keeps receiving visitors and none of them respect boundaries.",
       "subparts": "ORIGINAL / CONTINUED / UNEDITED",
       "characters": [
@@ -3801,7 +3823,7 @@
       "label": "The Quiet Floor",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "The quiet floor is quiet in the way a predator is quiet.",
       "subparts": "p0.1 / p0.2 / p1 / p2 / p3 / p4",
       "characters": [
@@ -3822,7 +3844,7 @@
       "label": "The Quiet One",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "The quiet one says nothing, which is generally how the worst file starts.",
       "subparts": "p1 / p2 / p3 / p4 / p5 / p6",
       "characters": [
@@ -3842,7 +3864,7 @@
       "label": "Even the Architecture is Cursed Here",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "The windows are alarmed, the bathrooms are suspicious, the doors are rude, and the floor plan may be legally haunted.",
       "subparts": "",
       "characters": [
@@ -3865,7 +3887,7 @@
       "label": "The Sentient Mechs are the Least Weirdest Thing Here",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "The giant thinking war robots are somehow the normal coworkers, which says terrible things about the rest of the base.",
       "subparts": "",
       "characters": [
@@ -3888,7 +3910,7 @@
       "label": "Ouija Boards are Useless Here",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "Planchettes are for amateurs; this haunting prefers SMS.",
       "subparts": "",
       "characters": [
@@ -3910,7 +3932,7 @@
       "label": "The Coffin in the Crowd",
       "cluster": "do in dc",
       "clusterDescription": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "One pedestrian does not look like the others. Please do not open it.",
       "subparts": "",
       "characters": [
@@ -3933,7 +3955,7 @@
       "label": "The Hill",
       "cluster": "do in dc",
       "clusterDescription": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "A figure walks uphill. PILOT follows. Something waits above them both.",
       "subparts": "p1 / p2 / p3",
       "characters": [
@@ -3956,7 +3978,7 @@
       "label": "The Drives & Engines Archive",
       "cluster": "found files",
       "clusterDescription": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
-      "color": "#d9d9d9",
+      "color": "#6F6457",
       "description": "",
       "subparts": "WHO AND WHAT ARE DRIVES & ENGINES / WHY THEY ARE DRAWN TO CERTAIN PLACES / UNRESOLVED / UNBOWED / FIRST / ULTRAVIOLET / CLINGER",
       "characters": [
@@ -3978,7 +4000,7 @@
       "label": "The Unauthorized Pet Rock",
       "cluster": "do in dc",
       "clusterDescription": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "Please clean up after your pet rock.",
       "subparts": "p0 / p1 / p2 / p3 / p4 / p5 / EPILOGUE",
       "characters": [
@@ -4001,7 +4023,7 @@
       "label": "The Unrecoverables",
       "cluster": "deeper into the poppyverse",
       "clusterDescription": "Same multiverse branch, deeper layers, fewer safety rails.",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Some people, files, and futures cannot be recovered; the archive keeps them anyway.",
       "subparts": "01 / 02 / 03 / 04 / 05 / 06 / 07 / 08 / MILO [p1] / MILO [p2] / MILO [v2]",
       "characters": [
@@ -4023,7 +4045,7 @@
       "label": "The Other Side of the Heat",
       "cluster": "area fifty-done",
       "clusterDescription": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "The desert shows something it has no intention of giving back.",
       "subparts": "The woman in the sun / The white house with the blue shutters",
       "characters": [
@@ -4045,7 +4067,7 @@
       "label": "Dress in Layers",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Dress for the weather and emergency triage.",
       "subparts": "",
       "characters": [
@@ -4065,7 +4087,7 @@
       "label": "The Civilian",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "She's just here to observe. Totally just observing.",
       "subparts": "",
       "characters": [
@@ -4087,7 +4109,7 @@
       "label": "The Sideliner",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Benchwarmers have the best view of the game.",
       "subparts": "",
       "characters": [
@@ -4109,7 +4131,7 @@
       "label": "Beyond Death and Recognition",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "DONOR's used to patients who don't talk back. These ones won't shut up, and that’s beautiful.",
       "subparts": "",
       "characters": [
@@ -4131,7 +4153,7 @@
       "label": "The Piloting",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "The haunting, but make it specifically PILOT.",
       "subparts": "",
       "characters": [
@@ -4151,7 +4173,7 @@
       "label": "Economy Class Is a Pain in the Ass",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "The legroom is genuinely terrible. This is the least of everyone's problems.",
       "subparts": "",
       "characters": [
@@ -4173,7 +4195,7 @@
       "label": "Unhinged Lids and Minds",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "The lids in question will be explained. The minds in question will not.",
       "subparts": "",
       "characters": [
@@ -4193,7 +4215,7 @@
       "label": "Houston, We’ve Got a Big Problem",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Yes you do. Yes it is massive. Houston cannot help.",
       "subparts": "",
       "characters": [
@@ -4214,7 +4236,7 @@
       "label": "Houston, We’ve Got a Bigger Problem",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "If you thought the previous crew had it bad, this new crew has escalated it.",
       "subparts": "",
       "characters": [
@@ -4237,7 +4259,7 @@
       "label": "You Get an F for Effort",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "The F actually stands for failure.",
       "subparts": "",
       "characters": [
@@ -4257,7 +4279,7 @@
       "label": "It’s Your Turn",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Congratulations. You've been selected.",
       "subparts": "",
       "characters": [
@@ -4283,7 +4305,7 @@
       "label": "It Was Almost Your Turn",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Congratulations. You were almost selected.",
       "subparts": "",
       "characters": [
@@ -4305,7 +4327,7 @@
       "label": "You Get a Gold Star",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Congratulations. That is all.",
       "subparts": "",
       "characters": [
@@ -4325,7 +4347,7 @@
       "label": "Counting Stars",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Everyone is counting stars. Way, way too many stars. No one is stopping.",
       "subparts": "",
       "characters": [
@@ -4345,7 +4367,7 @@
       "label": "Six Feet Long and Under",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Human-length. Human-width. The math on this one is deliberately uncomfortable.",
       "subparts": "",
       "characters": [
@@ -4366,7 +4388,7 @@
       "label": "Contracted Envy",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "DONOR works in the morgue. The dead don't complain. The living do. She prefers the dead, sometimes.",
       "subparts": "",
       "characters": [
@@ -4386,7 +4408,7 @@
       "label": "Dreams of Death",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "PILOT dreams. They are not good dreams.",
       "subparts": "",
       "characters": [
@@ -4406,7 +4428,7 @@
       "label": "Flirting with Death",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Not metaphorically. Literally circling the drain and making eye contact with it.",
       "subparts": "",
       "characters": [
@@ -4430,7 +4452,7 @@
       "label": "Flirting After Death",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Death hasn't stopped anyone's game. If anything, it's improved it.",
       "subparts": "",
       "characters": [
@@ -4450,7 +4472,7 @@
       "label": "Stars on a Wall",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "PILOT counts stars. There are still too many. She also keeps going.",
       "subparts": "",
       "characters": [
@@ -4470,7 +4492,7 @@
       "label": "Stars on a Canvas",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "DONOR counts stars. There are too many. She keeps going anyway.",
       "subparts": "",
       "characters": [
@@ -4492,7 +4514,7 @@
       "label": "Pre-Piloting",
       "cluster": "the red poppyverse",
       "clusterDescription": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Before PILOT was PILOT, she was something else.",
       "subparts": "",
       "characters": [
@@ -4512,7 +4534,7 @@
       "label": "In Serif vs. Source Sans",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "The gap between what got written down and what actually happened . It’s a canyon.",
       "subparts": "",
       "characters": [
@@ -4533,7 +4555,7 @@
       "label": "Merry Christmas, Now Who Stickerbombed the House?",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "The house has been stickerbombed. The house did not consent to being stickerbombed. Merry Christmas.",
       "subparts": "",
       "characters": [
@@ -4554,7 +4576,7 @@
       "label": "Happy Thanksgiving and Why Is the Sky Pink?",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "The pink sky is not the emergency. The pink sky is just atmosphere. Everything else is the emergency.",
       "subparts": "",
       "characters": [
@@ -4578,7 +4600,7 @@
       "label": "Section 94",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "That is a large section number. Someone has been busy.",
       "subparts": "",
       "characters": [
@@ -4599,7 +4621,7 @@
       "label": "You Wore the Same Outfit Twice",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "The audacity. The nerve. The repeat.",
       "subparts": "",
       "characters": [
@@ -4620,7 +4642,7 @@
       "label": "Level Up, Level Down, or Just Level Sideways?",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "Progress is relative. So is direction. So, honestly, is the floor.",
       "subparts": "",
       "characters": [
@@ -4641,7 +4663,7 @@
       "label": "Economy Class Sass",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "Complimentary snacks will not be served. Neither will sympathy.",
       "subparts": "",
       "characters": [
@@ -4664,7 +4686,7 @@
       "label": "Apple-y Ever After",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "Your software will update tonight.",
       "subparts": "",
       "characters": [
@@ -4686,7 +4708,7 @@
       "label": "Do You Think They Felt Like Heroes? / Do You Feel Like a Hero?",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "A question posed quietly. No pressure. Really.",
       "subparts": "",
       "characters": [
@@ -4708,7 +4730,7 @@
       "label": "Four Steps to Nowhere",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "Watch your step. The destination is not a place.",
       "subparts": "",
       "characters": [
@@ -4729,7 +4751,7 @@
       "label": "Happy Memorial Day",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "A long weekend of trauma. The grill is not involved.",
       "subparts": "",
       "characters": [
@@ -4751,7 +4773,7 @@
       "label": "Lost in Translation",
       "cluster": "do in dc",
       "clusterDescription": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "Hopelessly, utterly, irretrievably lost. And that's just the vocabulary.",
       "subparts": "",
       "characters": [
@@ -4772,7 +4794,7 @@
       "label": "Happy Fourth of July",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "A single night. A lifetime of damage.",
       "subparts": "",
       "characters": [
@@ -4794,7 +4816,7 @@
       "label": "In Plaque vs. in Person",
       "cluster": "by the bay",
       "clusterDescription": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "The gap between the monument and the person. It's a canyon.",
       "subparts": "",
       "characters": [
@@ -4816,7 +4838,7 @@
       "label": "Smoldering Embers",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "After the burn, the slow fade.",
       "subparts": "",
       "characters": [
@@ -4840,7 +4862,7 @@
       "label": "Orders from Somewhere High Above",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "This is above your clearance level. It's also above everyone else's.",
       "subparts": "",
       "characters": [
@@ -4861,7 +4883,7 @@
       "label": "Haunting Goes Both Ways",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "You can haunt yourself. Your past self can haunt yourself, and so can your future self. The universe has a truly terrible sense of humor.",
       "subparts": "",
       "characters": [
@@ -4886,7 +4908,7 @@
       "label": "NULL Error",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "Meet NULL: a unit with no soul. This should be comforting. It is not.",
       "subparts": "",
       "characters": [],
@@ -4906,7 +4928,7 @@
       "label": "Hot and Cold",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "Opposites attract. This is textbook. This does not make it easier.",
       "subparts": "",
       "characters": [
@@ -4927,7 +4949,7 @@
       "label": "SANTOS Does Not Believe in Ghosts",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "SANTOS does not believe in ghosts. SANTOS is surrounded by ghosts.",
       "subparts": "",
       "characters": [
@@ -4950,7 +4972,7 @@
       "label": "Kintsugi in Gold",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "The cracks are filled with gold. That's the whole point.",
       "subparts": "",
       "characters": [
@@ -4973,7 +4995,7 @@
       "label": "Flecks of Gold",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "Burn bright. While you can.",
       "subparts": "",
       "characters": [
@@ -4994,7 +5016,7 @@
       "label": "Flecks of Gold, Rekindled",
       "cluster": "the spider lilyverse",
       "clusterDescription": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "Burn back brighter. The universe gave it another shot.",
       "subparts": "",
       "characters": [
@@ -5017,7 +5039,7 @@
       "label": "You Wanna Be Me",
       "cluster": "the ultravioletverse",
       "clusterDescription": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
-      "color": "#7b2cff",
+      "color": "#6D28D9",
       "description": "OLDER PILOT looks at MUNDANE PILOT and sees herself. MUNDANE PILOT looks back and has thoughts.",
       "subparts": "",
       "characters": [
@@ -5041,7 +5063,7 @@
       "label": "Now You Wanna Demand a Refund",
       "cluster": "the ultravioletverse",
       "clusterDescription": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
-      "color": "#7b2cff",
+      "color": "#6D28D9",
       "description": "The experience was not as advertised.",
       "subparts": "",
       "characters": [
@@ -5062,7 +5084,7 @@
       "label": "Purple Is the Color of Envy",
       "cluster": "the ultravioletverse",
       "clusterDescription": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
-      "color": "#7b2cff",
+      "color": "#6D28D9",
       "description": "Green had the monopoly for centuries. Purple is staging a coup.",
       "subparts": "",
       "characters": [
@@ -5083,7 +5105,7 @@
       "label": "Found in Translation",
       "cluster": "the ultravioletverse",
       "clusterDescription": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
-      "color": "#7b2cff",
+      "color": "#6D28D9",
       "description": "Something was lost in translation. Something else was found.",
       "subparts": "",
       "characters": [
@@ -5106,7 +5128,7 @@
       "label": "Black Opt in or Out?",
       "cluster": "the ultravioletverse",
       "clusterDescription": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
-      "color": "#7b2cff",
+      "color": "#6D28D9",
       "description": "OLDER PILOT is being asked a question. That question is the entire premise.",
       "subparts": "",
       "characters": [
@@ -5127,7 +5149,7 @@
       "label": "The Abyss Walks on Land",
       "cluster": "welcome to the poppyverse",
       "clusterDescription": "Where it all begins. Your first step into this mess.",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "An ancient abyssal intelligence attempts a gentle day on land in the body of a tiny plush orca, with mixed results and excellent beverages.",
       "subparts": "p1 / p2 / p3",
       "characters": [
@@ -5150,7 +5172,7 @@
       "label": "The Black Ram",
       "cluster": "the fireweedverse",
       "clusterDescription": "Fireweed is a Poppyverse branch grown in the burn scar of Fire Force: spontaneous human combustion, Infernals, Company 8, and the terrible things that grow from bodies the fire did not finish.",
-      "color": "#ff5a1f",
+      "color": "#C8430F",
       "description": "Sae Kurogane, a Company 8 captain, enters Fireweed in a blaze of glory. Literally, unfortunately.",
       "subparts": "p1 / p2 / p3",
       "characters": [
@@ -5172,7 +5194,7 @@
       "label": "The Pilot Light",
       "cluster": "the fireweedverse",
       "clusterDescription": "Fireweed is a Poppyverse branch grown in the burn scar of Fire Force: spontaneous human combustion, Infernals, Company 8, and the terrible things that grow from bodies the fire did not finish.",
-      "color": "#ff5a1f",
+      "color": "#C8430F",
       "description": "PILOT comes into Fireweed as a very small red problem in a place nobody wanted a small red problem",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
@@ -5195,7 +5217,7 @@
       "label": "The Unit Engine",
       "cluster": "the fireweedverse",
       "clusterDescription": "Fireweed is a Poppyverse branch grown in the burn scar of Fire Force: spontaneous human combustion, Infernals, Company 8, and the terrible things that grow from bodies the fire did not finish.",
-      "color": "#ff5a1f",
+      "color": "#C8430F",
       "description": "UNIT appears where fire, body, and machinery overlap badly: a small horned core caught inside the wreckage of something much larger.",
       "subparts": "p1 / p2 / p3 / p4",
       "characters": [
@@ -5559,6 +5581,14 @@
       return `<p>${items.map(escapeHtml).join(", ")}</p>`;
     }
 
+    function renderChips(items) {
+      if (!items || !items.length) return "<p>—</p>";
+      const chips = items
+        .map(item => `<span class="tag-chip">${escapeHtml(item)}</span>`)
+        .join("");
+      return `<div class="tag-chips">${chips}</div>`;
+    }
+
     function renderCollisions(items) {
       if (!items || !items.length) return "<p>—</p>";
       const parts = items.map(item => {
@@ -5609,7 +5639,7 @@
 
         <section class="drawer-section">
           <h3>Characters</h3>
-          ${renderList(node.characters)}
+          ${renderChips(node.characters)}
         </section>
 
         <section class="drawer-section">

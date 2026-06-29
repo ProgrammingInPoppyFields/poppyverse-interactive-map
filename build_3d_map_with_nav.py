@@ -794,6 +794,28 @@ def build_html(data: dict[str, Any]) -> str:
       border-bottom-color: var(--active-color);
     }}
 
+    .tag-chips {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 0;
+    }}
+
+    .tag-chip {{
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--active-color) 18%, transparent);
+      border: 1px solid color-mix(in srgb, var(--active-color) 45%, transparent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }}
+
     .read-link {{
       display: inline-flex;
       align-items: center;
@@ -955,6 +977,14 @@ def build_html(data: dict[str, Any]) -> str:
       return `<p>${{items.map(escapeHtml).join(", ")}}</p>`;
     }}
 
+    function renderChips(items) {{
+      if (!items || !items.length) return "<p>—</p>";
+      const chips = items
+        .map(item => `<span class="tag-chip">${{escapeHtml(item)}}</span>`)
+        .join("");
+      return `<div class="tag-chips">${{chips}}</div>`;
+    }}
+
     function renderCollisions(items) {{
       if (!items || !items.length) return "<p>—</p>";
       const parts = items.map(item => {{
@@ -1005,7 +1035,7 @@ def build_html(data: dict[str, Any]) -> str:
 
         <section class="drawer-section">
           <h3>Characters</h3>
-          ${{renderList(node.characters)}}
+          ${{renderChips(node.characters)}}
         </section>
 
         <section class="drawer-section">
