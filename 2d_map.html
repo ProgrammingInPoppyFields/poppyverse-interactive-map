@@ -387,6 +387,27 @@
       font-style: italic;
     }
 
+    .tag-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-chip {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--active-color) 18%, transparent);
+      border: 1px solid color-mix(in srgb, var(--active-color) 45%, transparent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
     @media (max-width: 760px) {
       .page {
         padding-left: 16px;
@@ -451,105 +472,105 @@
   "clusters": [
     {
       "name": "found files",
-      "color": "#d9d9d9",
+      "color": "#6F6457",
       "description": "Introductory paperwork recovered from the narrative floor after the multiverse tripped over its own filing cabinet.",
       "coverUrl": "https://images.unsplash.com/photo-1583521214690-73421a1829a9?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 0
     },
     {
       "name": "welcome to the poppyverse",
-      "color": "#ff1447",
+      "color": "#D81F4C",
       "description": "Where it all begins. Your first step into this mess.",
       "coverUrl": "https://images.unsplash.com/photo-1527615532814-540d0d97d938?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 1
     },
     {
       "name": "deeper into the poppyverse",
-      "color": "#8b1e3f",
+      "color": "#92274F",
       "description": "Same multiverse branch, deeper layers, fewer safety rails.",
       "coverUrl": "https://images.unsplash.com/photo-1457364887197-9150188c107b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 2
     },
     {
       "name": "the red poppyverse",
-      "color": "#e10600",
+      "color": "#C1121F",
       "description": "Where the poppies blaze bright with purpose, and the petals fall faster than they should.",
       "coverUrl": "https://images.unsplash.com/photo-1643537243683-a61ba2e77cf1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 3
     },
     {
       "name": "the desert roseverse",
-      "color": "#c98263",
+      "color": "#9E5B43",
       "description": "Endless sand, questionable hygiene, and even stranger things than the desert mirages.",
       "coverUrl": "https://images.unsplash.com/photo-1488197047962-b48492212cda?q=80&w=2334&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==",
       "order": 4
     },
     {
       "name": "the ultravioletverse",
-      "color": "#7b2cff",
+      "color": "#6D28D9",
       "description": "A universe where the badass you idolize offers you life advice that sounds suspiciously like HR warnings.",
       "coverUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 5
     },
     {
       "name": "the lilyverse",
-      "color": "#9a9a9a",
+      "color": "#A0398F",
       "description": "Every other DONOR is a glitching, haunting, half-present entity. This one? Full commander bars, fully corporeal, fully capable of ending you with paperwork alone.",
       "coverUrl": "https://images.unsplash.com/photo-1446941611757-91d2c3bd3d45?q=80&w=802&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 6
     },
     {
       "name": "the spider lilyverse",
-      "color": "#5a0008",
+      "color": "#8A152C",
       "description": "Reincarnation, irony, second chances, and the universe’s terrible sense of humor.",
       "coverUrl": "https://images.unsplash.com/photo-1708112292872-fd5612affa79?q=80&w=1809&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 7
     },
     {
       "name": "the fireweedverse",
-      "color": "#ff5a1f",
+      "color": "#C8430F",
       "description": "Fireweed is a Poppyverse branch grown in the burn scar of Fire Force: spontaneous human combustion, Infernals, Company 8, and the terrible things that grow from bodies the fire did not finish.",
       "coverUrl": "https://images.unsplash.com/photo-1583248352195-d3a8e766edf2?q=80&w=1744&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 8
     },
     {
       "name": "by the bay",
-      "color": "#2f8f9d",
+      "color": "#1A7370",
       "description": "Bay Area stories where the rent is high, the fog is suspicious, and the tech industry is somehow still not the weirdest thing happening.",
       "coverUrl": "https://images.unsplash.com/photo-1575500596523-d625dd041614?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 9
     },
     {
       "name": "do in dc",
-      "color": "#f5f0e6",
+      "color": "#4F6488",
       "description": "A sightseeing tour through monuments, museums, and whatever classified nonsense followed everyone into the nation’s capital.",
       "coverUrl": "https://images.unsplash.com/photo-1501466044931-62695aada8e9?q=80&w=1574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 10
     },
     {
       "name": "houston, houston",
-      "color": "#1f6feb",
+      "color": "#1F5FD0",
       "description": "NASA, family ghosts, interdimensional aliens, and astronomical incidents large enough to make Mission Control consider unplugging the headset.",
       "coverUrl": "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1908&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 11
     },
     {
       "name": "counting sheep",
-      "color": "#b9d8a6",
+      "color": "#507A2F",
       "description": "PILOT and DONOR grow old on a NorCal sheep farm, where peace is warm, woolly, and not even pretending the ram symbolism is subtle.",
       "coverUrl": "https://images.unsplash.com/photo-1744172246156-f35b958401b3?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 12
     },
     {
       "name": "area fifty-done",
-      "color": "#39ff14",
+      "color": "#168038",
       "description": "Whatever happens in Area Fifty-Done stays in Area Fifty-Done!",
       "coverUrl": "https://images.unsplash.com/photo-1549313861-33587f3d2956?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==",
       "order": 13
     },
     {
       "name": "beyond the poppyverse",
-      "color": "#111827",
+      "color": "#534A82",
       "description": "Where the fourth wall gets thin and the author starts pacing.",
       "coverUrl": "https://images.unsplash.com/photo-1538370965046-79c0d6907d47?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "order": 14
@@ -2131,6 +2152,15 @@
 
       if (column === "Content URL" && isUrl(text)) {
         return `<a class="content-link" href="${escapeHtml(text)}" target="_blank" rel="noopener">Read</a>`;
+      }
+
+      if (column === "Characters") {
+        const tags = text.split(",").map(t => t.trim()).filter(Boolean);
+        if (!tags.length) return '<span class="empty">—</span>';
+        const chips = tags
+          .map(t => `<span class="tag-chip">${escapeHtml(t)}</span>`)
+          .join("");
+        return `<div class="tag-chips">${chips}</div>`;
       }
 
       return escapeHtml(text);

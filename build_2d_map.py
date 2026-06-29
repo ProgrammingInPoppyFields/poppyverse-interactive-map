@@ -624,6 +624,27 @@ def build_html(data: dict[str, Any]) -> str:
       font-style: italic;
     }}
 
+    .tag-chips {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }}
+
+    .tag-chip {{
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--active-color) 18%, transparent);
+      border: 1px solid color-mix(in srgb, var(--active-color) 45%, transparent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }}
+
     @media (max-width: 760px) {{
       .page {{
         padding-left: 16px;
@@ -717,6 +738,15 @@ def build_html(data: dict[str, Any]) -> str:
 
       if (column === "Content URL" && isUrl(text)) {{
         return `<a class="content-link" href="${{escapeHtml(text)}}" target="_blank" rel="noopener">Read</a>`;
+      }}
+
+      if (column === "Characters") {{
+        const tags = text.split(",").map(t => t.trim()).filter(Boolean);
+        if (!tags.length) return '<span class="empty">—</span>';
+        const chips = tags
+          .map(t => `<span class="tag-chip">${{escapeHtml(t)}}</span>`)
+          .join("");
+        return `<div class="tag-chips">${{chips}}</div>`;
       }}
 
       return escapeHtml(text);
