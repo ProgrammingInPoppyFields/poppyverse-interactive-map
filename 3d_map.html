@@ -522,7 +522,7 @@
   <label class="axes-toggle" for="axesToggle">
     <input type="checkbox" id="axesToggle" />
     <span class="axes-toggle-track"><span class="axes-toggle-thumb"></span></span>
-    <span class="axes-toggle-label">Show axes</span>
+    <span class="axes-toggle-label">Show globe</span>
   </label>
 
   <a class="wormhole-btn" href="https://programminginpoppyfields.github.io/engine-codex/" target="_blank" rel="noopener">Wormhole</a>
@@ -5467,9 +5467,12 @@
 
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
-    const CLUSTER_SPREAD = 150;
-    const DEPTH_SCALE = 35;
-    const NODE_SCATTER = 50;
+    // Globe layout: every node lives on/inside a sphere centered at 0,0,0.
+    const AXIS_MAX = 10;        // CSV metrics (Relativity / Relatability / Depth) are scored 0..10
+    const GLOBE_RADIUS = 720;   // distance from the origin at maximum Relativity (bigger = dots spread further apart)
+    const MIN_RADIUS = 60;      // inner shell so low-Relativity nodes don't collapse onto the exact origin
+    const JITTER = 0.18;        // small seeded spread so nodes with identical scores don't stack
+    const POINT_JITTER = 14;    // absolute (Cartesian) units of random nudge so coincident dots never perfectly overlap
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -5657,21 +5660,36 @@
     }
 
     function prepareGraphData() {
-      const clusterOrder = DATA.clusters.map(c => c.name);
-      const clusterIndex = new Map(clusterOrder.map((name, index) => [name, index]));
-
       const nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
       DATA.nodes.forEach(node => {
-        const idx = clusterIndex.has(node.cluster) ? clusterIndex.get(node.cluster) : clusterOrder.length;
+        // --- Globe layout: pure data-driven spherical coordinates, centered on 0,0,0. ---
+        // Cluster no longer affects position (it only colors the node):
+        //   radius    <- (X) Relativity   : INVERTED -- high Relativity hugs the core, low flings outward
+        //   latitude  <- (Y) Relatability : pole (0) to pole (PI)
+        //   longitude <- (Z) Depth        : all the way around the equator (0..2PI)
         const seed = hash32(String(node.id) + "|" + String(node.cluster));
 
-        const angle = rand(seed) * Math.PI * 2;
-        const radius = rand(seed + 1) * NODE_SCATTER + 20;
+        // Normalize each metric to 0..1, then add a small seeded jitter so nodes
+        // that share identical scores don't land on the exact same point.
+        const relN   = Math.max(0, Math.min(1, node.xValue / AXIS_MAX));
+        const relatN = Math.max(0, Math.min(1, node.yValue / AXIS_MAX));
+        const depthN = Math.max(0, Math.min(1, node.zValue / AXIS_MAX));
 
-        node.x = node.xValue * 40 + Math.cos(angle) * radius;
-        node.y = -node.zValue * DEPTH_SCALE;
-        node.z = idx * CLUSTER_SPREAD + Math.sin(angle) * radius;
+        const r   = MIN_RADIUS + (GLOBE_RADIUS - MIN_RADIUS) * (1 - relN) * (1 + (rand(seed) - 0.5) * JITTER);
+        const lat = (relatN + (rand(seed + 1) - 0.5) * JITTER) * Math.PI;       // polar angle, north -> south
+        const lon = (depthN + (rand(seed + 2) - 0.5) * JITTER) * Math.PI * 2;   // azimuth around the pole
+
+        // Final absolute (Cartesian) jitter: a small per-node random nudge on each
+        // axis so any dots that landed on identical coords still separate visibly.
+        // Seeded off the node id, so it's stable across reloads (not Math.random).
+        const jx = (rand(seed + 3) - 0.5) * 2 * POINT_JITTER;
+        const jy = (rand(seed + 4) - 0.5) * 2 * POINT_JITTER;
+        const jz = (rand(seed + 5) - 0.5) * 2 * POINT_JITTER;
+
+        node.x = r * Math.sin(lat) * Math.cos(lon) + jx;
+        node.y = r * Math.cos(lat) + jy;
+        node.z = r * Math.sin(lat) * Math.sin(lon) + jz;
 
         node.fx = node.x;
         node.fy = node.y;
@@ -5866,9 +5884,9 @@
         1200
       );
 
-      // --- Axes overlay (hidden by default; toggled via the "Show axes" switch) ---
-      // Axes are labeled with the three source columns: X = Depth,
-      // Y (up) = Relatability, Z = Relativity.
+      // --- Globe reference frame (hidden by default; toggled via the "Show globe" switch) ---
+      // Centered on 0,0,0: three axes through the origin, a faint wireframe globe at
+      // max Depth, equator + meridian rings, and a bright marker at the exact center.
       const axesGroup = new THREE.Group();
       axesGroup.visible = false;
 
@@ -5917,10 +5935,44 @@
         axesGroup.add(label);
       }
 
-      const axisOrigin = { x: bounds.minX, y: bounds.minY, z: bounds.minZ };
-      addAxis(axisOrigin, { x: bounds.maxX, y: bounds.minY, z: bounds.minZ }, "#FF6B6B", "Depth");
-      addAxis(axisOrigin, { x: bounds.minX, y: bounds.maxY, z: bounds.minZ }, "#6BCB77", "Relatability");
-      addAxis(axisOrigin, { x: bounds.minX, y: bounds.minY, z: bounds.maxZ }, "#4D96FF", "Relativity");
+      // Three axes through the origin so the center (0,0,0) is unmistakable.
+      const FRAME_R = GLOBE_RADIUS + 30;
+      addAxis({ x: -FRAME_R, y: 0, z: 0 }, { x: FRAME_R, y: 0, z: 0 }, "#4D96FF", "Relativity (inv r)");
+      addAxis({ x: 0, y: -FRAME_R, z: 0 }, { x: 0, y: FRAME_R, z: 0 }, "#6BCB77", "Relatability (lat)");
+      addAxis({ x: 0, y: 0, z: -FRAME_R }, { x: 0, y: 0, z: FRAME_R }, "#FF6B6B", "Depth (lon)");
+
+      // Faint wireframe globe at maximum Depth radius.
+      const globeWire = new THREE.Mesh(
+        new THREE.SphereGeometry(GLOBE_RADIUS, 24, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.06 })
+      );
+      globeWire.raycast = () => {};
+      axesGroup.add(globeWire);
+
+      // Equator + meridian rings at the globe surface.
+      function addRing(asMeridian) {
+        const pts = [];
+        for (let i = 0; i <= 96; i++) {
+          const a = (i / 96) * Math.PI * 2;
+          pts.push(new THREE.Vector3(Math.cos(a) * GLOBE_RADIUS, 0, Math.sin(a) * GLOBE_RADIUS));
+        }
+        const ring = new THREE.Line(
+          new THREE.BufferGeometry().setFromPoints(pts),
+          new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.16 })
+        );
+        if (asMeridian) ring.rotation.x = Math.PI / 2;
+        axesGroup.add(ring);
+      }
+      addRing(false);  // equator (X-Z plane)
+      addRing(true);   // meridian (X-Y plane)
+
+      // Bright marker at the exact center, 0,0,0.
+      const originMarker = new THREE.Mesh(
+        new THREE.SphereGeometry(6, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+      );
+      originMarker.raycast = () => {};
+      axesGroup.add(originMarker);
 
       scene.add(axesGroup);
 
