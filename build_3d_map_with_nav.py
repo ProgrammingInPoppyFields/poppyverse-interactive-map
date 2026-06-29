@@ -735,7 +735,7 @@ def build_html(data: dict[str, Any]) -> str:
       margin-top: 14px;
       padding: 5px 9px;
       border-radius: 999px;
-      background: var(--active-color);
+      background: color-mix(in srgb, var(--active-color) 55%, #000);
       color: #fff;
       font-size: 11px;
       font-weight: 900;
@@ -813,7 +813,18 @@ def build_html(data: dict[str, Any]) -> str:
       letter-spacing: 0.08em;
       line-height: 1.3;
       text-transform: uppercase;
+      text-decoration: none;
       white-space: nowrap;
+    }}
+
+    a.tag-chip {{
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }}
+
+    a.tag-chip:hover {{
+      background: color-mix(in srgb, var(--active-color) 34%, transparent);
+      border-color: var(--active-color);
     }}
 
     .read-link {{
@@ -823,7 +834,7 @@ def build_html(data: dict[str, Any]) -> str:
       min-height: 40px;
       padding: 10px 14px;
       border-radius: 999px;
-      background: var(--active-color);
+      background: color-mix(in srgb, var(--active-color) 55%, #000);
       color: #fff;
       text-decoration: none;
       font-size: 12px;
@@ -987,13 +998,13 @@ def build_html(data: dict[str, Any]) -> str:
 
     function renderCollisions(items) {{
       if (!items || !items.length) return "<p>—</p>";
-      const parts = items.map(item => {{
+      const chips = items.map(item => {{
         const label = escapeHtml(item.label || "");
         return item.url
-          ? `<a class="collision-link" href="${{escapeHtml(item.url)}}" target="_blank" rel="noopener">${{label}}</a>`
-          : label;
+          ? `<a class="tag-chip" href="${{escapeHtml(item.url)}}" target="_blank" rel="noopener">${{label}}</a>`
+          : `<span class="tag-chip">${{label}}</span>`;
       }});
-      return `<p>${{parts.join(", ")}}</p>`;
+      return `<div class="tag-chips">${{chips.join("")}}</div>`;
     }}
 
     function openDrawer(node) {{
@@ -1018,7 +1029,7 @@ def build_html(data: dict[str, Any]) -> str:
         ? `
           <section class="drawer-section">
             <h3>Sub-parts</h3>
-            <p>${{escapeHtml(node.subparts)}}</p>
+            ${{renderChips(node.subparts.split("/").map(s => s.trim()).filter(Boolean))}}
           </section>
         `
         : "";
