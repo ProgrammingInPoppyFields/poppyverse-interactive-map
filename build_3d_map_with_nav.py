@@ -917,6 +917,7 @@ def build_html(data: dict[str, Any]) -> str:
 
     let hoveredNode = null;
     let selectedNode = null;
+    let nodeById = new Map();
 
     function escapeHtml(value) {{
       return String(value ?? "")
@@ -1000,14 +1001,18 @@ def build_html(data: dict[str, Any]) -> str:
       if (!items || !items.length) return "<p>—</p>";
       const chips = items.map(item => {{
         const label = escapeHtml(item.label || "");
-        return item.url
-          ? `<a class="tag-chip" href="${{escapeHtml(item.url)}}" target="_blank" rel="noopener">${{label}}</a>`
+        return item.id != null
+          ? `<a class="tag-chip" href="#" data-collision-id="${{escapeHtml(String(item.id))}}">${{label}}</a>`
           : `<span class="tag-chip">${{label}}</span>`;
       }});
       return `<div class="tag-chips">${{chips.join("")}}</div>`;
     }}
 
     function openDrawer(node) {{
+      if (selectedNode && selectedNode !== node) {{
+        resetNodeVisual(selectedNode);
+      }}
+
       selectedNode = node;
       setHighlightedNode(node);
 
@@ -1097,7 +1102,7 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     function prepareGraphData() {{
-      const nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
+      nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
       DATA.nodes.forEach(node => {{
         // --- Globe layout: pure data-driven spherical coordinates, centered on 0,0,0. ---
@@ -1149,14 +1154,14 @@ def build_html(data: dict[str, Any]) -> str:
       // Build each node's collision list from the (already de-duped, undirected)
       // links so the drawer shows a collision on BOTH endpoints, not just the
       // node whose CSV cell happened to name the other. Each entry carries the
-      // partner's title and story URL for a clickable link.
+      // partner's id so clicking it opens that node's card in the drawer.
       DATA.nodes.forEach(node => {{ node.collisionLinks = []; }});
       DATA.links.forEach(link => {{
         const a = link.source;
         const b = link.target;
         if (typeof a !== "object" || typeof b !== "object") return;
-        a.collisionLinks.push({{ label: b.label, url: b.contentUrl }});
-        b.collisionLinks.push({{ label: a.label, url: a.contentUrl }});
+        a.collisionLinks.push({{ label: b.label, url: b.contentUrl, id: b.id }});
+        b.collisionLinks.push({{ label: a.label, url: a.contentUrl, id: a.id }});
       }});
 
       return {{
@@ -1177,6 +1182,14 @@ def build_html(data: dict[str, Any]) -> str:
 
       drawerClose.addEventListener("click", closeDrawer);
       drawerBackdrop.addEventListener("click", closeDrawer);
+
+      drawerBody.addEventListener("click", event => {{
+        const chip = event.target.closest(".tag-chip[data-collision-id]");
+        if (!chip) return;
+        event.preventDefault();
+        const target = nodeById.get(chip.dataset.collisionId);
+        if (target) openDrawer(target);
+      }});
 
       window.addEventListener("keydown", event => {{
         if (event.key === "Escape") closeDrawer();
