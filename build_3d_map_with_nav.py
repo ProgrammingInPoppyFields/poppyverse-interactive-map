@@ -122,11 +122,11 @@ def parse_bool(value: str) -> bool:
     return str(value or "").strip().lower() in {"yes", "true", "1", "y"}
 
 
-def parse_list(value: str) -> list[str]:
+def parse_list(value: str, delimiter: str = ",") -> list[str]:
     value = str(value or "").strip()
     if not value:
         return []
-    return [item.strip() for item in value.split(",") if item.strip()]
+    return [item.strip() for item in value.split(delimiter) if item.strip()]
 
 
 def normalize_url(value: str) -> str:
@@ -243,7 +243,7 @@ def build_data() -> dict[str, Any]:
             "color": color,
             "description": get_first(row, ["Description", "Desc"]),
             "subparts": get_first(row, ["Sub-parts", "Subparts", "Parts"]),
-            "characters": parse_list(get_first(row, ["Characters"])),
+            "characters": parse_list(get_first(row, ["Characters"]), delimiter=";"),
             "collisions": parse_list(get_first(row, ["Collisions", "Collision"])),
             "contentUrl": normalize_url(get_first(row, ["Content URL", "URL", "Url"])),
             "coverUrl": normalize_url(get_first(row, ["Cover URL", "Cover", "Image URL", "Image"])),
