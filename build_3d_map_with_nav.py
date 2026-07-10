@@ -1357,16 +1357,26 @@ def build_html(data: dict[str, Any]) -> str:
       axesGroup.visible = false;
 
       function makeAxisLabel(text, colorHex) {{
+        const font = "600 32px Michroma, sans-serif";
+
+        // Measure first so the canvas is sized to fit the actual text --
+        // a fixed-width canvas clips longer labels (e.g. "Relativity (inv r)")
+        // equally off both edges since the text is centered.
+        const measureCtx = document.createElement("canvas").getContext("2d");
+        measureCtx.font = font;
+        const textWidth = measureCtx.measureText(text).width;
+
+        const paddingX = 24;
         const canvas = document.createElement("canvas");
-        canvas.width = 256;
+        canvas.width = Math.ceil(textWidth) + paddingX * 2;
         canvas.height = 64;
 
         const ctx = canvas.getContext("2d");
-        ctx.font = "600 32px Michroma, sans-serif";
+        ctx.font = font;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = colorHex;
-        ctx.fillText(text, 128, 34);
+        ctx.fillText(text, canvas.width / 2, 34);
 
         const tex = new THREE.CanvasTexture(canvas);
 
@@ -1379,7 +1389,11 @@ def build_html(data: dict[str, Any]) -> str:
           }})
         );
 
-        sprite.scale.set(150, 37, 1);
+        // Keep label height fixed, scale width to match the canvas's aspect
+        // ratio so text isn't stretched or squashed.
+        const spriteHeight = 37;
+        const spriteWidth = spriteHeight * (canvas.width / canvas.height);
+        sprite.scale.set(spriteWidth, spriteHeight, 1);
         sprite.renderOrder = 20;
         return sprite;
       }}
