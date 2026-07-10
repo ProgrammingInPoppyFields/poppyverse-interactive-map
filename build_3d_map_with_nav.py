@@ -248,6 +248,7 @@ def build_data() -> dict[str, Any]:
             "contentUrl": normalize_url(get_first(row, ["Content URL", "URL", "Url"])),
             "coverUrl": normalize_url(get_first(row, ["Cover URL", "Cover", "Image URL", "Image"])),
             "featured": parse_bool(get_first(row, ["Featured"])),
+            "isIntro": "intro" in name.lower(),
             "size": max(1.0, parse_float(get_first(row, ["Size", "Value"]), 1.0)),
             "xValue": parse_float(get_first(row, ["(X) Relativity", "X", "Relativity"]), 0.0),
             "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
@@ -833,7 +834,7 @@ def build_html(data: dict[str, Any]) -> str:
       justify-content: center;
       min-height: 40px;
       padding: 10px 14px;
-      border-radius: 999px;
+      border-radius: 5px;
       background: color-mix(in srgb, var(--active-color) 55%, #000);
       color: #fff;
       text-decoration: none;
@@ -1222,6 +1223,21 @@ def build_html(data: dict[str, Any]) -> str:
           const sizeVal = Number(node.size) || 1;
           const scale = 0.6 + sizeVal * 0.09;
           core.scale.set(scale, scale, scale);
+
+          if (node.isIntro) {{
+            const ring = new THREE.Mesh(
+              new THREE.RingGeometry(8, 12, 48),
+              new THREE.MeshBasicMaterial({{
+                color,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.85,
+                depthWrite: false
+              }})
+            );
+            ring.rotation.x = Math.PI / 2.6;
+            core.add(ring);
+          }}
 
           const glow = makeGlowSprite(colorHex);
           glow.raycast = () => {{}};
