@@ -1,6 +1,17 @@
-<p align="center">
-  <img src="/screenshots/4.png" alt="The Poppyverse — glowing story clusters linked by collision lines" width="100%" />
-</p>
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <img src="/screenshots/3d-map-plain.png" alt="The 3D map showing glowing story clusters linked by collision lines" width="100%" />
+      <br />
+      <sub><strong>3D map</strong> — story nodes floating in space, colored by cluster and linked by collision lines.</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="/screenshots/3d-map-globe.png" alt="The 3D map with the spherical Relativity / Relatability / Depth coordinate system revealed" width="100%" />
+      <br />
+      <sub><strong>3D map, "Show globe" enabled</strong> — the same nodes with the underlying spherical coordinate system (Relativity / Relatability / Depth) made visible.</sub>
+    </td>
+  </tr>
+</table>
 
 <h1 align="center">The Poppyverse Interactive Map</h1>
 
