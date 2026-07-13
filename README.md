@@ -133,6 +133,14 @@ Axes are hidden by default — toggle "Show globe" (bottom-left) to see the refe
 
 ---
 
+## what is a collision
+
+The white lines connecting nodes on the map, and the "Collisions" list on each detail card, aren't a technical link — they're a story relationship, defined in the `Collisions` column of `SRC_toc.csv`:
+
+> **COLLISION:** A collision defines a relationship between 2 stories where characters, timelines, or alternate versions of the same people from separate universes come into direct contact and begin affecting one another. Less "special crossover episode," more "the walls between realities have failed inspection."
+
+---
+
 ## build scripts
 
 | File | What it does |
