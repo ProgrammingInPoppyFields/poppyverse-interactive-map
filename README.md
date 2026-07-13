@@ -139,6 +139,14 @@ The white lines connecting nodes on the map, and the "Collisions" list on each d
 
 > **COLLISION:** A collision defines a relationship between 2 stories where characters, timelines, or alternate versions of the same people from separate universes come into direct contact and begin affecting one another. Less "special crossover episode," more "the walls between realities have failed inspection."
 
+Both concepts above show up together on a node's detail card — click any node on `3d_map.html` or `2d_map.html` to open it:
+
+<p align="center">
+  <img src="/screenshots/detail-card-view.png" alt="A story's detail card, showing its description, Relativity/Relatability/Depth coordinate meters, sub-parts, characters, collisions, and read-more link" width="420" />
+  <br />
+  <sub>A detail card — Coordinates meters and Collisions chips are populated straight from <code>SRC_toc.csv</code>.</sub>
+</p>
+
 ---
 
 ## build scripts

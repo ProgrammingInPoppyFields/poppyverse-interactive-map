@@ -693,7 +693,7 @@ def build_html(data: dict[str, Any]) -> str:
 
     .drawer-header {{
       position: relative;
-      padding: calc(var(--nav-height) + 26px) 24px 22px;
+      padding: calc(var(--nav-height) + 54px) 24px 22px;
       background:
         radial-gradient(circle at top left, color-mix(in srgb, var(--active-color) 36%, transparent), transparent 38%),
         linear-gradient(
@@ -706,7 +706,7 @@ def build_html(data: dict[str, Any]) -> str:
 
     .drawer-close {{
       position: absolute;
-      top: calc(var(--nav-height) + 16px);
+      top: calc(var(--nav-height) + 10px);
       right: 18px;
       width: 38px;
       height: 38px;
