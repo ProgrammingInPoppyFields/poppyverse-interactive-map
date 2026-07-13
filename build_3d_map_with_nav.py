@@ -784,6 +784,36 @@ def build_html(data: dict[str, Any]) -> str:
       line-height: 1.65;
     }}
 
+    .coord-meters {{
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }}
+
+    .coord-meter-label {{
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }}
+
+    .coord-meter-track {{
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }}
+
+    .coord-meter-fill {{
+      height: 100%;
+      border-radius: 999px;
+      background: var(--active-color);
+    }}
+
     .collision-link {{
       color: var(--active-color);
       text-decoration: none;
@@ -1002,6 +1032,27 @@ def build_html(data: dict[str, Any]) -> str:
       return `<div class="tag-chips">${{chips}}</div>`;
     }}
 
+    function renderCoordMeters(node) {{
+      const axes = [
+        ["Relativity", node.xValue],
+        ["Relatability", node.yValue],
+        ["Depth", node.zValue]
+      ];
+
+      const rows = axes.map(([label, value]) => {{
+        const v = Math.max(0, Math.min(AXIS_MAX, Number(value) || 0));
+        const pct = (v / AXIS_MAX) * 100;
+        return `
+          <div class="coord-meter">
+            <div class="coord-meter-label"><span>${{label}}</span><span>${{v}}/${{AXIS_MAX}}</span></div>
+            <div class="coord-meter-track"><div class="coord-meter-fill" style="width:${{pct}}%"></div></div>
+          </div>
+        `;
+      }}).join("");
+
+      return `<div class="coord-meters">${{rows}}</div>`;
+    }}
+
     function renderCollisions(items) {{
       if (!items || !items.length) return "<p>—</p>";
       const chips = items.map(item => {{
@@ -1050,6 +1101,11 @@ def build_html(data: dict[str, Any]) -> str:
         <section class="drawer-section">
           <h3>Description</h3>
           <p>${{escapeHtml(node.description || "No description yet.")}}</p>
+        </section>
+
+        <section class="drawer-section">
+          <h3>Coordinates</h3>
+          ${{renderCoordMeters(node)}}
         </section>
 
         ${{subpartsHtml}}
