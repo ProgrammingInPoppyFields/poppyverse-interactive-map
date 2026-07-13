@@ -1292,7 +1292,7 @@ def build_html(data: dict[str, Any]) -> str:
       controls.enableRotate = true;
       controls.enablePan = true;
       controls.minDistance = 20;
-      controls.maxDistance = 1600;
+      controls.maxDistance = 4000;
 
       const bounds = (() => {{
         let minX = Infinity;
@@ -1428,7 +1428,7 @@ def build_html(data: dict[str, Any]) -> str:
       // Faint wireframe globe at maximum Depth radius.
       const globeWire = new THREE.Mesh(
         new THREE.SphereGeometry(GLOBE_RADIUS, 24, 16),
-        new THREE.MeshBasicMaterial({{ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.06 }})
+        new THREE.MeshBasicMaterial({{ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.18 }})
       );
       globeWire.raycast = () => {{}};
       axesGroup.add(globeWire);
@@ -1442,7 +1442,7 @@ def build_html(data: dict[str, Any]) -> str:
         }}
         const ring = new THREE.Line(
           new THREE.BufferGeometry().setFromPoints(pts),
-          new THREE.LineBasicMaterial({{ color: 0xffffff, transparent: true, opacity: 0.16 }})
+          new THREE.LineBasicMaterial({{ color: 0xffffff, transparent: true, opacity: 0.4 }})
         );
         if (asMeridian) ring.rotation.x = Math.PI / 2;
         axesGroup.add(ring);
