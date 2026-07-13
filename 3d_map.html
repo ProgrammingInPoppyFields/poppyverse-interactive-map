@@ -5771,11 +5771,15 @@
 </script>
 
   <script src="https://unpkg.com/three@0.148.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.148.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://unpkg.com/3d-force-graph@1.72.0/dist/3d-force-graph.min.js"></script>
 
   <script>
     "use strict";
+
+    // Loaded separately from THREE above: we build custom node meshes by hand.
+    // 3d-force-graph bundles its own internal copy of Three.js too -- hence
+    // the harmless "multiple instances of Three.js" console warning.
+    // (CDN version-skew makes consolidating these unsafe -- see git history.)
 
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
