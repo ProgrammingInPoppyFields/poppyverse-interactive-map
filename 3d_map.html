@@ -6392,8 +6392,8 @@
       scene.add(axesGroup);
 
       // Publish-divide plane at z=0: published nodes (+Z) sit in front of it,
-      // unpublished nodes (-Z) sit behind it. Always visible (not gated behind
-      // the axes toggle) since it's the point of the layout, not a debug aid.
+      // unpublished nodes (-Z) sit behind it. Gated behind the axes toggle,
+      // same as the axes/frame and collision lines.
       const DIVIDE_SIZE = (AXIS_SCALE + 60) * 2;
       const dividePlane = new THREE.Mesh(
         new THREE.PlaneGeometry(DIVIDE_SIZE, DIVIDE_SIZE),
@@ -6406,7 +6406,7 @@
         })
       );
       dividePlane.raycast = () => {};
-      scene.add(dividePlane);
+      axesGroup.add(dividePlane);
 
       const divideEdge = new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints([
@@ -6418,7 +6418,7 @@
         new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 })
       );
       divideEdge.raycast = () => {};
-      scene.add(divideEdge);
+      axesGroup.add(divideEdge);
 
       const axesToggle = document.getElementById("axesToggle");
       axesToggle.checked = false;

@@ -126,11 +126,11 @@ What each score is actually rating, story-wise:
 * **RELATABILITY:** How closely the story resembles recognizable human life, including familiar relationships, everyday problems, and the general inconvenience of being a person.
 * **DEPTH:** How emotionally dark, psychologically complex, mature, or otherwise unsuitable for casual bedtime reading the story becomes.
 
-A translucent plane sits at `z = 0`, always visible, marking the divide: published stories (with a Content URL) float in front of it, everything still unpublished floats behind it.
+A translucent plane sits at `z = 0` marking the divide: published stories (with a Content URL) float in front of it, everything still unpublished floats behind it.
 
 Cluster no longer affects position, only color. A small seeded jitter keeps nodes with identical scores from stacking exactly on top of each other, but is deterministic per node id, so rebuilds don't shuffle anyone around.
 
-Axes and collision lines are hidden by default — toggle "Show axes" (bottom-left) to see the three labeled axis lines, the origin marker, and the white collision-link lines connecting nodes.
+Axes, the z=0 divide plane, and collision lines are all hidden by default — toggle "Show axes" (bottom-left) to see the three labeled axis lines, the origin marker, the divide plane, and the white collision-link lines connecting nodes.
 
 ---
 
@@ -265,6 +265,39 @@ Do not hand-edit the generated HTML unless you enjoy losing those changes the ne
 The 3D visualization builds on the open-source [`3d-force-graph`](https://github.com/vasturiano/3d-force-graph) project by [vasturiano](https://github.com/vasturiano).
 
 The surrounding archive system, content model, Python build pipeline, 2D dashboard, navigation, styling, and Poppyverse-specific interaction design were developed for this project.
+
+---
+
+## graph experiments
+
+The 3D map's layout has been rebuilt more than once. These are snapshots from different experiments along the way — not necessarily what the live map looks like right now:
+
+<table align="center" width="100%">
+  <tr valign="top">
+    <td align="center" width="50%">
+      <img src="/screenshots/3d-map-plain.png" alt="An early 3D map layout experiment" width="100%" />
+      <br />
+      <sub>Layout experiment</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="/screenshots/3d-map-globe.png" alt="A spherical globe layout experiment with axes revealed" width="100%" />
+      <br />
+      <sub>Spherical globe layout experiment, axes revealed</sub>
+    </td>
+  </tr>
+  <tr valign="top">
+    <td align="center" width="50%">
+      <img src="/screenshots/3d-map-cube.png" alt="A cube-based layout experiment" width="100%" />
+      <br />
+      <sub>Cube layout experiment</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="/screenshots/3d-map-cube-ON.png" alt="The cube-based layout experiment with axes revealed" width="100%" />
+      <br />
+      <sub>Cube layout experiment, axes revealed</sub>
+    </td>
+  </tr>
+</table>
 
 ---
 

@@ -18,11 +18,10 @@ Output:
 - Keep Multiverse Color Legend.
 - Do NOT show axes.
 - Do NOT show axis labels.
-  (The reference frame — axes through the origin and the 0,0,0 center marker —
-  is hidden by default, but can be revealed via the "Show axes" toggle at the
-  bottom-left. The publish-divide plane at z=0, separating published nodes
-  (+Z) from unpublished nodes (-Z), is always visible since it's core to the
-  layout, not a debug aid.)
+  (The reference frame — axes through the origin, the 0,0,0 center marker, and
+  the publish-divide plane at z=0 (separating published nodes (+Z) from
+  unpublished nodes (-Z)) — is hidden by default, but can be revealed via the
+  "Show axes" toggle at the bottom-left.)
 - Do NOT show hover labels.
 - Do NOT show HUD title/subtitle.
 - Do NOT show content ratings in clicked cards.
@@ -1507,8 +1506,8 @@ def build_html(data: dict[str, Any]) -> str:
       scene.add(axesGroup);
 
       // Publish-divide plane at z=0: published nodes (+Z) sit in front of it,
-      // unpublished nodes (-Z) sit behind it. Always visible (not gated behind
-      // the axes toggle) since it's the point of the layout, not a debug aid.
+      // unpublished nodes (-Z) sit behind it. Gated behind the axes toggle,
+      // same as the axes/frame and collision lines.
       const DIVIDE_SIZE = (AXIS_SCALE + 60) * 2;
       const dividePlane = new THREE.Mesh(
         new THREE.PlaneGeometry(DIVIDE_SIZE, DIVIDE_SIZE),
@@ -1521,7 +1520,7 @@ def build_html(data: dict[str, Any]) -> str:
         }})
       );
       dividePlane.raycast = () => {{}};
-      scene.add(dividePlane);
+      axesGroup.add(dividePlane);
 
       const divideEdge = new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints([
@@ -1533,7 +1532,7 @@ def build_html(data: dict[str, Any]) -> str:
         new THREE.LineBasicMaterial({{ color: 0xffffff, transparent: true, opacity: 0.25 }})
       );
       divideEdge.raycast = () => {{}};
-      scene.add(divideEdge);
+      axesGroup.add(divideEdge);
 
       const axesToggle = document.getElementById("axesToggle");
       axesToggle.checked = false;
