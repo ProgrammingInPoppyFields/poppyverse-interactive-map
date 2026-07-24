@@ -742,7 +742,7 @@ def build_html(data: dict[str, Any]) -> str:
       }}
 
       if (column === "Characters") {{
-        const tags = text.split(",").map(t => t.trim()).filter(Boolean);
+        const tags = text.split(";").map(t => t.trim()).filter(Boolean);
         if (!tags.length) return '<span class="empty">—</span>';
         const chips = tags
           .map(t => `<span class="tag-chip">${{escapeHtml(t)}}</span>`)
