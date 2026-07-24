@@ -1,14 +1,14 @@
 <table align="center" width="100%">
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-plain.png" alt="The 3D map showing glowing story clusters linked by collision lines" width="100%" />
+      <img src="/screenshots/3d-map-plain.png" alt="The 3D map showing glowing story clusters" width="100%" />
       <br />
-      <sub><strong>3D map</strong><br />Story nodes floating in space, colored by cluster and linked by collision lines.</sub>
+      <sub><strong>3D map</strong><br />Story nodes floating in space, colored by cluster.</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-globe.png" alt="The 3D map with the spherical Relativity / Relatability / Depth coordinate system revealed" width="100%" />
+      <img src="/screenshots/3d-map-globe.png" alt="The 3D map with the Relativity / Relatability / Depth axes and collision lines revealed" width="100%" />
       <br />
-      <sub><strong>3D map, "Show globe" enabled</strong><br />The same nodes with the underlying spherical coordinate system (Relativity / Relatability / Depth) made visible.</sub>
+      <sub><strong>3D map, "Show axes" enabled</strong><br />The same nodes with the axes, origin marker, and collision-link lines made visible.</sub>
     </td>
   </tr>
 </table>
@@ -111,13 +111,14 @@ To change the content or structure of the site, update the CSVs or generator scr
 
 ## the 3D coordinate system
 
-`3d_map.html` doesn't plot the story metadata as literal x/y/z coordinates. Every node lives on (or inside) a sphere centered at `(0, 0, 0)`, and three `0`–`10` scores in `SRC_toc.csv` get converted into spherical coordinates:
+`3d_map.html` plots each node as a simple 3D scatter point centered at `(0, 0, 0)`. Three `0`–`10` scores in `SRC_toc.csv` drive the X and Y axes directly, while the Z axis is split by publish status:
 
 | CSV column | Controls | Behavior |
 |---|---|---|
-| `(X) Relativity` | radius (distance from center) | **Inverted.** `10` pulls a node in toward the core; `0` flings it out to the globe's surface. |
-| `(Y) Relatability` | latitude (pole to pole) | `0` = north pole, `10` = south pole. |
-| `(Z) Depth` | longitude (around the equator) | Wraps a full circle; `0` and `10` land on the same meridian. |
+| `(X) Relativity` | X position | Scaled directly; `0` and `10` sit at opposite edges of the X spread. |
+| `(Y) Relatability` | Y position | Scaled directly; `0` and `10` sit at opposite edges of the Y spread. |
+| `(Z) Depth` | Z magnitude only | Controls *distance* from the z=0 divide plane, not direction — see below. |
+| `Content URL` (presence) | Z sign | Has a URL -> **+Z** (in front of the divide). No URL -> **-Z** (behind it). |
 
 What each score is actually rating, story-wise:
 
@@ -125,11 +126,11 @@ What each score is actually rating, story-wise:
 * **RELATABILITY:** How closely the story resembles recognizable human life, including familiar relationships, everyday problems, and the general inconvenience of being a person.
 * **DEPTH:** How emotionally dark, psychologically complex, mature, or otherwise unsuitable for casual bedtime reading the story becomes.
 
-So `Relativity 10, Relatability 0, Depth 0` sits at the north pole right next to the core. `Relativity 0, Relatability 5, Depth 5` sits way out on the equator, on the globe's surface.
+A translucent plane sits at `z = 0`, always visible, marking the divide: published stories (with a Content URL) float in front of it, everything still unpublished floats behind it.
 
 Cluster no longer affects position, only color. A small seeded jitter keeps nodes with identical scores from stacking exactly on top of each other, but is deterministic per node id, so rebuilds don't shuffle anyone around.
 
-Axes are hidden by default — toggle "Show globe" (bottom-left) to see the reference sphere, the three labeled axis lines, the equator/meridian rings, and the origin marker.
+Axes and collision lines are hidden by default — toggle "Show axes" (bottom-left) to see the three labeled axis lines, the origin marker, and the white collision-link lines connecting nodes.
 
 ---
 
