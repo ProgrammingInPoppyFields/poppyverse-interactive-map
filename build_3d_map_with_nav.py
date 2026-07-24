@@ -1009,12 +1009,46 @@ def build_html(data: dict[str, Any]) -> str:
       );
     }}
 
+    // Same idea as makeGlowSprite, but with many more gradient stops for a
+    // long, gradual falloff. The 3-stop gradient above is fine under normal
+    // blending, but under AdditiveBlending (used for the INTRO node glow) its
+    // two straight-line segments visibly band/edge instead of fading smoothly.
+    function makeSoftGlowSprite(colorHex) {{
+      const canvas = document.createElement("canvas");
+      canvas.width = 128;
+      canvas.height = 128;
+
+      const ctx = canvas.getContext("2d");
+      const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+
+      grad.addColorStop(0, colorHex + "FF");
+      grad.addColorStop(0.15, colorHex + "CC");
+      grad.addColorStop(0.3, colorHex + "88");
+      grad.addColorStop(0.5, colorHex + "50");
+      grad.addColorStop(0.7, colorHex + "26");
+      grad.addColorStop(0.85, colorHex + "0D");
+      grad.addColorStop(1, colorHex + "00");
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 128, 128);
+
+      const tex = new THREE.CanvasTexture(canvas);
+
+      return new THREE.Sprite(
+        new THREE.SpriteMaterial({{
+          map: tex,
+          transparent: true,
+          depthWrite: false
+        }})
+      );
+    }}
+
     function resetNodeVisual(node) {{
       if (!node || !node.__glow) return;
 
       const s = node.__idleSize * 0.98;
       node.__glow.scale.set(s, s, 1);
-      node.__glow.material.opacity = 0.32;
+      node.__glow.material.opacity = node.__idleOpacity != null ? node.__idleOpacity : 0.32;
     }}
 
     function setHighlightedNode(node) {{
@@ -1292,39 +1326,80 @@ def build_html(data: dict[str, Any]) -> str:
           core.scale.set(scale, scale, scale);
 
           if (node.isIntro) {{
+            const ringGlowColor = new THREE.Color(colorHex).lerp(new THREE.Color(0xffffff), 0.35);
+
             const ring = new THREE.Mesh(
               new THREE.RingGeometry(10, 22, 48),
               new THREE.MeshBasicMaterial({{
-                color,
+                color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.85,
-                depthWrite: false
+                opacity: 1,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
               }})
             );
+
+            // Wider, fainter halo layered behind the crisp ring to fake a glow/bloom
+            // (there's no postprocessing pipeline here, so this is done by hand).
+            const ringHalo = new THREE.Mesh(
+              new THREE.RingGeometry(6, 28, 48),
+              new THREE.MeshBasicMaterial({{
+                color: ringGlowColor,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.35,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+              }})
+            );
+
             const ringSeed = hash32(String(node.id) + "|ring");
             const tiltJitter = (rand(ringSeed) - 0.5) * (Math.PI / 2.5);
             const spin = rand(ringSeed + 1) * Math.PI * 2;
             const roll = (rand(ringSeed + 2) - 0.5) * (Math.PI / 3);
-            ring.rotation.x = Math.PI / 2.6 + tiltJitter;
-            ring.rotation.y = spin;
-            ring.rotation.z = roll;
+            ring.rotation.x = ringHalo.rotation.x = Math.PI / 2.6 + tiltJitter;
+            ring.rotation.y = ringHalo.rotation.y = spin;
+            ring.rotation.z = ringHalo.rotation.z = roll;
+            core.add(ringHalo);
             core.add(ring);
           }}
 
-          const glow = makeGlowSprite(colorHex);
+          const glow = node.isIntro ? makeSoftGlowSprite(colorHex) : makeGlowSprite(colorHex);
           glow.raycast = () => {{}};
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.max(42, 5 * scale * 5.4);
+          const idleSize = Math.max(42, 5 * scale * 5.4) * (node.isIntro ? 1.6 : 1);
+          const idleOpacity = node.isIntro ? 0.75 : 0.32;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
-          glow.material.opacity = 0.32;
+          glow.material.opacity = idleOpacity;
+          if (node.isIntro) {{
+            // Normal alpha blending just overlays a translucent patch, which reads
+            // as small/dim on a dark background. Additive blending actually adds
+            // light, which is what makes something look like it's glowing.
+            glow.material.blending = THREE.AdditiveBlending;
+          }}
           core.add(glow);
+
+          if (node.isIntro) {{
+            // A second, much wider and fainter additive sprite so the light
+            // diffuses outward instead of staying a small hot patch.
+            const megaGlow = makeSoftGlowSprite(colorHex);
+            megaGlow.raycast = () => {{}};
+            megaGlow.material.depthTest = false;
+            megaGlow.material.blending = THREE.AdditiveBlending;
+            megaGlow.material.opacity = 0.4;
+            megaGlow.renderOrder = 9;
+            const megaSize = idleSize * 2.6;
+            megaGlow.scale.set(megaSize, megaSize, 1);
+            core.add(megaGlow);
+          }}
 
           node.__core = core;
           node.__glow = glow;
           node.__idleSize = idleSize;
+          node.__idleOpacity = idleOpacity;
 
           return core;
         }})
