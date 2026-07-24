@@ -1286,7 +1286,7 @@ def build_html(data: dict[str, Any]) -> str:
 
           if (node.isIntro) {{
             const ring = new THREE.Mesh(
-              new THREE.RingGeometry(8, 12, 48),
+              new THREE.RingGeometry(10, 22, 48),
               new THREE.MeshBasicMaterial({{
                 color,
                 side: THREE.DoubleSide,
