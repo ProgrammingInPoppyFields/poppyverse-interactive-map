@@ -941,8 +941,8 @@ def build_html(data: dict[str, Any]) -> str:
     const AXIS_SCALE = 480;     // half-extent of the X/Y spread (bigger = dots spread further apart)
     const DEPTH_GAP = 60;       // minimum distance any node sits from the z=0 divide plane
     const DEPTH_SPAN = 480;     // additional Z distance added on top of DEPTH_GAP, scaled by Depth score
-    const JITTER = 0.18;        // small seeded spread so nodes with identical scores don't stack
-    const POINT_JITTER = 14;    // absolute (Cartesian) units of random nudge so coincident dots never perfectly overlap
+    const JITTER = 0.4;         // seeded spread so nodes with identical scores don't stack
+    const POINT_JITTER = 60;    // absolute (Cartesian) units of random nudge -- breaks up the integer-rating grid into something organic
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
