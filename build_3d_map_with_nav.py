@@ -1609,6 +1609,10 @@ def build_html(data: dict[str, Any]) -> str:
       divideEdge.raycast = () => {{}};
       axesGroup.add(divideEdge);
 
+      const divideLabel = makeAxisLabel("The Draft Horizon", "#FFFFFF");
+      divideLabel.position.set(0, DIVIDE_SIZE / 2 + 24, 0);
+      axesGroup.add(divideLabel);
+
       const axesToggle = document.getElementById("axesToggle");
       axesToggle.checked = false;
       axesGroup.visible = false;
