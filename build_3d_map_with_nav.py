@@ -1295,7 +1295,13 @@ def build_html(data: dict[str, Any]) -> str:
                 depthWrite: false
               }})
             );
-            ring.rotation.x = Math.PI / 2.6;
+            const ringSeed = hash32(String(node.id) + "|ring");
+            const tiltJitter = (rand(ringSeed) - 0.5) * (Math.PI / 2.5);
+            const spin = rand(ringSeed + 1) * Math.PI * 2;
+            const roll = (rand(ringSeed + 2) - 0.5) * (Math.PI / 3);
+            ring.rotation.x = Math.PI / 2.6 + tiltJitter;
+            ring.rotation.y = spin;
+            ring.rotation.z = roll;
             core.add(ring);
           }}
 
