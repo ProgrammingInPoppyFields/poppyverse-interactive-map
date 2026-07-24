@@ -11,15 +11,18 @@ Output:
 
 3D visual rules:
 - Keep graph nodes.
-- Keep collision links if resolvable.
+- Keep collision links if resolvable, but only render them when the "Show axes"
+  toggle is on (they're hidden by default, same as the axes/frame).
 - Keep click drawer.
 - Keep top nav.
 - Keep Multiverse Color Legend.
 - Do NOT show axes.
 - Do NOT show axis labels.
-  (The globe reference frame — axes through the origin, a faint wireframe
-  sphere, equator/meridian rings, and the 0,0,0 center marker — is hidden by
-  default, but can be revealed via the "Show globe" toggle at the bottom-left.)
+  (The reference frame — axes through the origin and the 0,0,0 center marker —
+  is hidden by default, but can be revealed via the "Show axes" toggle at the
+  bottom-left. The publish-divide plane at z=0, separating published nodes
+  (+Z) from unpublished nodes (-Z), is always visible since it's core to the
+  layout, not a debug aid.)
 - Do NOT show hover labels.
 - Do NOT show HUD title/subtitle.
 - Do NOT show content ratings in clicked cards.
@@ -911,7 +914,7 @@ def build_html(data: dict[str, Any]) -> str:
   <label class="axes-toggle" for="axesToggle">
     <input type="checkbox" id="axesToggle" />
     <span class="axes-toggle-track"><span class="axes-toggle-thumb"></span></span>
-    <span class="axes-toggle-label">Show globe</span>
+    <span class="axes-toggle-label">Show axes</span>
   </label>
 
   <a class="wormhole-btn" href="https://programminginpoppyfields.github.io/engine-codex/" target="_blank" rel="noopener">Wormhole</a>
@@ -931,10 +934,14 @@ def build_html(data: dict[str, Any]) -> str:
 
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
-    // Globe layout: every node lives on/inside a sphere centered at 0,0,0.
+    // Simple 3D scatter layout, centered at 0,0,0. X/Y come straight from
+    // Relativity/Relatability; Z's magnitude comes from Depth but its SIGN is
+    // forced by publish status, so published/unpublished nodes always land on
+    // opposite sides of the z=0 divide plane.
     const AXIS_MAX = 10;        // CSV metrics (Relativity / Relatability / Depth) are scored 0..10
-    const GLOBE_RADIUS = 720;   // distance from the origin at maximum Relativity (bigger = dots spread further apart)
-    const MIN_RADIUS = 60;      // inner shell so low-Relativity nodes don't collapse onto the exact origin
+    const AXIS_SCALE = 480;     // half-extent of the X/Y spread (bigger = dots spread further apart)
+    const DEPTH_GAP = 60;       // minimum distance any node sits from the z=0 divide plane
+    const DEPTH_SPAN = 480;     // additional Z distance added on top of DEPTH_GAP, scaled by Depth score
     const JITTER = 0.18;        // small seeded spread so nodes with identical scores don't stack
     const POINT_JITTER = 14;    // absolute (Cartesian) units of random nudge so coincident dots never perfectly overlap
 
@@ -1166,11 +1173,13 @@ def build_html(data: dict[str, Any]) -> str:
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
       DATA.nodes.forEach(node => {{
-        // --- Globe layout: pure data-driven spherical coordinates, centered on 0,0,0. ---
+        // --- Simple 3D scatter layout, centered on 0,0,0. ---
         // Cluster no longer affects position (it only colors the node):
-        //   radius    <- (X) Relativity   : INVERTED -- high Relativity hugs the core, low flings outward
-        //   latitude  <- (Y) Relatability : pole (0) to pole (PI)
-        //   longitude <- (Z) Depth        : all the way around the equator (0..2PI)
+        //   X <- (X) Relativity
+        //   Y <- (Y) Relatability
+        //   Z <- (Z) Depth magnitude, SIGNED by publish status (has a Content
+        //        URL -> +Z, no Content URL -> -Z) so the two populations always
+        //        land on opposite sides of the z=0 publish-divide plane.
         const seed = hash32(String(node.id) + "|" + String(node.cluster));
 
         // Normalize each metric to 0..1, then add a small seeded jitter so nodes
@@ -1179,9 +1188,8 @@ def build_html(data: dict[str, Any]) -> str:
         const relatN = Math.max(0, Math.min(1, node.yValue / AXIS_MAX));
         const depthN = Math.max(0, Math.min(1, node.zValue / AXIS_MAX));
 
-        const r   = MIN_RADIUS + (GLOBE_RADIUS - MIN_RADIUS) * (1 - relN) * (1 + (rand(seed) - 0.5) * JITTER);
-        const lat = (relatN + (rand(seed + 1) - 0.5) * JITTER) * Math.PI;       // polar angle, north -> south
-        const lon = (depthN + (rand(seed + 2) - 0.5) * JITTER) * Math.PI * 2;   // azimuth around the pole
+        const published = Boolean(node.contentUrl);
+        const zMag = DEPTH_GAP + DEPTH_SPAN * depthN * (1 + (rand(seed + 2) - 0.5) * JITTER);
 
         // Final absolute (Cartesian) jitter: a small per-node random nudge on each
         // axis so any dots that landed on identical coords still separate visibly.
@@ -1190,9 +1198,9 @@ def build_html(data: dict[str, Any]) -> str:
         const jy = (rand(seed + 4) - 0.5) * 2 * POINT_JITTER;
         const jz = (rand(seed + 5) - 0.5) * 2 * POINT_JITTER;
 
-        node.x = r * Math.sin(lat) * Math.cos(lon) + jx;
-        node.y = r * Math.cos(lat) + jy;
-        node.z = r * Math.sin(lat) * Math.sin(lon) + jz;
+        node.x = (relN - 0.5) * 2 * AXIS_SCALE * (1 + (rand(seed) - 0.5) * JITTER) + jx;
+        node.y = (relatN - 0.5) * 2 * AXIS_SCALE * (1 + (rand(seed + 1) - 0.5) * JITTER) + jy;
+        node.z = (published ? 1 : -1) * zMag + jz;
 
         node.fx = node.x;
         node.fy = node.y;
@@ -1323,7 +1331,7 @@ def build_html(data: dict[str, Any]) -> str:
         }})
         .linkColor(() => "#FFFFFF")
         .linkWidth(0)
-        .linkOpacity(1);
+        .linkOpacity(0);
 
       const renderer = new THREE.WebGLRenderer({{
         antialias: true,
@@ -1482,35 +1490,11 @@ def build_html(data: dict[str, Any]) -> str:
       }}
 
       // Three axes through the origin so the center (0,0,0) is unmistakable.
-      const FRAME_R = GLOBE_RADIUS + 30;
-      addAxis({{ x: -FRAME_R, y: 0, z: 0 }}, {{ x: FRAME_R, y: 0, z: 0 }}, "#4D96FF", "Relativity (inv r)");
-      addAxis({{ x: 0, y: -FRAME_R, z: 0 }}, {{ x: 0, y: FRAME_R, z: 0 }}, "#6BCB77", "Relatability (lat)");
-      addAxis({{ x: 0, y: 0, z: -FRAME_R }}, {{ x: 0, y: 0, z: FRAME_R }}, "#FF6B6B", "Depth (lon)");
-
-      // Faint wireframe globe at maximum Depth radius.
-      const globeWire = new THREE.Mesh(
-        new THREE.SphereGeometry(GLOBE_RADIUS, 24, 16),
-        new THREE.MeshBasicMaterial({{ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.18 }})
-      );
-      globeWire.raycast = () => {{}};
-      axesGroup.add(globeWire);
-
-      // Equator + meridian rings at the globe surface.
-      function addRing(asMeridian) {{
-        const pts = [];
-        for (let i = 0; i <= 96; i++) {{
-          const a = (i / 96) * Math.PI * 2;
-          pts.push(new THREE.Vector3(Math.cos(a) * GLOBE_RADIUS, 0, Math.sin(a) * GLOBE_RADIUS));
-        }}
-        const ring = new THREE.Line(
-          new THREE.BufferGeometry().setFromPoints(pts),
-          new THREE.LineBasicMaterial({{ color: 0xffffff, transparent: true, opacity: 0.4 }})
-        );
-        if (asMeridian) ring.rotation.x = Math.PI / 2;
-        axesGroup.add(ring);
-      }}
-      addRing(false);  // equator (X-Z plane)
-      addRing(true);   // meridian (X-Y plane)
+      const FRAME_XY = AXIS_SCALE + 30;
+      const FRAME_Z = DEPTH_GAP + DEPTH_SPAN + 30;
+      addAxis({{ x: -FRAME_XY, y: 0, z: 0 }}, {{ x: FRAME_XY, y: 0, z: 0 }}, "#4D96FF", "Relativity");
+      addAxis({{ x: 0, y: -FRAME_XY, z: 0 }}, {{ x: 0, y: FRAME_XY, z: 0 }}, "#6BCB77", "Relatability");
+      addAxis({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: FRAME_Z }}, "#FF6B6B", "Depth");
 
       // Bright marker at the exact center, 0,0,0.
       const originMarker = new THREE.Mesh(
@@ -1522,11 +1506,41 @@ def build_html(data: dict[str, Any]) -> str:
 
       scene.add(axesGroup);
 
+      // Publish-divide plane at z=0: published nodes (+Z) sit in front of it,
+      // unpublished nodes (-Z) sit behind it. Always visible (not gated behind
+      // the axes toggle) since it's the point of the layout, not a debug aid.
+      const DIVIDE_SIZE = (AXIS_SCALE + 60) * 2;
+      const dividePlane = new THREE.Mesh(
+        new THREE.PlaneGeometry(DIVIDE_SIZE, DIVIDE_SIZE),
+        new THREE.MeshBasicMaterial({{
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.05,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        }})
+      );
+      dividePlane.raycast = () => {{}};
+      scene.add(dividePlane);
+
+      const divideEdge = new THREE.LineLoop(
+        new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(-DIVIDE_SIZE / 2, -DIVIDE_SIZE / 2, 0),
+          new THREE.Vector3(DIVIDE_SIZE / 2, -DIVIDE_SIZE / 2, 0),
+          new THREE.Vector3(DIVIDE_SIZE / 2, DIVIDE_SIZE / 2, 0),
+          new THREE.Vector3(-DIVIDE_SIZE / 2, DIVIDE_SIZE / 2, 0)
+        ]),
+        new THREE.LineBasicMaterial({{ color: 0xffffff, transparent: true, opacity: 0.25 }})
+      );
+      divideEdge.raycast = () => {{}};
+      scene.add(divideEdge);
+
       const axesToggle = document.getElementById("axesToggle");
       axesToggle.checked = false;
       axesGroup.visible = false;
       axesToggle.addEventListener("change", () => {{
         axesGroup.visible = axesToggle.checked;
+        Graph.linkOpacity(axesToggle.checked ? 1 : 0);
       }});
 
       Graph.onNodeHover((node, prev) => {{
