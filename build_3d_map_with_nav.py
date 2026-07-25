@@ -25,7 +25,8 @@ Output:
 - Do NOT show hover labels.
 - Do NOT show HUD title/subtitle.
 - Do NOT show content ratings in clicked cards.
-- Do NOT show bounding cube.
+- A glowing wireframe bounding box (the max reach of every axis) is hidden by
+  default, revealed via the same "Show axes" toggle as the rest of the frame.
 """
 
 from __future__ import annotations
@@ -1602,6 +1603,33 @@ def build_html(data: dict[str, Any]) -> str:
       );
       originMarker.raycast = () => {{}};
       axesGroup.add(originMarker);
+
+      // Glowing wireframe box marking the outer edge of the coordinate space --
+      // the max reach of every axis (FRAME_XY on X/Y, FRAME_Z on Z) stitched
+      // into one bounding frame. A crisp inner line plus a wider, fainter
+      // outer one (same trick as the INTRO rings) fakes a glow without a real
+      // postprocessing pipeline.
+      function makeBoundingBox(inflate, opacity) {{
+        const geom = new THREE.BoxGeometry(
+          FRAME_XY * 2 + inflate,
+          FRAME_XY * 2 + inflate,
+          FRAME_Z * 2 + inflate
+        );
+        const box = new THREE.LineSegments(
+          new THREE.EdgesGeometry(geom),
+          new THREE.LineBasicMaterial({{
+            color: 0xffffff,
+            transparent: true,
+            opacity,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending
+          }})
+        );
+        box.raycast = () => {{}};
+        return box;
+      }}
+      axesGroup.add(makeBoundingBox(0, 0.5));
+      axesGroup.add(makeBoundingBox(14, 0.18));
 
       scene.add(axesGroup);
 
