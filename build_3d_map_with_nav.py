@@ -1484,8 +1484,11 @@ def build_html(data: dict[str, Any]) -> str:
       const axesGroup = new THREE.Group();
       axesGroup.visible = false;
 
-      function makeAxisLabel(text, colorHex) {{
-        const font = "600 32px Michroma, sans-serif";
+      function makeAxisLabel(text, colorHex, opts) {{
+        opts = opts || {{}};
+        const fontPx = opts.fontPx || 32;
+        const opacity = opts.opacity != null ? opts.opacity : 1;
+        const font = `600 ${{fontPx}}px Michroma, sans-serif`;
 
         // Measure first so the canvas is sized to fit the actual text --
         // a fixed-width canvas clips longer labels (e.g. "Relativity (inv r)")
@@ -1497,14 +1500,15 @@ def build_html(data: dict[str, Any]) -> str:
         const paddingX = 24;
         const canvas = document.createElement("canvas");
         canvas.width = Math.ceil(textWidth) + paddingX * 2;
-        canvas.height = 64;
+        canvas.height = Math.ceil(fontPx * 2);
 
         const ctx = canvas.getContext("2d");
         ctx.font = font;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = colorHex;
-        ctx.fillText(text, canvas.width / 2, 34);
+        ctx.globalAlpha = opacity;
+        ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
         const tex = new THREE.CanvasTexture(canvas);
 
@@ -1519,14 +1523,30 @@ def build_html(data: dict[str, Any]) -> str:
 
         // Keep label height fixed, scale width to match the canvas's aspect
         // ratio so text isn't stretched or squashed.
-        const spriteHeight = 37;
+        const spriteHeight = opts.spriteHeight || 37;
         const spriteWidth = spriteHeight * (canvas.width / canvas.height);
         sprite.scale.set(spriteWidth, spriteHeight, 1);
         sprite.renderOrder = 20;
         return sprite;
       }}
 
-      function addAxis(from, to, colorHex, labelText) {{
+      // Descriptive captions explaining what each end of an axis actually
+      // means, in plain language -- not just the metric name. Placed further
+      // out than the tip itself (along the same axis direction) so they never
+      // overlap the bold category-name label sitting right at the tip, and
+      // small/dim enough to read as secondary context rather than a title.
+      function addAxisCaption(point, dir, colorHex, text) {{
+        const GAP = 46; // distance beyond `point`, along `dir`, before the caption starts
+        const label = makeAxisLabel(text, colorHex, {{ fontPx: 20, opacity: 0.65, spriteHeight: 26 }});
+        label.position.set(
+          point.x + dir.x * GAP,
+          point.y + dir.y * GAP,
+          point.z + dir.z * GAP
+        );
+        axesGroup.add(label);
+      }}
+
+      function addAxis(from, to, colorHex, labelText, lowCaption, highCaption) {{
         const geom = new THREE.BufferGeometry().setFromPoints([
           new THREE.Vector3(from.x, from.y, from.z),
           new THREE.Vector3(to.x, to.y, to.z)
@@ -1541,14 +1561,39 @@ def build_html(data: dict[str, Any]) -> str:
         const label = makeAxisLabel(labelText, colorHex);
         label.position.set(to.x, to.y, to.z);
         axesGroup.add(label);
+
+        // Unit vector pointing from the low tip toward the high tip, so
+        // captions push straight outward past each end -- never sideways
+        // into the other two (orthogonal) axes' territory.
+        const dx = to.x - from.x, dy = to.y - from.y, dz = to.z - from.z;
+        const len = Math.hypot(dx, dy, dz) || 1;
+        const dir = {{ x: dx / len, y: dy / len, z: dz / len }};
+        const negDir = {{ x: -dir.x, y: -dir.y, z: -dir.z }};
+
+        if (lowCaption) addAxisCaption(from, negDir, colorHex, lowCaption);
+        if (highCaption) addAxisCaption(to, dir, colorHex, highCaption);
       }}
 
       // Three axes through the origin so the center (0,0,0) is unmistakable.
+      // Each end gets a short plain-language caption (low value -> high value)
+      // explaining what that side of the scale actually represents.
       const FRAME_XY = AXIS_SCALE + 30;
       const FRAME_Z = DEPTH_GAP + DEPTH_SPAN + 30;
-      addAxis({{ x: -FRAME_XY, y: 0, z: 0 }}, {{ x: FRAME_XY, y: 0, z: 0 }}, "#4D96FF", "Relativity");
-      addAxis({{ x: 0, y: -FRAME_XY, z: 0 }}, {{ x: 0, y: FRAME_XY, z: 0 }}, "#6BCB77", "Relatability");
-      addAxis({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: FRAME_Z }}, "#FF6B6B", "Depth");
+      addAxis({{ x: -FRAME_XY, y: 0, z: 0 }}, {{ x: FRAME_XY, y: 0, z: 0 }}, "#4D96FF", "Relativity",
+        "nothing unusual is happening", "reality is breaking");
+      addAxis({{ x: 0, y: -FRAME_XY, z: 0 }}, {{ x: 0, y: FRAME_XY, z: 0 }}, "#6BCB77", "Relatability",
+        "barely human", "painfully relatable");
+
+      // Depth is a special case: its sign encodes publish status (+Z published,
+      // -Z unpublished, see the divide plane below), not "low vs. high depth."
+      // Depth itself is the *magnitude* -- distance from the z=0 plane in
+      // either direction. So both tips are the "high depth" end, and "low
+      // depth" sits near the origin on both sides, not at either tip.
+      addAxis({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: FRAME_Z }}, "#FF6B6B", "Depth",
+        null, "not bedtime reading");
+      addAxisCaption({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: -1 }}, "#FF6B6B", "not bedtime reading");
+      addAxisCaption({{ x: 60, y: 0, z: DEPTH_GAP }}, {{ x: 1, y: 0, z: 0 }}, "#FF6B6B", "light and breezy");
+      addAxisCaption({{ x: 60, y: 0, z: -DEPTH_GAP }}, {{ x: 1, y: 0, z: 0 }}, "#FF6B6B", "light and breezy");
 
       // Bright marker at the exact center, 0,0,0.
       const originMarker = new THREE.Mesh(
@@ -1589,8 +1634,12 @@ def build_html(data: dict[str, Any]) -> str:
       divideEdge.raycast = () => {{}};
       axesGroup.add(divideEdge);
 
+      // Pushed well past the Relatability axis's high-end caption ("painfully
+      // relatable", which sits at y = FRAME_XY + 46 = 556) -- both labels are
+      // pinned to x=0, z=0, so they need real vertical separation or they sit
+      // right on top of each other.
       const divideLabel = makeAxisLabel("The Draft Horizon", "#FFFFFF");
-      divideLabel.position.set(0, DIVIDE_SIZE / 2 + 24, 0);
+      divideLabel.position.set(0, DIVIDE_SIZE / 2 + 110, 0);
       axesGroup.add(divideLabel);
 
       const axesToggle = document.getElementById("axesToggle");
