@@ -594,6 +594,13 @@ def build_html(data: dict[str, Any]) -> str:
       line-height: 1.5;
     }}
 
+    /* Description tends to be the longest free-text column -- give it real
+       room instead of letting auto table layout squeeze it down to a sliver. */
+    th[data-col="Description"],
+    td[data-col="Description"] {{
+      min-width: 420px;
+    }}
+
     tr:last-child td {{
       border-bottom: 0;
     }}
@@ -770,13 +777,13 @@ def build_html(data: dict[str, Any]) -> str:
       }}
 
       const thead = columns
-        .map(col => `<th>${{escapeHtml(col)}}</th>`)
+        .map(col => `<th data-col="${{escapeHtml(col)}}">${{escapeHtml(col)}}</th>`)
         .join("");
 
       const rows = entries
         .map(entry => {{
           const cells = columns
-            .map(col => `<td>${{renderCell(col, entry[col])}}</td>`)
+            .map(col => `<td data-col="${{escapeHtml(col)}}">${{renderCell(col, entry[col])}}</td>`)
             .join("");
           return `<tr>${{cells}}</tr>`;
         }})
