@@ -357,6 +357,13 @@
       line-height: 1.5;
     }
 
+    /* Description tends to be the longest free-text column -- give it real
+       room instead of letting auto table layout squeeze it down to a sliver. */
+    th[data-col="Description"],
+    td[data-col="Description"] {
+      min-width: 420px;
+    }
+
     tr:last-child td {
       border-bottom: 0;
     }
@@ -4883,7 +4890,7 @@
       },
       {
         "Name": "Pt",
-        "Sub-parts": "Sparring / Crotches / BJJ",
+        "Sub-parts": "Sparring / Close Contact / BJJ",
         "Description": "PILOT gets thrown, strangled, and crotch-mashed by a rotating cast of extremely polite training partners and calls all of it team bonding. 'It's just a sport,' everyone lies.",
         "Characters": "PILOT; Ensign K; Petty Officer M; Lt. J; Soren; Avery; Kenji; Tank; Mira; Tomás; Ramos; Mack; Torres; Coach",
         "Content URL": ""
@@ -5298,7 +5305,7 @@
         "Content URL": ""
       },
       {
-        "Name": "Nude",
+        "Name": "Wardrobe Malfunction",
         "Sub-parts": "",
         "Description": "A wardrobe malfunction, handled gracefully.",
         "Characters": "PILOT; UNIT",
@@ -5354,7 +5361,7 @@
         "Content URL": "https://inpoppyfields.tumblr.com/post/760128563779371008/skin-steel-sleep"
       },
       {
-        "Name": "Tissue",
+        "Name": "Organic Tissue",
         "Sub-parts": "",
         "Description": "A routine checkup turns into PILOT's crash course in human reproductive anatomy for a mech with, charitably, zero stakes in the matter. Equal parts tender and deliberately crude.",
         "Characters": "PILOT; UNIT",
@@ -5642,14 +5649,14 @@
       {
         "Name": "Something Tries to Speak",
         "Sub-parts": "",
-        "Description": "A glitching entity called UV hijacks mirrors, plaques, and phone screens to needle PILOT with cruel little messages at DC monuments, until Arlington's gate stops it cold.",
+        "Description": "A glitching entity called UV hijacks mirrors, plaques, and phone screens to needle PILOT with cruel little messages at DC monuments, until the Memorial Gate stops it cold.",
         "Characters": "PILOT; UV",
         "Content URL": ""
       },
       {
         "Name": "Something Tries to Enter",
         "Sub-parts": "",
-        "Description": "The same haunting entity that stalks PILOT through DC can't bring itself to cross the threshold into Arlington, so it sulks through libraries, Trader Joe's, and a Dunkin' in Crystal City instead.",
+        "Description": "The same haunting entity that stalks PILOT through DC can't bring itself to cross the threshold at the Memorial Gate, so it sulks through libraries, Trader Joe's, and a Dunkin' in Crystal City instead.",
         "Characters": "UV",
         "Content URL": ""
       },
@@ -5804,13 +5811,13 @@
       }
 
       const thead = columns
-        .map(col => `<th>${escapeHtml(col)}</th>`)
+        .map(col => `<th data-col="${escapeHtml(col)}">${escapeHtml(col)}</th>`)
         .join("");
 
       const rows = entries
         .map(entry => {
           const cells = columns
-            .map(col => `<td>${renderCell(col, entry[col])}</td>`)
+            .map(col => `<td data-col="${escapeHtml(col)}">${renderCell(col, entry[col])}</td>`)
             .join("");
           return `<tr>${cells}</tr>`;
         })
