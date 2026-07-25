@@ -1309,12 +1309,12 @@ def build_html(data: dict[str, Any]) -> str:
             const ringGlowColor = new THREE.Color(colorHex).lerp(new THREE.Color(0xffffff), 0.35);
 
             const ring = new THREE.Mesh(
-              new THREE.RingGeometry(60, 140, 48),
+              new THREE.RingGeometry(38, 78, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 1,
+                opacity: 0.55,
                 depthWrite: false,
                 blending: THREE.AdditiveBlending
               }})
@@ -1323,12 +1323,12 @@ def build_html(data: dict[str, Any]) -> str:
             // Wider, fainter halo layered behind the crisp ring to fake a glow/bloom
             // (there's no postprocessing pipeline here, so this is done by hand).
             const ringHalo = new THREE.Mesh(
-              new THREE.RingGeometry(35, 170, 48),
+              new THREE.RingGeometry(26, 100, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.35,
+                opacity: 0.18,
                 depthWrite: false,
                 blending: THREE.AdditiveBlending
               }})
