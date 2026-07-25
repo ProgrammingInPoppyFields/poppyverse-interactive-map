@@ -983,36 +983,9 @@ def build_html(data: dict[str, Any]) -> str:
       return x - Math.floor(x);
     }}
 
-    function makeGlowSprite(colorHex) {{
-      const canvas = document.createElement("canvas");
-      canvas.width = 128;
-      canvas.height = 128;
-
-      const ctx = canvas.getContext("2d");
-      const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-
-      grad.addColorStop(0, colorHex);
-      grad.addColorStop(0.5, colorHex + "80");
-      grad.addColorStop(1, colorHex + "00");
-
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 128, 128);
-
-      const tex = new THREE.CanvasTexture(canvas);
-
-      return new THREE.Sprite(
-        new THREE.SpriteMaterial({{
-          map: tex,
-          transparent: true,
-          depthWrite: false
-        }})
-      );
-    }}
-
-    // Same idea as makeGlowSprite, but with many more gradient stops for a
-    // long, gradual falloff. The 3-stop gradient above is fine under normal
-    // blending, but under AdditiveBlending (used for the INTRO node glow) its
-    // two straight-line segments visibly band/edge instead of fading smoothly.
+    // Many-stop gradient for a long, gradual falloff -- a simple 3-stop
+    // gradient bands/edges visibly once rendered with AdditiveBlending
+    // (used for every node's glow), so this is worth the extra stops.
     function makeSoftGlowSprite(colorHex) {{
       const canvas = document.createElement("canvas");
       canvas.width = 128;
@@ -1022,11 +995,15 @@ def build_html(data: dict[str, Any]) -> str:
       const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
 
       grad.addColorStop(0, colorHex + "FF");
-      grad.addColorStop(0.15, colorHex + "CC");
-      grad.addColorStop(0.3, colorHex + "88");
-      grad.addColorStop(0.5, colorHex + "50");
-      grad.addColorStop(0.7, colorHex + "26");
-      grad.addColorStop(0.85, colorHex + "0D");
+      grad.addColorStop(0.1, colorHex + "F0");
+      grad.addColorStop(0.2, colorHex + "D8");
+      grad.addColorStop(0.32, colorHex + "B4");
+      grad.addColorStop(0.45, colorHex + "8A");
+      grad.addColorStop(0.58, colorHex + "62");
+      grad.addColorStop(0.7, colorHex + "40");
+      grad.addColorStop(0.8, colorHex + "26");
+      grad.addColorStop(0.9, colorHex + "12");
+      grad.addColorStop(0.96, colorHex + "05");
       grad.addColorStop(1, colorHex + "00");
 
       ctx.fillStyle = grad;
@@ -1056,7 +1033,8 @@ def build_html(data: dict[str, Any]) -> str:
 
       const r = Math.min(node.__idleSize, 22);
       node.__glow.scale.set(r, r, 1);
-      node.__glow.material.opacity = 0.82;
+      const base = node.__idleOpacity != null ? node.__idleOpacity : 0.32;
+      node.__glow.material.opacity = Math.min(1, base + 0.25);
     }}
 
     function renderList(items) {{
@@ -1322,14 +1300,16 @@ def build_html(data: dict[str, Any]) -> str:
           );
 
           const sizeVal = Number(node.size) || 1;
-          const scale = 0.6 + sizeVal * 0.09;
+          // Experimental: pure proportional linear scale (no baseline offset),
+          // so scale is directly proportional to Size instead of Size + a floor.
+          const scale = sizeVal * 0.145;
           core.scale.set(scale, scale, scale);
 
           if (node.isIntro) {{
             const ringGlowColor = new THREE.Color(colorHex).lerp(new THREE.Color(0xffffff), 0.35);
 
             const ring = new THREE.Mesh(
-              new THREE.RingGeometry(10, 22, 48),
+              new THREE.RingGeometry(60, 140, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
@@ -1343,7 +1323,7 @@ def build_html(data: dict[str, Any]) -> str:
             // Wider, fainter halo layered behind the crisp ring to fake a glow/bloom
             // (there's no postprocessing pipeline here, so this is done by hand).
             const ringHalo = new THREE.Mesh(
-              new THREE.RingGeometry(6, 28, 48),
+              new THREE.RingGeometry(35, 170, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
@@ -1365,21 +1345,21 @@ def build_html(data: dict[str, Any]) -> str:
             core.add(ring);
           }}
 
-          const glow = node.isIntro ? makeSoftGlowSprite(colorHex) : makeGlowSprite(colorHex);
+          const glow = makeSoftGlowSprite(colorHex);
           glow.raycast = () => {{}};
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.max(42, 5 * scale * 5.4) * (node.isIntro ? 1.6 : 1);
-          const idleOpacity = node.isIntro ? 0.75 : 0.32;
+          const idleSize = Math.max(58, 5 * scale * 5.4 * 1.3) * (node.isIntro ? 1.6 : 1);
+          const idleOpacity = node.isIntro ? 0.9 : 0.6;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
-          if (node.isIntro) {{
-            // Normal alpha blending just overlays a translucent patch, which reads
-            // as small/dim on a dark background. Additive blending actually adds
-            // light, which is what makes something look like it's glowing.
-            glow.material.blending = THREE.AdditiveBlending;
-          }}
+          // Normal alpha blending just overlays a translucent patch, which reads
+          // as small/dim on a dark background. Additive blending actually adds
+          // light, which is what makes something look like it's glowing. The
+          // soft multi-stop gradient (vs. the old 3-stop one) keeps it from
+          // banding now that every node uses additive blending.
+          glow.material.blending = THREE.AdditiveBlending;
           core.add(glow);
 
           if (node.isIntro) {{
@@ -1389,7 +1369,7 @@ def build_html(data: dict[str, Any]) -> str:
             megaGlow.raycast = () => {{}};
             megaGlow.material.depthTest = false;
             megaGlow.material.blending = THREE.AdditiveBlending;
-            megaGlow.material.opacity = 0.4;
+            megaGlow.material.opacity = 0.5;
             megaGlow.renderOrder = 9;
             const megaSize = idleSize * 2.6;
             megaGlow.scale.set(megaSize, megaSize, 1);
@@ -1646,14 +1626,16 @@ def build_html(data: dict[str, Any]) -> str:
 
       renderer.setAnimationLoop(() => {{
         const t = performance.now() * 0.012;
-        const pulse = 0.70 + 0.30 * (0.5 + 0.5 * Math.sin(t));
+        const wave = 0.5 + 0.5 * Math.sin(t);
 
         if (hoveredNode && hoveredNode.__glow && hoveredNode !== selectedNode) {{
-          hoveredNode.__glow.material.opacity = pulse;
+          const base = hoveredNode.__idleOpacity != null ? hoveredNode.__idleOpacity : 0.32;
+          hoveredNode.__glow.material.opacity = Math.min(1, base + 0.15 + 0.15 * wave);
         }}
 
         if (selectedNode && selectedNode.__glow) {{
-          selectedNode.__glow.material.opacity = 0.62;
+          const base = selectedNode.__idleOpacity != null ? selectedNode.__idleOpacity : 0.32;
+          selectedNode.__glow.material.opacity = Math.min(1, base + 0.2);
           const r = Math.min(selectedNode.__idleSize, 22);
           selectedNode.__glow.scale.set(r, r, 1);
         }}
