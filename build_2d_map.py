@@ -489,7 +489,7 @@ def build_html(data: dict[str, Any]) -> str:
       top: 0;
       right: 0;
       z-index: 1100;
-      width: min(900px, 94vw);
+      width: 80vw;
       height: 100vh;
       background: #09090f;
       border-left: 1px solid rgba(255, 255, 255, 0.18);
@@ -676,6 +676,12 @@ def build_html(data: dict[str, Any]) -> str:
       .drawer-body {{
         padding-left: 20px;
         padding-right: 20px;
+      }}
+    }}
+
+    @media (orientation: portrait) {{
+      .drawer {{
+        width: 100vw;
       }}
     }}
   </style>
