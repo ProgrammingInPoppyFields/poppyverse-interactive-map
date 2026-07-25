@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="/screenshots/header.png" alt="A field of glowing multiverse nodes and nebulae drifting in space" width="100%" />
+</p>
+
 <table align="center" width="100%">
   <tr valign="top">
     <td align="center" width="50%">
@@ -295,6 +299,18 @@ The 3D map's layout has been rebuilt more than once. These are snapshots from di
       <img src="/screenshots/3d-map-cube-ON.png" alt="The cube-based layout experiment with axes revealed" width="100%" />
       <br />
       <sub>Cube layout experiment, axes revealed</sub>
+    </td>
+  </tr>
+  <tr valign="top">
+    <td align="center" width="50%">
+      <img src="/screenshots/3d-map-div.png" alt="A scatter layout experiment split by the publish-divide plane" width="100%" />
+      <br />
+      <sub>Scatter/divide layout experiment</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="/screenshots/3d-map-div-ON.png" alt="The scatter/divide layout experiment with axes, captions, and the Draft Horizon plane revealed" width="100%" />
+      <br />
+      <sub>Scatter/divide layout experiment, axes revealed</sub>
     </td>
   </tr>
 </table>
