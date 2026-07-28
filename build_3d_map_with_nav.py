@@ -11,7 +11,7 @@ Output:
 
 3D visual rules:
 - Keep graph nodes.
-- Keep collision links if resolvable, but only render them when the "Show axes"
+- Keep connection links if resolvable, but only render them when the "Show axes"
   toggle is on (they're hidden by default, same as the axes/frame).
 - Keep click drawer.
 - Keep top nav.
@@ -247,7 +247,7 @@ def build_data() -> dict[str, Any]:
             "description": get_first(row, ["Description", "Desc"]),
             "subparts": get_first(row, ["Sub-parts", "Subparts", "Parts"]),
             "characters": parse_list(get_first(row, ["Characters"]), delimiter=";"),
-            "collisions": parse_list(get_first(row, ["Collisions", "Collision"])),
+            "connections": parse_list(get_first(row, ["Connections", "Connection"])),
             "contentUrl": normalize_url(get_first(row, ["Content URL", "URL", "Url"])),
             "coverUrl": normalize_url(get_first(row, ["Cover URL", "Cover", "Image URL", "Image"])),
             "featured": parse_bool(get_first(row, ["Featured"])),
@@ -276,7 +276,7 @@ def build_data() -> dict[str, Any]:
     for node in nodes:
         source_id = str(node["id"])
 
-        for raw_target in node["collisions"]:
+        for raw_target in node["connections"]:
             target_key = str(raw_target).strip()
 
             if not target_key or target_key == "0":
@@ -817,14 +817,14 @@ def build_html(data: dict[str, Any]) -> str:
       background: var(--active-color);
     }}
 
-    .collision-link {{
+    .connection-link {{
       color: var(--active-color);
       text-decoration: none;
       border-bottom: 1px solid color-mix(in srgb, var(--active-color) 45%, transparent);
       transition: border-color 0.15s ease;
     }}
 
-    .collision-link:hover {{
+    .connection-link:hover {{
       border-bottom-color: var(--active-color);
     }}
 
@@ -1072,12 +1072,12 @@ def build_html(data: dict[str, Any]) -> str:
       return `<div class="coord-meters">${{rows}}</div>`;
     }}
 
-    function renderCollisions(items) {{
+    function renderConnections(items) {{
       if (!items || !items.length) return "<p>—</p>";
       const chips = items.map(item => {{
         const label = escapeHtml(item.label || "");
         return item.id != null
-          ? `<a class="tag-chip" href="#" data-collision-id="${{escapeHtml(String(item.id))}}">${{label}}</a>`
+          ? `<a class="tag-chip" href="#" data-connection-id="${{escapeHtml(String(item.id))}}">${{label}}</a>`
           : `<span class="tag-chip">${{label}}</span>`;
       }});
       return `<div class="tag-chips">${{chips.join("")}}</div>`;
@@ -1135,8 +1135,8 @@ def build_html(data: dict[str, Any]) -> str:
         </section>
 
         <section class="drawer-section">
-          <h3>Collisions</h3>
-          ${{renderCollisions(node.collisionLinks || [])}}
+          <h3>Connections</h3>
+          ${{renderConnections(node.connectionLinks || [])}}
         </section>
 
         <section class="drawer-section">
@@ -1232,17 +1232,17 @@ def build_html(data: dict[str, Any]) -> str:
         if (target) link.target = target;
       }});
 
-      // Build each node's collision list from the (already de-duped, undirected)
-      // links so the drawer shows a collision on BOTH endpoints, not just the
+      // Build each node's connection list from the (already de-duped, undirected)
+      // links so the drawer shows a connection on BOTH endpoints, not just the
       // node whose CSV cell happened to name the other. Each entry carries the
       // partner's id so clicking it opens that node's card in the drawer.
-      DATA.nodes.forEach(node => {{ node.collisionLinks = []; }});
+      DATA.nodes.forEach(node => {{ node.connectionLinks = []; }});
       DATA.links.forEach(link => {{
         const a = link.source;
         const b = link.target;
         if (typeof a !== "object" || typeof b !== "object") return;
-        a.collisionLinks.push({{ label: b.label, url: b.contentUrl, id: b.id }});
-        b.collisionLinks.push({{ label: a.label, url: a.contentUrl, id: a.id }});
+        a.connectionLinks.push({{ label: b.label, url: b.contentUrl, id: b.id }});
+        b.connectionLinks.push({{ label: a.label, url: a.contentUrl, id: a.id }});
       }});
 
       return {{
@@ -1265,10 +1265,10 @@ def build_html(data: dict[str, Any]) -> str:
       drawerBackdrop.addEventListener("click", closeDrawer);
 
       drawerBody.addEventListener("click", event => {{
-        const chip = event.target.closest(".tag-chip[data-collision-id]");
+        const chip = event.target.closest(".tag-chip[data-connection-id]");
         if (!chip) return;
         event.preventDefault();
-        const target = nodeById.get(chip.dataset.collisionId);
+        const target = nodeById.get(chip.dataset.connectionId);
         if (target) openDrawer(target);
       }});
 
@@ -1310,12 +1310,12 @@ def build_html(data: dict[str, Any]) -> str:
             const ringGlowColor = new THREE.Color(colorHex).lerp(new THREE.Color(0xffffff), 0.35);
 
             const ring = new THREE.Mesh(
-              new THREE.RingGeometry(38, 78, 48),
+              new THREE.RingGeometry(34, 50, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.55,
+                opacity: 0.13,
                 depthWrite: false,
                 blending: THREE.AdditiveBlending
               }})
@@ -1324,12 +1324,12 @@ def build_html(data: dict[str, Any]) -> str:
             // Wider, fainter halo layered behind the crisp ring to fake a glow/bloom
             // (there's no postprocessing pipeline here, so this is done by hand).
             const ringHalo = new THREE.Mesh(
-              new THREE.RingGeometry(26, 100, 48),
+              new THREE.RingGeometry(28, 58, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.18,
+                opacity: 0.03,
                 depthWrite: false,
                 blending: THREE.AdditiveBlending
               }})
@@ -1351,8 +1351,8 @@ def build_html(data: dict[str, Any]) -> str:
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.max(58, 5 * scale * 5.4 * 1.3) * (node.isIntro ? 1.6 : 1);
-          const idleOpacity = node.isIntro ? 0.9 : 0.6;
+          const idleSize = Math.max(58, 5 * scale * 5.4 * 1.3) * (node.isIntro ? 1.0 : 1);
+          const idleOpacity = node.isIntro ? 0.22 : 0.45;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
           // Normal alpha blending just overlays a translucent patch, which reads
@@ -1370,9 +1370,9 @@ def build_html(data: dict[str, Any]) -> str:
             megaGlow.raycast = () => {{}};
             megaGlow.material.depthTest = false;
             megaGlow.material.blending = THREE.AdditiveBlending;
-            megaGlow.material.opacity = 0.5;
+            megaGlow.material.opacity = 0.08;
             megaGlow.renderOrder = 9;
-            const megaSize = idleSize * 2.6;
+            const megaSize = idleSize * 1.15;
             megaGlow.scale.set(megaSize, megaSize, 1);
             core.add(megaGlow);
           }}
@@ -1384,7 +1384,7 @@ def build_html(data: dict[str, Any]) -> str:
 
           return core;
         }})
-        .linkColor(() => "#FFFFFF")
+        .linkColor(() => "#B8BFCC")
         .linkWidth(0)
         .linkOpacity(0);
 
@@ -1635,7 +1635,7 @@ def build_html(data: dict[str, Any]) -> str:
 
       // Publish-divide plane at z=0: published nodes (+Z) sit in front of it,
       // unpublished nodes (-Z) sit behind it. Gated behind the axes toggle,
-      // same as the axes/frame and collision lines.
+      // same as the axes/frame and connection lines.
       const DIVIDE_SIZE = (AXIS_SCALE + 60) * 2;
       const dividePlane = new THREE.Mesh(
         new THREE.PlaneGeometry(DIVIDE_SIZE, DIVIDE_SIZE),
@@ -1675,8 +1675,27 @@ def build_html(data: dict[str, Any]) -> str:
       axesGroup.visible = false;
       axesToggle.addEventListener("change", () => {{
         axesGroup.visible = axesToggle.checked;
-        Graph.linkOpacity(axesToggle.checked ? 1 : 0);
+        Graph.linkOpacity(axesToggle.checked ? 0.35 : 0);
       }});
+
+      // "START HERE" callout over the entry-point INTRO node, gated behind the
+      // same "Show axes" toggle as the rest of the reference frame -- it's a
+      // wayfinding aid for people poking at the raw graph, not part of the
+      // normal browsing experience.
+      const startHereNode = nodeById.get("700");
+
+      if (startHereNode) {{
+        const startHereLabel = makeAxisLabel("START HERE", "#FFFFFF", {{
+          fontPx: 76,
+          spriteHeight: 110
+        }});
+        startHereLabel.position.set(
+          startHereNode.x,
+          startHereNode.y + 95,
+          startHereNode.z
+        );
+        axesGroup.add(startHereLabel);
+      }}
 
       Graph.onNodeHover((node, prev) => {{
         const prevNode = prev || hoveredNode;

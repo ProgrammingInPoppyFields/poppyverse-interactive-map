@@ -10,9 +10,9 @@
       <sub><strong>3D map</strong><br />Story nodes floating in space, colored by cluster.</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-globe.png" alt="The 3D map with the Relativity / Relatability / Depth axes and collision lines revealed" width="100%" />
+      <img src="/screenshots/3d-map-globe.png" alt="The 3D map with the Relativity / Relatability / Depth axes and connection lines revealed" width="100%" />
       <br />
-      <sub><strong>3D map, "Show axes" enabled</strong><br />The same nodes with the axes, origin marker, and collision-link lines made visible.</sub>
+      <sub><strong>3D map, "Show axes" enabled</strong><br />The same nodes with the axes, origin marker, and connection-link lines made visible.</sub>
     </td>
   </tr>
 </table>
@@ -42,7 +42,7 @@ The Poppyverse is too interconnected for a normal table of contents and too unst
 This project turns its stories, characters, timelines, and relationships into a browsable interface with two complementary views:
 
 - **2D Map** — a calmer cluster-first dashboard for structured browsing
-- **3D Map** — an interactive force-directed graph for seeing collisions, connections, and narrative gravity
+- **3D Map** — an interactive force-directed graph for seeing connections and narrative gravity
 
 The site is generated from structured CSV data rather than maintained as a pile of hand-edited HTML pages. Content, metadata, relationships, and presentation logic stay separate, which makes the archive easier to expand without manually rebuilding the universe every time canon shifts.
 
@@ -134,22 +134,22 @@ A translucent plane sits at `z = 0` marking the divide: published stories (with 
 
 Cluster no longer affects position, only color. A small seeded jitter keeps nodes with identical scores from stacking exactly on top of each other, but is deterministic per node id, so rebuilds don't shuffle anyone around.
 
-Axes, the z=0 divide plane, and collision lines are all hidden by default — toggle "Show axes" (bottom-left) to see the three labeled axis lines, the origin marker, the divide plane, and the white collision-link lines connecting nodes.
+Axes, the z=0 divide plane, and connection lines are all hidden by default — toggle "Show axes" (bottom-left) to see the three labeled axis lines, the origin marker, the divide plane, and the faint connection-link lines connecting nodes.
 
 ---
 
-## what is a collision
+## what is a connection
 
-The white lines connecting nodes on the map, and the "Collisions" list on each detail card, aren't a technical link — they're a story relationship, defined in the `Collisions` column of `SRC_toc.csv`:
+The faint lines connecting nodes on the map, and the "Connections" list on each detail card, aren't a technical link — they're a story relationship, defined in the `Connections` column of `SRC_toc.csv`:
 
-> **COLLISION:** A collision defines a relationship between 2 stories where characters, timelines, or alternate versions of the same people from separate universes come into direct contact and begin affecting one another. Less "special crossover episode," more "the walls between realities have failed inspection."
+> **CONNECTION:** A connection defines a relationship between 2 stories where characters, timelines, or alternate versions of the same people from separate universes come into direct contact and begin affecting one another. Less "special crossover episode," more "the walls between realities have failed inspection."
 
 Both concepts above show up together on a node's detail card — click any node on `3d_map.html` or `2d_map.html` to open it:
 
 <p align="center">
-  <img src="/screenshots/detail-card-view.png" alt="A story's detail card, showing its description, Relativity/Relatability/Depth coordinate meters, sub-parts, characters, collisions, and read-more link" width="420" />
+  <img src="/screenshots/detail-card-view.png" alt="A story's detail card, showing its description, Relativity/Relatability/Depth coordinate meters, sub-parts, characters, connections, and read-more link" width="420" />
   <br />
-  <sub>A detail card — Coordinates meters and Collisions chips are populated straight from <code>SRC_toc.csv</code>.</sub>
+  <sub>A detail card — Coordinates meters and Connections chips are populated straight from <code>SRC_toc.csv</code>.</sub>
 </p>
 
 ---
