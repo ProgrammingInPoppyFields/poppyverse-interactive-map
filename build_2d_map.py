@@ -21,7 +21,7 @@ It intentionally excludes:
 - Cluster
 - Sub-cluster
 - Size
-- Collisions
+- Connections
 - (X) Relativity
 - (Y) Relatability
 - (Z) Depth
