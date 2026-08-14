@@ -305,33 +305,36 @@
       box-shadow: 0 0 28px color-mix(in srgb, var(--poppy-pink) 30%, transparent);
     }
 
-    /* Narrow viewports: the three bottom controls can't sit side by side
-       (the legend bar alone is 320px), so stack them centered, with the
-       legend on top, the wormhole in the middle, and the axes toggle on
-       the bottom. Each step is one control-height plus a 10px gap. */
+    /* Narrow viewports: the four bottom controls can't sit side by side
+       (the legend bar alone is 320px), so stack them centered -- legend on
+       top, wormhole next, then the axes toggle, then the links toggle on
+       the bottom. Each step is one control-height plus a 10px gap. The two
+       toggles are forced into a column (rather than relying on flex-wrap)
+       so this math stays exact instead of guessing whether they wrapped. */
     @media (max-width: 820px) {
       .bottom-toggles {
         left: 50%;
         right: auto;
         transform: translateX(-50%);
         bottom: 18px;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
       }
 
       .wormhole-btn {
-        bottom: calc(18px + (var(--control-height) + 10px));
+        bottom: calc(18px + 2 * (var(--control-height) + 10px));
       }
 
       .legend {
         left: 50%;
         right: auto;
         transform: translateX(-50%);
-        bottom: calc(18px + 2 * (var(--control-height) + 10px));
-        max-height: calc(100vh - var(--nav-height) - 138px);
+        bottom: calc(18px + 3 * (var(--control-height) + 10px));
+        max-height: calc(100vh - var(--nav-height) - 190px);
       }
 
       .legend-rows {
-        max-height: calc(100vh - var(--nav-height) - 178px);
+        max-height: calc(100vh - var(--nav-height) - 230px);
       }
     }
 
@@ -18709,7 +18712,7 @@
       linksToggle.checked = false;
       Graph.linkOpacity(0);
       linksToggle.addEventListener("change", () => {
-        Graph.linkOpacity(linksToggle.checked ? 0.35 : 0);
+        Graph.linkOpacity(linksToggle.checked ? 0.8 : 0);
       });
 
       // "START HERE" callout over the entry-point INTRO node, gated behind the
