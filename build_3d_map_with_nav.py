@@ -11,8 +11,9 @@ Output:
 
 3D visual rules:
 - Keep graph nodes.
-- Keep connection links if resolvable, but only render them when the "Show axes"
-  toggle is on (they're hidden by default, same as the axes/frame).
+- Keep connection links if resolvable, but only render them when the "Show links"
+  toggle is on (they're hidden by default, and toggle independently of the
+  axes/frame via their own control next to "Show axes").
 - Keep click drawer.
 - Keep top nav.
 - Keep Multiverse Color Legend.
@@ -252,6 +253,7 @@ def build_data() -> dict[str, Any]:
             "coverUrl": normalize_url(get_first(row, ["Cover URL", "Cover", "Image URL", "Image"])),
             "featured": parse_bool(get_first(row, ["Featured"])),
             "isIntro": "intro" in name.lower(),
+            "isManga": name.strip().upper().startswith("[MANGA]"),
             "size": max(1.0, parse_float(get_first(row, ["Size", "Value"]), 1.0)),
             "xValue": parse_float(get_first(row, ["(X) Relativity", "X", "Relativity"]), 0.0),
             "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
@@ -529,11 +531,18 @@ def build_html(data: dict[str, Any]) -> str:
       line-height: 1.45;
     }}
 
-    .axes-toggle {{
+    .bottom-toggles {{
       position: fixed;
       bottom: 18px;
       left: 18px;
       z-index: 22;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }}
+
+    .axes-toggle {{
       display: flex;
       align-items: center;
       gap: 10px;
@@ -636,11 +645,12 @@ def build_html(data: dict[str, Any]) -> str:
        legend on top, the wormhole in the middle, and the axes toggle on
        the bottom. Each step is one control-height plus a 10px gap. */
     @media (max-width: 820px) {{
-      .axes-toggle {{
+      .bottom-toggles {{
         left: 50%;
         right: auto;
         transform: translateX(-50%);
         bottom: 18px;
+        justify-content: center;
       }}
 
       .wormhole-btn {{
@@ -911,11 +921,18 @@ def build_html(data: dict[str, Any]) -> str:
     <div id="drawerBody" class="drawer-body"></div>
   </aside>
 
-  <label class="axes-toggle" for="axesToggle">
-    <input type="checkbox" id="axesToggle" />
-    <span class="axes-toggle-track"><span class="axes-toggle-thumb"></span></span>
-    <span class="axes-toggle-label">Show axes</span>
-  </label>
+  <div class="bottom-toggles">
+    <label class="axes-toggle" for="axesToggle">
+      <input type="checkbox" id="axesToggle" />
+      <span class="axes-toggle-track"><span class="axes-toggle-thumb"></span></span>
+      <span class="axes-toggle-label">Show axes</span>
+    </label>
+    <label class="axes-toggle" for="linksToggle">
+      <input type="checkbox" id="linksToggle" />
+      <span class="axes-toggle-track"><span class="axes-toggle-thumb"></span></span>
+      <span class="axes-toggle-label">Show links</span>
+    </label>
+  </div>
 
   <a class="wormhole-btn" href="https://programminginpoppyfields.github.io/engine-codex/" target="_blank" rel="noopener">Wormhole</a>
 
@@ -939,11 +956,11 @@ def build_html(data: dict[str, Any]) -> str:
     // forced by publish status, so published/unpublished nodes always land on
     // opposite sides of the z=0 divide plane.
     const AXIS_MAX = 10;        // CSV metrics (Relativity / Relatability / Depth) are scored 0..10
-    const AXIS_SCALE = 480;     // half-extent of the X/Y spread (bigger = dots spread further apart)
-    const DEPTH_GAP = 60;       // minimum distance any node sits from the z=0 divide plane
-    const DEPTH_SPAN = 480;     // additional Z distance added on top of DEPTH_GAP, scaled by Depth score
+    const AXIS_SCALE = 560;     // half-extent of the X/Y spread (bigger = dots spread further apart)
+    const DEPTH_GAP = 70;       // minimum distance any node sits from the z=0 divide plane
+    const DEPTH_SPAN = 560;     // additional Z distance added on top of DEPTH_GAP, scaled by Depth score
     const JITTER = 0.4;         // seeded spread so nodes with identical scores don't stack
-    const POINT_JITTER = 60;    // absolute (Cartesian) units of random nudge -- breaks up the integer-rating grid into something organic
+    const POINT_JITTER = 70;    // absolute (Cartesian) units of random nudge -- breaks up the integer-rating grid into something organic
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1290,32 +1307,55 @@ def build_html(data: dict[str, Any]) -> str:
         .nodeThreeObject(node => {{
           const colorHex = node.color || "#FF1447";
           const color = new THREE.Color(colorHex);
+          // Push saturation up so hue reads clearly regardless of lighting --
+          // guarantees vividness at the data level instead of hoping the
+          // light rig doesn't wash it out.
+          {{
+            const hsl = {{ h: 0, s: 0, l: 0 }};
+            color.getHSL(hsl);
+            color.setHSL(hsl.h, Math.min(1, hsl.s * 1.35), hsl.l);
+          }}
 
+          // EXPERIMENTAL: [MANGA] nodes get a faceted, low-poly core instead of
+          // a smooth sphere -- a paneled silhouette instead of an orbital
+          // accessory, so it doesn't compete with the isIntro ring treatment.
           const core = new THREE.Mesh(
-            new THREE.SphereGeometry(5, 24, 24),
+            node.isManga ? new THREE.TetrahedronGeometry(5.5, 0) : new THREE.SphereGeometry(5, 24, 24),
             new THREE.MeshStandardMaterial({{
               color,
-              metalness: 0.12,
-              roughness: 0.38
+              metalness: 0.03,
+              roughness: 0.5,
+              flatShading: node.isManga
             }})
           );
 
           const sizeVal = Number(node.size) || 1;
           // Experimental: pure proportional linear scale (no baseline offset),
           // so scale is directly proportional to Size instead of Size + a floor.
-          const scale = sizeVal * 0.145;
+          const scale = sizeVal * 0.32;
           core.scale.set(scale, scale, scale);
+
+          if (node.isManga) {{
+            // Random seeded orientation so the tetrahedrons don't all point
+            // the same way -- every other node is rotationally symmetric
+            // enough not to need this, but a flat-shaded pyramid very visibly
+            // isn't.
+            const rotSeed = hash32(String(node.id) + "|mangaRot");
+            core.rotation.x = rand(rotSeed) * Math.PI * 2;
+            core.rotation.y = rand(rotSeed + 1) * Math.PI * 2;
+            core.rotation.z = rand(rotSeed + 2) * Math.PI * 2;
+          }}
 
           if (node.isIntro) {{
             const ringGlowColor = new THREE.Color(colorHex).lerp(new THREE.Color(0xffffff), 0.35);
 
             const ring = new THREE.Mesh(
-              new THREE.RingGeometry(34, 50, 48),
+              new THREE.RingGeometry(44, 50, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.13,
+                opacity: 0.26,
                 depthWrite: false,
                 blending: THREE.AdditiveBlending
               }})
@@ -1324,12 +1364,12 @@ def build_html(data: dict[str, Any]) -> str:
             // Wider, fainter halo layered behind the crisp ring to fake a glow/bloom
             // (there's no postprocessing pipeline here, so this is done by hand).
             const ringHalo = new THREE.Mesh(
-              new THREE.RingGeometry(28, 58, 48),
+              new THREE.RingGeometry(39, 55, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.03,
+                opacity: 0.07,
                 depthWrite: false,
                 blending: THREE.AdditiveBlending
               }})
@@ -1351,8 +1391,8 @@ def build_html(data: dict[str, Any]) -> str:
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.max(58, 5 * scale * 5.4 * 1.3) * (node.isIntro ? 1.0 : 1);
-          const idleOpacity = node.isIntro ? 0.22 : 0.45;
+          const idleSize = Math.max(22, 5 * scale * 5.4 * 1.3) * (node.isIntro ? 1.0 : 1);
+          const idleOpacity = node.isIntro ? 0.19 : 0.38;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
           // Normal alpha blending just overlays a translucent patch, which reads
@@ -1370,7 +1410,7 @@ def build_html(data: dict[str, Any]) -> str:
             megaGlow.raycast = () => {{}};
             megaGlow.material.depthTest = false;
             megaGlow.material.blending = THREE.AdditiveBlending;
-            megaGlow.material.opacity = 0.08;
+            megaGlow.material.opacity = 0.07;
             megaGlow.renderOrder = 9;
             const megaSize = idleSize * 1.15;
             megaGlow.scale.set(megaSize, megaSize, 1);
@@ -1398,7 +1438,7 @@ def build_html(data: dict[str, Any]) -> str:
       renderer.setClearColor(0x000000, 0);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.05;
+      renderer.toneMappingExposure = 0.85;
 
       Graph.renderer(renderer);
       Graph.width(window.innerWidth).height(window.innerHeight);
@@ -1407,9 +1447,12 @@ def build_html(data: dict[str, Any]) -> str:
       const scene = Graph.scene();
       scene.background = null;
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.36));
+      // Tinted violet instead of flat white -- white ambient uniformly washes
+      // every surface toward grey/white regardless of its own hue; a tinted
+      // fill light avoids that while still lighting the shadowed side.
+      scene.add(new THREE.AmbientLight(0x4a3a66, 0.24));
 
-      const dir = new THREE.DirectionalLight(0xffffff, 0.7);
+      const dir = new THREE.DirectionalLight(0xffffff, 0.42);
       dir.position.set(60, 80, 40);
       scene.add(dir);
 
@@ -1675,7 +1718,13 @@ def build_html(data: dict[str, Any]) -> str:
       axesGroup.visible = false;
       axesToggle.addEventListener("change", () => {{
         axesGroup.visible = axesToggle.checked;
-        Graph.linkOpacity(axesToggle.checked ? 0.35 : 0);
+      }});
+
+      const linksToggle = document.getElementById("linksToggle");
+      linksToggle.checked = false;
+      Graph.linkOpacity(0);
+      linksToggle.addEventListener("change", () => {{
+        Graph.linkOpacity(linksToggle.checked ? 0.35 : 0);
       }});
 
       // "START HERE" callout over the entry-point INTRO node, gated behind the
@@ -1686,12 +1735,12 @@ def build_html(data: dict[str, Any]) -> str:
 
       if (startHereNode) {{
         const startHereLabel = makeAxisLabel("START HERE", "#FFFFFF", {{
-          fontPx: 76,
-          spriteHeight: 110
+          fontPx: 52,
+          spriteHeight: 75
         }});
         startHereLabel.position.set(
           startHereNode.x,
-          startHereNode.y + 95,
+          startHereNode.y + 72,
           startHereNode.z
         );
         axesGroup.add(startHereLabel);
