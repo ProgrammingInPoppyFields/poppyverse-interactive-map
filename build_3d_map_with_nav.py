@@ -16,7 +16,7 @@ Output:
   axes/frame via their own control next to "Show axes").
 - Keep click drawer.
 - Keep top nav.
-- Keep Multiverse Color Legend.
+- Keep the Legend (node shapes + multiverse colors).
 - Do NOT show axes.
 - Do NOT show axis labels.
   (The reference frame — axes through the origin, the 0,0,0 center marker, and
@@ -935,7 +935,7 @@ def build_html(data: dict[str, Any]) -> str:
   <div id="graph"></div>
 
   <aside id="legend" class="legend">
-    <button id="legendToggle" class="legend-toggle" type="button">Multiverse Color Legend ▴</button>
+    <button id="legendToggle" class="legend-toggle" type="button">Legend ▴</button>
     <div id="legendRows" class="legend-rows"></div>
   </aside>
 
@@ -1241,7 +1241,7 @@ def build_html(data: dict[str, Any]) -> str:
 
       const colorLabel = document.createElement("p");
       colorLabel.className = "legend-section-label";
-      colorLabel.textContent = "Cluster Colors";
+      colorLabel.textContent = "Multiverse Colors";
       legendRows.appendChild(colorLabel);
 
       DATA.clusters.forEach(cluster => {{
@@ -1352,8 +1352,8 @@ def build_html(data: dict[str, Any]) -> str:
       legendToggle.addEventListener("click", () => {{
         const isOpen = legend.classList.toggle("open");
         legendToggle.textContent = isOpen
-          ? "Multiverse Color Legend ▾"
-          : "Multiverse Color Legend ▴";
+          ? "Legend ▾"
+          : "Legend ▴";
       }});
 
       drawerClose.addEventListener("click", closeDrawer);
