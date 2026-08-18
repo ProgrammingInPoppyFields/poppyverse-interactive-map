@@ -17696,6 +17696,94 @@
       "xValue": 2.0,
       "yValue": 10.0,
       "zValue": 9.0
+    },
+    {
+      "id": "735",
+      "label": "[TRAILER] Sunlight",
+      "cluster": "",
+      "clusterDescription": "",
+      "color": "#FF1447",
+      "description": "",
+      "subparts": "",
+      "characters": [],
+      "connections": [],
+      "contentUrl": "https://www.youtube.com/watch?v=8Rt_fmHHC9E&list=PLcYNCq7mIrmw&index=4",
+      "coverUrl": "",
+      "featured": false,
+      "isIntro": false,
+      "isManga": false,
+      "isMeta": false,
+      "isTrailer": true,
+      "size": 1.0,
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
+    },
+    {
+      "id": "736",
+      "label": "[TRAILER] Something in the Air Tonight",
+      "cluster": "",
+      "clusterDescription": "",
+      "color": "#FF1447",
+      "description": "",
+      "subparts": "",
+      "characters": [],
+      "connections": [],
+      "contentUrl": "https://www.youtube.com/watch?v=oUvxt9mwSjo&list=PLcYNCq7mIrmw&index=3",
+      "coverUrl": "",
+      "featured": false,
+      "isIntro": false,
+      "isManga": false,
+      "isMeta": false,
+      "isTrailer": true,
+      "size": 1.0,
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
+    },
+    {
+      "id": "737",
+      "label": "[TRAILER] Seeing Stars",
+      "cluster": "",
+      "clusterDescription": "",
+      "color": "#FF1447",
+      "description": "",
+      "subparts": "",
+      "characters": [],
+      "connections": [],
+      "contentUrl": "https://www.youtube.com/watch?v=x91wm7NfH2Y&list=PLcYNCq7mIrmw&index=2",
+      "coverUrl": "",
+      "featured": false,
+      "isIntro": false,
+      "isManga": false,
+      "isMeta": false,
+      "isTrailer": true,
+      "size": 1.0,
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
+    },
+    {
+      "id": "738",
+      "label": "[TRAILER] Poppy-cursed",
+      "cluster": "",
+      "clusterDescription": "",
+      "color": "#FF1447",
+      "description": "",
+      "subparts": "",
+      "characters": [],
+      "connections": [],
+      "contentUrl": "https://www.youtube.com/watch?v=13ux-KJjlZY&list=PLcYNCq7mIrmw&index=1",
+      "coverUrl": "",
+      "featured": false,
+      "isIntro": false,
+      "isManga": false,
+      "isMeta": false,
+      "isTrailer": true,
+      "size": 1.0,
+      "xValue": 0.0,
+      "yValue": 0.0,
+      "zValue": 0.0
     }
   ],
   "links": [
@@ -20326,6 +20414,10 @@
       });
 
       Graph.onNodeClick(node => {
+        if (node.isTrailer && node.contentUrl) {
+          window.open(node.contentUrl, "_blank", "noopener");
+          return;
+        }
         openDrawer(node);
       });
 
