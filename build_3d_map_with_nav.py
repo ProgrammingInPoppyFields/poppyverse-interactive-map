@@ -533,6 +533,30 @@ def build_html(data: dict[str, Any]) -> str:
       line-height: 1.45;
     }}
 
+    .legend-section-label {{
+      margin: 12px 0 2px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.5);
+      font-family: "Michroma", sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }}
+
+    .legend-shape-icon {{
+      width: 14px;
+      height: 14px;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
+    }}
+
     .bottom-toggles {{
       position: fixed;
       bottom: 18px;
@@ -1186,6 +1210,39 @@ def build_html(data: dict[str, Any]) -> str:
 
     function buildLegend() {{
       legendRows.innerHTML = "";
+
+      const shapeLabel = document.createElement("p");
+      shapeLabel.className = "legend-section-label";
+      shapeLabel.textContent = "Node Shapes";
+      legendRows.appendChild(shapeLabel);
+
+      const shapes = [
+        ["▲", "Manga Panels", "Reference art and panel pages -- no story text."],
+        ["■", "Author Notes", "Commentary from behind the curtain, not story canon."],
+        ["☄", "Trailers", "Click to watch on YouTube."],
+        ["🪐", "Intro", "The first stop for a given branch or arc."],
+        ["●", "Stories", "The actual narrative content. Click to read."]
+      ];
+
+      shapes.forEach(([glyph, name, desc]) => {{
+        const row = document.createElement("div");
+        row.className = "legend-row";
+
+        row.innerHTML = `
+          <div class="legend-shape-icon">${{glyph}}</div>
+          <div>
+            <p class="legend-name">${{escapeHtml(name)}}</p>
+            <p class="legend-desc">${{escapeHtml(desc)}}</p>
+          </div>
+        `;
+
+        legendRows.appendChild(row);
+      }});
+
+      const colorLabel = document.createElement("p");
+      colorLabel.className = "legend-section-label";
+      colorLabel.textContent = "Cluster Colors";
+      legendRows.appendChild(colorLabel);
 
       DATA.clusters.forEach(cluster => {{
         const row = document.createElement("div");
