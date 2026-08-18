@@ -255,6 +255,7 @@ def build_data() -> dict[str, Any]:
             "isIntro": "intro" in name.lower(),
             "isManga": name.strip().upper().startswith("[MANGA]"),
             "isMeta": name.strip().upper().startswith("[META]"),
+            "isTrailer": name.strip().upper().startswith("[TRAILER]"),
             "size": max(1.0, parse_float(get_first(row, ["Size", "Value"]), 1.0)),
             "xValue": parse_float(get_first(row, ["(X) Relativity", "X", "Relativity"]), 0.0),
             "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
@@ -1215,6 +1216,22 @@ def build_html(data: dict[str, Any]) -> str:
         //        land on opposite sides of the z=0 publish-divide plane.
         const seed = hash32(String(node.id) + "|" + String(node.cluster));
 
+        // [TRAILER] nodes (YouTube trailers) aren't story content scored on
+        // Relativity/Relatability/Depth -- they float freely through the
+        // whole scene volume instead of sitting on those axes. Seeded so
+        // they're stable across reloads, but otherwise untethered from the
+        // coordinate system everything else is pinned to.
+        if (node.isTrailer) {{
+          node.x = (rand(seed + 10) - 0.5) * 2 * AXIS_SCALE;
+          node.y = (rand(seed + 11) - 0.5) * 2 * AXIS_SCALE;
+          node.z = (rand(seed + 12) - 0.5) * 2 * (DEPTH_GAP + DEPTH_SPAN);
+          node.fx = node.x;
+          node.fy = node.y;
+          node.fz = node.z;
+          node.val = node.size;
+          return;
+        }}
+
         // Normalize each metric to 0..1, then add a small seeded jitter so nodes
         // that share identical scores don't land on the exact same point.
         const relN   = Math.max(0, Math.min(1, node.xValue / AXIS_MAX));
@@ -1326,22 +1343,29 @@ def build_html(data: dict[str, Any]) -> str:
           // [META] nodes get a cube -- a distinct, unmissable silhouette for
           // "you're looking at authorial commentary, not a story," even
           // though the node itself now lives in its story's own cluster.
+          // [TRAILER] nodes get a low-poly "rock" core (the comet head) --
+          // the tail sprites added below are what actually sell the comet
+          // read, this is just something for them to trail off of.
           const core = new THREE.Mesh(
             node.isManga ? new THREE.TetrahedronGeometry(5.5, 0) :
             node.isMeta ? new THREE.BoxGeometry(8, 8, 8) :
+            node.isTrailer ? new THREE.IcosahedronGeometry(11, 0) :
             new THREE.SphereGeometry(5, 24, 24),
             new THREE.MeshStandardMaterial({{
               color,
               metalness: 0.03,
               roughness: 0.5,
-              flatShading: node.isManga
+              flatShading: node.isManga || node.isTrailer
             }})
           );
 
           const sizeVal = Number(node.size) || 1;
           // Experimental: pure proportional linear scale (no baseline offset),
           // so scale is directly proportional to Size instead of Size + a floor.
-          const scale = sizeVal * 0.32;
+          // [TRAILER] nodes get a flat multiplier on top -- they need to read
+          // as "notice me" even at low Size values, since there's no axis
+          // score driving their prominence the way there is for story nodes.
+          const scale = sizeVal * 0.32 * (node.isTrailer ? 1.8 : 1);
           core.scale.set(scale, scale, scale);
 
           if (node.isManga) {{
@@ -1362,6 +1386,42 @@ def build_html(data: dict[str, Any]) -> str:
             core.rotation.x = rand(rotSeed) * Math.PI * 2;
             core.rotation.y = rand(rotSeed + 1) * Math.PI * 2;
             core.rotation.z = rand(rotSeed + 2) * Math.PI * 2;
+          }}
+
+          if (node.isTrailer) {{
+            const rotSeed = hash32(String(node.id) + "|trailerRot");
+            core.rotation.x = rand(rotSeed) * Math.PI * 2;
+            core.rotation.y = rand(rotSeed + 1) * Math.PI * 2;
+            core.rotation.z = rand(rotSeed + 2) * Math.PI * 2;
+
+            // Comet tail: a staggered chain of shrinking, fading additive
+            // glow puffs trailing off in one seeded-random direction. Each
+            // puff is a camera-facing billboard, but the fixed offsets
+            // between them still read as a directional streak from any
+            // viewing angle -- cheaper and simpler than a real particle
+            // system, and consistent with how every other glow in this file
+            // is a hand-placed sprite rather than a postprocessing effect.
+            const tailSeed = hash32(String(node.id) + "|trailerTail");
+            const tailDir = new THREE.Vector3(
+              rand(tailSeed) - 0.5,
+              rand(tailSeed + 1) - 0.5,
+              rand(tailSeed + 2) - 0.5
+            ).normalize();
+
+            const TAIL_STEPS = 7;
+            for (let i = 1; i <= TAIL_STEPS; i++) {{
+              const t = i / TAIL_STEPS;
+              const puff = makeSoftGlowSprite(colorHex);
+              puff.raycast = () => {{}};
+              puff.material.depthTest = false;
+              puff.material.blending = THREE.AdditiveBlending;
+              puff.renderOrder = 8;
+              const puffSize = (1 - t * 0.8) * 34;
+              puff.scale.set(puffSize, puffSize, 1);
+              puff.material.opacity = (1 - t) * 0.55;
+              puff.position.copy(tailDir).multiplyScalar(-t * 46);
+              core.add(puff);
+            }}
           }}
 
           if (node.isIntro) {{
@@ -1409,8 +1469,8 @@ def build_html(data: dict[str, Any]) -> str:
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.max(22, 5 * scale * 5.4 * 1.3) * (node.isIntro ? 1.0 : 1);
-          const idleOpacity = node.isIntro ? 0.19 : 0.38;
+          const idleSize = Math.max(22, 5 * scale * 5.4 * 1.3) * (node.isTrailer ? 1.5 : node.isIntro ? 1.0 : 1);
+          const idleOpacity = node.isTrailer ? 0.5 : node.isIntro ? 0.19 : 0.38;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
           // Normal alpha blending just overlays a translucent patch, which reads
