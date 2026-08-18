@@ -1365,7 +1365,7 @@ def build_html(data: dict[str, Any]) -> str:
           // [TRAILER] nodes get a flat multiplier on top -- they need to read
           // as "notice me" even at low Size values, since there's no axis
           // score driving their prominence the way there is for story nodes.
-          const scale = sizeVal * 0.32 * (node.isTrailer ? 1.8 : 1);
+          const scale = sizeVal * 0.32 * (node.isTrailer ? 5.4 : 1);
           core.scale.set(scale, scale, scale);
 
           if (node.isManga) {{
