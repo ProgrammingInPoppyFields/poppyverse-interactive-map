@@ -1844,6 +1844,10 @@ def build_html(data: dict[str, Any]) -> str:
       }});
 
       Graph.onNodeClick(node => {{
+        if (node.isTrailer && node.contentUrl) {{
+          window.open(node.contentUrl, "_blank", "noopener");
+          return;
+        }}
         openDrawer(node);
       }});
 
