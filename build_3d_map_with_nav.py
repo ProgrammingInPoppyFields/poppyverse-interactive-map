@@ -254,6 +254,7 @@ def build_data() -> dict[str, Any]:
             "featured": parse_bool(get_first(row, ["Featured"])),
             "isIntro": "intro" in name.lower(),
             "isManga": name.strip().upper().startswith("[MANGA]"),
+            "isMeta": name.strip().upper().startswith("[META]"),
             "size": max(1.0, parse_float(get_first(row, ["Size", "Value"]), 1.0)),
             "xValue": parse_float(get_first(row, ["(X) Relativity", "X", "Relativity"]), 0.0),
             "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
@@ -1322,8 +1323,13 @@ def build_html(data: dict[str, Any]) -> str:
           // EXPERIMENTAL: [MANGA] nodes get a faceted, low-poly core instead of
           // a smooth sphere -- a paneled silhouette instead of an orbital
           // accessory, so it doesn't compete with the isIntro ring treatment.
+          // [META] nodes get a cube -- a distinct, unmissable silhouette for
+          // "you're looking at authorial commentary, not a story," even
+          // though the node itself now lives in its story's own cluster.
           const core = new THREE.Mesh(
-            node.isManga ? new THREE.TetrahedronGeometry(5.5, 0) : new THREE.SphereGeometry(5, 24, 24),
+            node.isManga ? new THREE.TetrahedronGeometry(5.5, 0) :
+            node.isMeta ? new THREE.BoxGeometry(8, 8, 8) :
+            new THREE.SphereGeometry(5, 24, 24),
             new THREE.MeshStandardMaterial({{
               color,
               metalness: 0.03,
@@ -1344,6 +1350,15 @@ def build_html(data: dict[str, Any]) -> str:
             // enough not to need this, but a flat-shaded pyramid very visibly
             // isn't.
             const rotSeed = hash32(String(node.id) + "|mangaRot");
+            core.rotation.x = rand(rotSeed) * Math.PI * 2;
+            core.rotation.y = rand(rotSeed + 1) * Math.PI * 2;
+            core.rotation.z = rand(rotSeed + 2) * Math.PI * 2;
+          }}
+
+          if (node.isMeta) {{
+            // Same idea as the manga rotation jitter -- a grid of perfectly
+            // axis-aligned cubes reads as a bug, not a design choice.
+            const rotSeed = hash32(String(node.id) + "|metaRot");
             core.rotation.x = rand(rotSeed) * Math.PI * 2;
             core.rotation.y = rand(rotSeed + 1) * Math.PI * 2;
             core.rotation.z = rand(rotSeed + 2) * Math.PI * 2;
