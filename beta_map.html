@@ -18532,6 +18532,21 @@
     function prepareGraphData() {
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
+      // Jitter (and, for trailers, the spread around their pinned X) can
+      // otherwise push a node's raw computed position past the cylinder's
+      // own boundary -- clamp every node back inside it: X within the
+      // timeline's 0..LINEAR_SCALE*2 reach, and the Y/Z radius within
+      // AXIS_SCALE, preserving whatever angle it landed at.
+      function clampToCylinder(node) {
+        node.x = Math.max(0, Math.min(LINEAR_SCALE * 2, node.x));
+        const rMag = Math.hypot(node.y, node.z);
+        if (rMag > AXIS_SCALE) {
+          const shrink = AXIS_SCALE / rMag;
+          node.y *= shrink;
+          node.z *= shrink;
+        }
+      }
+
       DATA.nodes.forEach(node => {
         // --- BETA MAP scatter layout, anchored on the origin (0,0,0). ---
         // Cluster no longer affects position (it only colors the node):
@@ -18558,6 +18573,7 @@
           node.x = trailerLinN * (LINEAR_SCALE * 2) + (rand(seed + 10) - 0.5) * 2 * (LINEAR_SCALE * 0.15);
           node.y = (rand(seed + 11) - 0.5) * 2 * AXIS_SCALE;
           node.z = (rand(seed + 12) - 0.5) * 2 * AXIS_SCALE;
+          clampToCylinder(node);
           node.fx = node.x;
           node.fy = node.y;
           node.fz = node.z;
@@ -18589,9 +18605,15 @@
         // Final absolute (Cartesian) jitter: a small per-node random nudge on each
         // axis so any dots that landed on identical coords still separate visibly.
         // Seeded off the node id, so it's stable across reloads (not Math.random).
-        const jx = (rand(seed + 3) - 0.5) * 2 * POINT_JITTER;
-        const jy = (rand(seed + 4) - 0.5) * 2 * POINT_JITTER;
-        const jz = (rand(seed + 5) - 0.5) * 2 * POINT_JITTER;
+        // welcome to the poppyverse has zero orbit radius AND a single shared
+        // Linearity Position across ~110 rows, so jitter is the *only* thing
+        // separating them -- the normal amount reads as way too clustered, so
+        // this cluster gets a much wider nudge.
+        const isWelcome = node.cluster === "welcome to the poppyverse";
+        const pointJitter = isWelcome ? POINT_JITTER * 4 : POINT_JITTER;
+        const jx = (rand(seed + 3) - 0.5) * 2 * pointJitter;
+        const jy = (rand(seed + 4) - 0.5) * 2 * pointJitter;
+        const jz = (rand(seed + 5) - 0.5) * 2 * pointJitter;
 
         // POPPYSEED and BEGINNINGS are the only two nodes meant to sit at
         // the *exact* (x, 0, 0) point, visibly skewered dead-center by the
@@ -18609,6 +18631,7 @@
         node.x = relN * (LINEAR_SCALE * 2) * (onAxis ? 1 : (1 + (rand(seed) - 0.5) * JITTER)) + (onAxis ? 0 : jx);
         node.y = radius * Math.cos(theta) + (onAxis ? 0 : jy);
         node.z = radius * Math.sin(theta) + (onAxis ? 0 : jz);
+        clampToCylinder(node);
 
         node.fx = node.x;
         node.fy = node.y;
