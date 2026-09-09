@@ -2,18 +2,17 @@
 """
 Build the Poppyverse Beta Map -- an experimental layout that replaces the
 X/Y/Z axes from the main 3D map with a different coordinate system:
-  X <- Linearity Position (a hand-assigned narrative/reading-order rank,
-       NOT the (X) Relativity score the main map uses)
-  Y <- (Y) Relatability, relabeled "Maturity Depth" (reused as a
-       placeholder until that axis gets its own real data)
+  X <- (X) Relativity, same score the main map uses
+  Y <- Linearity Position, relabeled "Linear Time" (a hand-assigned
+       narrative/reading-order rank, NOT the (Y) Relatability score)
   Z <- (Z) Depth, relabeled "Multiverse Stability" (same placeholder
        situation, publish-divide sign convention kept)
 
 POPPYSEED (id 700) sits alone at Linearity Position 0, BEGINNINGS (id
-229) at 1, then the rest of "welcome to the poppyverse" fans out from
-there; every other cluster occupies its own contiguous block further
-out so the whole catalog still renders, just not narratively ordered
-outside that one cluster yet.
+229) at 1, then every other "welcome to the poppyverse" row sits flat
+at 2, and everything else gets a scattered, deterministic value from
+3-10 so the whole catalog still renders without being narratively
+ordered outside that one cluster.
 
 Source files:
 - SRC_clusters.csv
@@ -1029,13 +1028,14 @@ def build_html(data: dict[str, Any]) -> str:
 
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
-    // BETA MAP layout: X comes from Linearity Position (a narrative/reading-
-    // order rank, NOT Relativity), Y/Z still come from Relatability/Depth
-    // (relabeled Maturity Depth / Multiverse Stability) as placeholders.
+    // BETA MAP layout: X comes from (X) Relativity (same score the main map
+    // uses), Y comes from Linearity Position (a narrative/reading-order
+    // rank, relabeled "Linear Time"), Z still comes from Depth (relabeled
+    // Multiverse Stability) as a placeholder.
     // Z's magnitude comes from that placeholder Depth value but its SIGN is
     // still forced by publish status, so published/unpublished nodes always
     // land on opposite sides of the z=0 divide plane.
-    const AXIS_MAX = 10;        // CSV metrics (Relatability / Depth) are scored 0..10
+    const AXIS_MAX = 10;        // CSV metrics (Relativity / Depth) are scored 0..10
     const LINEARITY_MAX = Math.max(1, ...DATA.nodes.map(n => Number(n.linearityPosition) || 0));
     const AXIS_SCALE = 560;     // half-extent of the X/Y spread (bigger = dots spread further apart)
     const DEPTH_GAP = 70;       // minimum distance any node sits from the z=0 divide plane
@@ -1152,8 +1152,8 @@ def build_html(data: dict[str, Any]) -> str:
 
     function renderCoordMeters(node) {{
       const axes = [
+        ["Relativity", node.xValue, AXIS_MAX],
         ["Linear Time", node.linearityPosition, LINEARITY_MAX],
-        ["Maturity Depth", node.yValue, AXIS_MAX],
         ["Multiverse Stability", node.zValue, AXIS_MAX]
       ];
 
@@ -1327,8 +1327,8 @@ def build_html(data: dict[str, Any]) -> str:
       DATA.nodes.forEach(node => {{
         // --- BETA MAP scatter layout, centered on 0,0,0. ---
         // Cluster no longer affects position (it only colors the node):
-        //   X <- Linearity Position (narrative/reading-order rank)
-        //   Y <- (Y) Relatability, standing in for "Maturity Depth"
+        //   X <- (X) Relativity, same score the main map uses
+        //   Y <- Linearity Position, relabeled "Linear Time"
         //   Z <- (Z) Depth magnitude, standing in for "Multiverse Stability",
         //        SIGNED by publish status (has a Content URL -> +Z, no
         //        Content URL -> -Z) so the two populations always land on
@@ -1353,8 +1353,8 @@ def build_html(data: dict[str, Any]) -> str:
 
         // Normalize each metric to 0..1, then add a small seeded jitter so nodes
         // that share identical scores don't land on the exact same point.
-        const relN   = Math.max(0, Math.min(1, node.linearityPosition / LINEARITY_MAX));
-        const relatN = Math.max(0, Math.min(1, node.yValue / AXIS_MAX));
+        const relN   = Math.max(0, Math.min(1, node.xValue / AXIS_MAX));
+        const relatN = Math.max(0, Math.min(1, node.linearityPosition / LINEARITY_MAX));
         const depthN = Math.max(0, Math.min(1, node.zValue / AXIS_MAX));
 
         const published = Boolean(node.contentUrl);
@@ -1820,10 +1820,10 @@ def build_html(data: dict[str, Any]) -> str:
       // explaining what that side of the scale actually represents.
       const FRAME_XY = AXIS_SCALE + 30;
       const FRAME_Z = DEPTH_GAP + DEPTH_SPAN + 30;
-      addAxis({{ x: -FRAME_XY, y: 0, z: 0 }}, {{ x: FRAME_XY, y: 0, z: 0 }}, "#4D96FF", "Linear Time",
+      addAxis({{ x: -FRAME_XY, y: 0, z: 0 }}, {{ x: FRAME_XY, y: 0, z: 0 }}, "#4D96FF", "Relativity",
+        "nothing unusual is happening", "reality is breaking");
+      addAxis({{ x: 0, y: -FRAME_XY, z: 0 }}, {{ x: 0, y: FRAME_XY, z: 0 }}, "#6BCB77", "Linear Time",
         "start here", "furthest downstream");
-      addAxis({{ x: 0, y: -FRAME_XY, z: 0 }}, {{ x: 0, y: FRAME_XY, z: 0 }}, "#6BCB77", "Maturity Depth",
-        "barely human", "painfully relatable");
 
       // Multiverse Stability is a special case: its sign encodes publish status
       // (+Z published, -Z unpublished, see the divide plane below), not "low vs.
