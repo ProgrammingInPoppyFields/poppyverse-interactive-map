@@ -18246,7 +18246,8 @@
     // (+Z) from unpublished (-Z) nodes across the z=0 divide plane.
     const AXIS_MAX = 10;        // CSV metrics (Relatability / Depth) are scored 0..10
     const LINEARITY_MAX = Math.max(1, ...DATA.nodes.map(n => Number(n.linearityPosition) || 0));
-    const AXIS_SCALE = 560;     // max reach of Linear Time (x2, since it starts at 0) and the Maturity Depth/Multiverse Stability orbit radius
+    const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
+    const LINEAR_SCALE = 1120;  // max reach of Linear Time (x2, since it starts at 0) -- stretched well past AXIS_SCALE so the timeline reads long
     const JITTER = 0.4;         // seeded spread so nodes with identical scores don't stack
     const POINT_JITTER = 70;    // absolute (Cartesian) units of random nudge -- breaks up the integer-rating grid into something organic
 
@@ -18551,7 +18552,7 @@
         // reloads, but otherwise untethered from the coordinate system
         // everything else is pinned to.
         if (node.isTrailer) {
-          node.x = rand(seed + 10) * 2 * AXIS_SCALE;
+          node.x = rand(seed + 10) * 2 * LINEAR_SCALE;
           node.y = (rand(seed + 11) - 0.5) * 2 * AXIS_SCALE;
           node.z = (rand(seed + 12) - 0.5) * 2 * AXIS_SCALE;
           node.fx = node.x;
@@ -18589,11 +18590,19 @@
         const jy = (rand(seed + 4) - 0.5) * 2 * POINT_JITTER;
         const jz = (rand(seed + 5) - 0.5) * 2 * POINT_JITTER;
 
+        // A zero radius means this node's (Y) Relatability score is 0 --
+        // POPPYSEED and BEGINNINGS both live here. Skip every jitter for
+        // these so they sit at the *exact* (x, 0, 0) point, visibly
+        // skewered through dead-center by the Linear Time axis, instead
+        // of getting nudged off it by the same random wobble everything
+        // else gets.
+        const onAxis = radius === 0;
+
         // X starts at 0 (POPPYSEED's home) instead of being centered in the
         // frame, so the whole scatter visibly grows outward from the origin.
-        node.x = relN * (AXIS_SCALE * 2) * (1 + (rand(seed) - 0.5) * JITTER) + jx;
-        node.y = radius * Math.cos(theta) + jy;
-        node.z = radius * Math.sin(theta) + jz;
+        node.x = relN * (LINEAR_SCALE * 2) * (onAxis ? 1 : (1 + (rand(seed) - 0.5) * JITTER)) + (onAxis ? 0 : jx);
+        node.y = radius * Math.cos(theta) + (onAxis ? 0 : jy);
+        node.z = radius * Math.sin(theta) + (onAxis ? 0 : jz);
 
         node.fx = node.x;
         node.fy = node.y;
@@ -18918,12 +18927,12 @@
       // Pivot Y/Z on the literal world origin (0,0,0) -- they're a symmetric
       // radius/angle wrap around the X axis, so 0 is always their true
       // center regardless of how the scatter lands. X is different: Linear
-      // Time runs 0..2*AXIS_SCALE (POPPYSEED sits at the 0 end), so
+      // Time runs 0..2*LINEAR_SCALE (POPPYSEED sits at the 0 end), so
       // centering the pivot at x=0 leaves the entire scatter sitting to one
-      // side of the frame. Pivoting at AXIS_SCALE -- the midpoint of that
+      // side of the frame. Pivoting at LINEAR_SCALE -- the midpoint of that
       // range -- keeps POPPYSEED's end and the far end both in view instead
       // of everything bunching to one side.
-      controls.target.set(AXIS_SCALE, 0, 0);
+      controls.target.set(LINEAR_SCALE, 0, 0);
 
       const spanX = bounds.maxX - bounds.minX;
       const spanY = bounds.maxY - bounds.minY;
@@ -18936,12 +18945,12 @@
       // straight at the viewer.
       Graph.cameraPosition(
         {
-          x: AXIS_SCALE,
+          x: LINEAR_SCALE,
           y: 0,
           z: diag * 1.86
         },
         {
-          x: AXIS_SCALE,
+          x: LINEAR_SCALE,
           y: 0,
           z: 0
         },
@@ -19051,7 +19060,7 @@
       // together they form a radius/angle pair that wraps around the Linear
       // Time axis (see prepareGraphData), so they share one symmetric
       // reach (FRAME_R) since either can land on either side of 0.
-      const FRAME_X = AXIS_SCALE * 2 + 30;
+      const FRAME_X = LINEAR_SCALE * 2 + 30;
       const FRAME_R = AXIS_SCALE + 30;
       addAxis({ x: 0, y: 0, z: 0 }, { x: FRAME_X, y: 0, z: 0 }, "#4D96FF", "Linear Time",
         "start here", "furthest downstream");
