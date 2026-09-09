@@ -802,6 +802,10 @@ def build_html(data: dict[str, Any]) -> str:
       box-shadow: 0 0 14px rgba(255, 189, 77, 0.55);
     }}
 
+    .drawer-crossover[hidden] {{
+      display: none;
+    }}
+
     .drawer-crossover::before {{
       content: "⚡ ";
     }}
