@@ -277,10 +277,6 @@ def build_data() -> dict[str, Any]:
             "isMeta": name.strip().upper().startswith("[META]"),
             "isTrailer": name.strip().upper().startswith("[TRAILER]"),
             "size": max(1.0, parse_float(get_first(row, ["Size", "Value"]), 1.0)),
-            "xValue": parse_float(get_first(row, ["(X) Relativity", "X", "Relativity"]), 0.0),
-            "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
-            "zValue": parse_float(get_first(row, ["(Z) Depth", "Z", "Depth"]), 0.0),
-            "linearityPosition": parse_float(get_first(row, ["Linearity Position"]), 0.0),
             "finalX": parse_float(get_first(row, ["Final X"]), 0.0),
             "finalY": parse_float(get_first(row, ["Final Y"]), 0.0),
             "finalZ": parse_float(get_first(row, ["Final Z"]), 0.0),
@@ -1045,8 +1041,6 @@ def build_html(data: dict[str, Any]) -> str:
     // (Maturity Depth) as radius, Depth (Multiverse Stability) as angle,
     // with publish status still separating published (+Z) from unpublished
     // (-Z). See prepareGraphData() -- it's just a read now, not a formula.
-    const AXIS_MAX = 10;        // CSV metrics (Relatability / Depth) are scored 0..10
-    const LINEARITY_MAX = Math.max(1, ...DATA.nodes.map(n => Number(n.linearityPosition) || 0));
     const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
     const LINEAR_SCALE = 1120;  // max reach of Linear Time (x2, since it starts at 0) -- stretched well past AXIS_SCALE so the timeline reads long
 
@@ -1158,22 +1152,20 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     function renderCoordMeters(node) {{
+      // Plain literal values, not 0-10 score bars -- Final X/Y/Z are baked
+      // scatter-plot coordinates (unbounded, signable), not narrative scores,
+      // so a percentage-fill meter doesn't apply here the way it used to.
       const axes = [
-        ["Linear Time", node.linearityPosition, LINEARITY_MAX],
-        ["Maturity Depth", node.yValue, AXIS_MAX],
-        ["Multiverse Stability", node.zValue, AXIS_MAX]
+        ["Final X", node.finalX],
+        ["Final Y", node.finalY],
+        ["Final Z", node.finalZ]
       ];
 
-      const rows = axes.map(([label, value, max]) => {{
-        const v = Math.max(0, Math.min(max, Number(value) || 0));
-        const pct = (v / max) * 100;
-        return `
-          <div class="coord-meter">
-            <div class="coord-meter-label"><span>${{label}}</span><span>${{v}}/${{max}}</span></div>
-            <div class="coord-meter-track"><div class="coord-meter-fill" style="width:${{pct}}%"></div></div>
-          </div>
-        `;
-      }}).join("");
+      const rows = axes.map(([label, value]) => `
+        <div class="coord-meter">
+          <div class="coord-meter-label"><span>${{label}}</span><span>${{(Number(value) || 0).toFixed(1)}}</span></div>
+        </div>
+      `).join("");
 
       return `<div class="coord-meters">${{rows}}</div>`;
     }}
