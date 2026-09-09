@@ -216,6 +216,10 @@ def build_data() -> dict[str, Any]:
         if not visible_row.get("Name"):
             continue
 
+        # Not a table column -- surfaced as a badge next to Name instead of an
+        # almost-always-empty column (most clusters have no crossover source).
+        visible_row["Crossover"] = get_first(row, ["Crossover"])
+
         entries_by_cluster.setdefault(cluster, []).append(visible_row)
 
     return {
@@ -653,6 +657,27 @@ def build_html(data: dict[str, Any]) -> str:
       white-space: nowrap;
     }}
 
+    .crossover-badge {{
+      display: inline-block;
+      margin-left: 8px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #FFD84D, #FF9A3D);
+      color: #1a1200;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      white-space: nowrap;
+      vertical-align: middle;
+      box-shadow: 0 0 10px rgba(255, 189, 77, 0.5);
+    }}
+
+    .crossover-badge::before {{
+      content: "⚡ ";
+    }}
+
     @media (max-width: 760px) {{
       .page {{
         padding-left: 16px;
@@ -789,7 +814,13 @@ def build_html(data: dict[str, Any]) -> str:
       const rows = entries
         .map(entry => {{
           const cells = columns
-            .map(col => `<td data-col="${{escapeHtml(col)}}">${{renderCell(col, entry[col])}}</td>`)
+            .map(col => {{
+              let html = renderCell(col, entry[col]);
+              if (col === "Name" && entry["Crossover"]) {{
+                html += `<span class="crossover-badge">${{escapeHtml(entry["Crossover"])}}</span>`;
+              }}
+              return `<td data-col="${{escapeHtml(col)}}">${{html}}</td>`;
+            }})
             .join("");
           return `<tr>${{cells}}</tr>`;
         }})
