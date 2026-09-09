@@ -259,9 +259,9 @@ def build_data() -> dict[str, Any]:
             "isMeta": name.strip().upper().startswith("[META]"),
             "isTrailer": name.strip().upper().startswith("[TRAILER]"),
             "size": max(1.0, parse_float(get_first(row, ["Size", "Value"]), 1.0)),
-            "xValue": parse_float(get_first(row, ["(X) Relativity", "X", "Relativity"]), 0.0),
-            "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
-            "zValue": parse_float(get_first(row, ["(Z) Depth", "Z", "Depth"]), 0.0),
+            "finalX": parse_float(get_first(row, ["Final X"]), 0.0),
+            "finalY": parse_float(get_first(row, ["Final Y"]), 0.0),
+            "finalZ": parse_float(get_first(row, ["Final Z"]), 0.0),
         }
 
         nodes.append(node)
@@ -1015,16 +1015,12 @@ def build_html(data: dict[str, Any]) -> str:
 
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
-    // Simple 3D scatter layout, centered at 0,0,0. X/Y come straight from
-    // Relativity/Relatability; Z's magnitude comes from Depth but its SIGN is
-    // forced by publish status, so published/unpublished nodes always land on
-    // opposite sides of the z=0 divide plane.
-    const AXIS_MAX = 10;        // CSV metrics (Relativity / Relatability / Depth) are scored 0..10
-    const AXIS_SCALE = 560;     // half-extent of the X/Y spread (bigger = dots spread further apart)
-    const DEPTH_GAP = 70;       // minimum distance any node sits from the z=0 divide plane
-    const DEPTH_SPAN = 560;     // additional Z distance added on top of DEPTH_GAP, scaled by Depth score
-    const JITTER = 0.4;         // seeded spread so nodes with identical scores don't stack
-    const POINT_JITTER = 70;    // absolute (Cartesian) units of random nudge -- breaks up the integer-rating grid into something organic
+    // Node positions are baked: each node's Final X/Y/Z (in SRC_toc.csv) is
+    // its literal position, computed once (the same Linear Time / Maturity
+    // Depth / Multiverse Stability layout Beta Map uses) and written back as
+    // a plain number instead of derived live from a formula. See
+    // prepareGraphData() -- it's just a read now.
+    const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius (reference-frame sizing only)
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1134,22 +1130,20 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     function renderCoordMeters(node) {{
+      // Plain literal values, not 0-10 score bars -- Final X/Y/Z are baked
+      // scatter-plot coordinates (unbounded, signable), not narrative scores,
+      // so a percentage-fill meter doesn't apply here the way it used to.
       const axes = [
-        ["Relativity", node.xValue],
-        ["Relatability", node.yValue],
-        ["Depth", node.zValue]
+        ["Final X", node.finalX],
+        ["Final Y", node.finalY],
+        ["Final Z", node.finalZ]
       ];
 
-      const rows = axes.map(([label, value]) => {{
-        const v = Math.max(0, Math.min(AXIS_MAX, Number(value) || 0));
-        const pct = (v / AXIS_MAX) * 100;
-        return `
-          <div class="coord-meter">
-            <div class="coord-meter-label"><span>${{label}}</span><span>${{v}}/${{AXIS_MAX}}</span></div>
-            <div class="coord-meter-track"><div class="coord-meter-fill" style="width:${{pct}}%"></div></div>
-          </div>
-        `;
-      }}).join("");
+      const rows = axes.map(([label, value]) => `
+        <div class="coord-meter">
+          <div class="coord-meter-label"><span>${{label}}</span><span>${{(Number(value) || 0).toFixed(1)}}</span></div>
+        </div>
+      `).join("");
 
       return `<div class="coord-meters">${{rows}}</div>`;
     }}
@@ -1307,56 +1301,17 @@ def build_html(data: dict[str, Any]) -> str:
     function prepareGraphData() {{
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
+      // 3D Map now plots the same baked Final X/Y/Z coordinates as Beta Map
+      // (SRC_toc.csv), computed once (Linear Time position, the Maturity
+      // Depth/Multiverse Stability orbit, every node's jitter) and written
+      // back as plain numbers -- there's no live formula left to run here.
       DATA.nodes.forEach(node => {{
-        // --- Simple 3D scatter layout, centered on 0,0,0. ---
-        // Cluster no longer affects position (it only colors the node):
-        //   X <- (X) Relativity
-        //   Y <- (Y) Relatability
-        //   Z <- (Z) Depth magnitude, SIGNED by publish status (has a Content
-        //        URL -> +Z, no Content URL -> -Z) so the two populations always
-        //        land on opposite sides of the z=0 publish-divide plane.
-        const seed = hash32(String(node.id) + "|" + String(node.cluster));
-
-        // [TRAILER] nodes (YouTube trailers) aren't story content scored on
-        // Relativity/Relatability/Depth -- they float freely through the
-        // whole scene volume instead of sitting on those axes. Seeded so
-        // they're stable across reloads, but otherwise untethered from the
-        // coordinate system everything else is pinned to.
-        if (node.isTrailer) {{
-          node.x = (rand(seed + 10) - 0.5) * 2 * AXIS_SCALE;
-          node.y = (rand(seed + 11) - 0.5) * 2 * AXIS_SCALE;
-          node.z = (rand(seed + 12) - 0.5) * 2 * (DEPTH_GAP + DEPTH_SPAN);
-          node.fx = node.x;
-          node.fy = node.y;
-          node.fz = node.z;
-          node.val = node.size;
-          return;
-        }}
-
-        // Normalize each metric to 0..1, then add a small seeded jitter so nodes
-        // that share identical scores don't land on the exact same point.
-        const relN   = Math.max(0, Math.min(1, node.xValue / AXIS_MAX));
-        const relatN = Math.max(0, Math.min(1, node.yValue / AXIS_MAX));
-        const depthN = Math.max(0, Math.min(1, node.zValue / AXIS_MAX));
-
-        const published = Boolean(node.contentUrl);
-        const zMag = DEPTH_GAP + DEPTH_SPAN * depthN * (1 + (rand(seed + 2) - 0.5) * JITTER);
-
-        // Final absolute (Cartesian) jitter: a small per-node random nudge on each
-        // axis so any dots that landed on identical coords still separate visibly.
-        // Seeded off the node id, so it's stable across reloads (not Math.random).
-        const jx = (rand(seed + 3) - 0.5) * 2 * POINT_JITTER;
-        const jy = (rand(seed + 4) - 0.5) * 2 * POINT_JITTER;
-        const jz = (rand(seed + 5) - 0.5) * 2 * POINT_JITTER;
-
-        node.x = (relN - 0.5) * 2 * AXIS_SCALE * (1 + (rand(seed) - 0.5) * JITTER) + jx;
-        node.y = (relatN - 0.5) * 2 * AXIS_SCALE * (1 + (rand(seed + 1) - 0.5) * JITTER) + jy;
-        node.z = (published ? 1 : -1) * zMag + jz;
-
+        node.x = Number(node.finalX) || 0;
+        node.y = Number(node.finalY) || 0;
+        node.z = Number(node.finalZ) || 0;
         node.fx = node.x;
         node.fy = node.y;
         node.fz = node.z;
-
         node.val = node.size;
       }});
 
@@ -1797,28 +1752,30 @@ def build_html(data: dict[str, Any]) -> str:
         if (highCaption) addAxisCaption(to, dir, colorHex, highCaption);
       }}
 
-      // Three axes through the origin so the center (0,0,0) is unmistakable.
-      // Each end gets a short plain-language caption (low value -> high value)
-      // explaining what that side of the scale actually represents.
-      const FRAME_XY = AXIS_SCALE + 30;
-      const FRAME_Z = DEPTH_GAP + DEPTH_SPAN + 30;
-      addAxis({{ x: -FRAME_XY, y: 0, z: 0 }}, {{ x: FRAME_XY, y: 0, z: 0 }}, "#4D96FF", "Relativity",
-        "nothing unusual is happening", "reality is breaking");
-      addAxis({{ x: 0, y: -FRAME_XY, z: 0 }}, {{ x: 0, y: FRAME_XY, z: 0 }}, "#6BCB77", "Relatability",
-        "barely human", "painfully relatable");
+      // Node positions are now the same baked Linear Time / Maturity Depth /
+      // Multiverse Stability coordinates Beta Map uses (see prepareGraphData):
+      // Linear Time runs 0..2*LINEAR_SCALE (POPPYSEED at the 0 end) instead
+      // of being centered through the origin, so the frame reflects that
+      // instead of assuming a symmetric spread. Maturity Depth/Multiverse
+      // Stability are a radius/angle pair wrapped around Linear Time, sharing
+      // one symmetric reach (FRAME_R) since either can land on either side
+      // of 0.
+      const LINEAR_SCALE = 1120;
+      const FRAME_X = LINEAR_SCALE * 2 + 30;
+      const FRAME_R = AXIS_SCALE + 30;
+      addAxis({{ x: 0, y: 0, z: 0 }}, {{ x: FRAME_X, y: 0, z: 0 }}, "#4D96FF", "Linear Time",
+        "start here", "furthest downstream");
+      addAxis({{ x: 0, y: -FRAME_R, z: 0 }}, {{ x: 0, y: FRAME_R, z: 0 }}, "#6BCB77", "Maturity Depth",
+        "close to the timeline", "far from the timeline");
 
-      // Depth is a special case: its sign encodes publish status (+Z published,
-      // -Z unpublished, see the divide plane below), not "low vs. high depth."
-      // Depth itself is the *magnitude* -- distance from the z=0 plane in
-      // either direction. So both tips are the "high depth" end, and "low
-      // depth" sits near the origin on both sides, not at either tip.
-      addAxis({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: FRAME_Z }}, "#FF6B6B", "Depth",
-        null, "not bedtime reading");
-      addAxisCaption({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: -1 }}, "#FF6B6B", "not bedtime reading & unpublished");
-      addAxisCaption({{ x: 60, y: 0, z: DEPTH_GAP }}, {{ x: 1, y: 0, z: 0 }}, "#FF6B6B", "light and breezy");
-      addAxisCaption({{ x: 60, y: 0, z: -DEPTH_GAP }}, {{ x: 1, y: 0, z: 0 }}, "#FF6B6B", "light and breezy & unpublished");
+      // Multiverse Stability is the orbit angle around Linear Time, not a
+      // straight dimension of its own -- this line just marks the
+      // toward/away-from-viewer direction. Sign still encodes publish status
+      // (+Z published, -Z unpublished, see the divide plane below).
+      addAxis({{ x: 0, y: 0, z: -FRAME_R }}, {{ x: 0, y: 0, z: FRAME_R }}, "#FF6B6B", "Multiverse Stability",
+        "unpublished side", "published side");
 
-      // Bright marker at the exact center, 0,0,0.
+      // Bright marker at the exact center, 0,0,0 -- POPPYSEED's fixed spot.
       const originMarker = new THREE.Mesh(
         new THREE.SphereGeometry(6, 16, 16),
         new THREE.MeshBasicMaterial({{ color: 0xffffff }})
@@ -1827,15 +1784,15 @@ def build_html(data: dict[str, Any]) -> str:
       axesGroup.add(originMarker);
 
       // Glowing wireframe box marking the outer edge of the coordinate space --
-      // the max reach of every axis (FRAME_XY on X/Y, FRAME_Z on Z) stitched
-      // into one bounding frame. A crisp inner line plus a wider, fainter
-      // outer one (same trick as the INTRO rings) fakes a glow without a real
-      // postprocessing pipeline.
+      // 0..FRAME_X on X (offset, since Linear Time starts at the origin, not
+      // centered through it), +-FRAME_R on Y/Z. A crisp inner line plus a
+      // wider, fainter outer one (same trick as the INTRO rings) fakes a
+      // glow without a real postprocessing pipeline.
       function makeBoundingBox(inflate, opacity) {{
         const geom = new THREE.BoxGeometry(
-          FRAME_XY * 2 + inflate,
-          FRAME_XY * 2 + inflate,
-          FRAME_Z * 2 + inflate
+          FRAME_X + inflate,
+          FRAME_R * 2 + inflate,
+          FRAME_R * 2 + inflate
         );
         const box = new THREE.LineSegments(
           new THREE.EdgesGeometry(geom),
@@ -1847,6 +1804,7 @@ def build_html(data: dict[str, Any]) -> str:
             blending: THREE.AdditiveBlending
           }})
         );
+        box.position.set(FRAME_X / 2, 0, 0);
         box.raycast = () => {{}};
         return box;
       }}
@@ -1856,11 +1814,15 @@ def build_html(data: dict[str, Any]) -> str:
       scene.add(axesGroup);
 
       // Publish-divide plane at z=0: published nodes (+Z) sit in front of it,
-      // unpublished nodes (-Z) sit behind it. Gated behind the axes toggle,
-      // same as the axes/frame and connection lines.
-      const DIVIDE_SIZE = (AXIS_SCALE + 60) * 2;
+      // unpublished nodes (-Z) sit behind it -- still true under the orbit
+      // wrap, since publish status picks which half of the circle a node's
+      // angle falls in. Sized/offset to span the full 0..FRAME_X reach of
+      // Linear Time instead of being centered through the origin. Gated
+      // behind the axes toggle, same as the axes/frame and connection lines.
+      const DIVIDE_W = FRAME_X + 60;
+      const DIVIDE_H = FRAME_R * 2;
       const dividePlane = new THREE.Mesh(
-        new THREE.PlaneGeometry(DIVIDE_SIZE, DIVIDE_SIZE),
+        new THREE.PlaneGeometry(DIVIDE_W, DIVIDE_H),
         new THREE.MeshBasicMaterial({{
           color: 0xffffff,
           transparent: true,
@@ -1869,27 +1831,28 @@ def build_html(data: dict[str, Any]) -> str:
           depthWrite: false
         }})
       );
+      dividePlane.position.set(FRAME_X / 2, 0, 0);
       dividePlane.raycast = () => {{}};
       axesGroup.add(dividePlane);
 
       const divideEdge = new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(-DIVIDE_SIZE / 2, -DIVIDE_SIZE / 2, 0),
-          new THREE.Vector3(DIVIDE_SIZE / 2, -DIVIDE_SIZE / 2, 0),
-          new THREE.Vector3(DIVIDE_SIZE / 2, DIVIDE_SIZE / 2, 0),
-          new THREE.Vector3(-DIVIDE_SIZE / 2, DIVIDE_SIZE / 2, 0)
+          new THREE.Vector3(0, -DIVIDE_H / 2, 0),
+          new THREE.Vector3(DIVIDE_W, -DIVIDE_H / 2, 0),
+          new THREE.Vector3(DIVIDE_W, DIVIDE_H / 2, 0),
+          new THREE.Vector3(0, DIVIDE_H / 2, 0)
         ]),
         new THREE.LineBasicMaterial({{ color: 0xffffff, transparent: true, opacity: 0.25 }})
       );
       divideEdge.raycast = () => {{}};
       axesGroup.add(divideEdge);
 
-      // Pushed well past the Relatability axis's high-end caption ("painfully
-      // relatable", which sits at y = FRAME_XY + 46 = 556) -- both labels are
-      // pinned to x=0, z=0, so they need real vertical separation or they sit
-      // right on top of each other.
+      // Pushed well past the Maturity Depth axis's high-end caption ("far
+      // from the timeline", which sits at y = FRAME_R + 46) -- both labels
+      // are pinned to the same x, z=0, so they need real vertical separation
+      // or they sit right on top of each other.
       const divideLabel = makeAxisLabel("The Draft Horizon", "#FFFFFF");
-      divideLabel.position.set(0, DIVIDE_SIZE / 2 + 110, 0);
+      divideLabel.position.set(FRAME_X / 2, DIVIDE_H / 2 + 110, 0);
       axesGroup.add(divideLabel);
 
       const axesToggle = document.getElementById("axesToggle");
