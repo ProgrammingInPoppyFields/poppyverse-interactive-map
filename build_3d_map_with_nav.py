@@ -464,7 +464,8 @@ def build_html(data: dict[str, Any]) -> str:
       z-index: 22;
       display: flex;
       flex-direction: column-reverse;
-      width: min(320px, calc(100vw - 36px));
+      width: max-content;
+      max-width: calc(100vw - 36px);
       max-height: calc(100vh - var(--nav-height) - 40px);
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.18);
@@ -472,6 +473,10 @@ def build_html(data: dict[str, Any]) -> str:
       background: rgba(0, 0, 0, 0.54);
       backdrop-filter: blur(12px);
       box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
+    }}
+
+    .legend.open {{
+      width: min(320px, calc(100vw - 36px));
     }}
 
     .legend-toggle {{
