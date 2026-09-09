@@ -16,11 +16,12 @@ X/Y/Z axes from the main 3D map with a different coordinate system:
        picks which hemisphere of the circle a node falls in, so Z's sign
        keeps separating published (+Z) from unpublished (-Z) nodes.
 
-POPPYSEED (id 700) sits alone at Linearity Position 0 (world origin),
-BEGINNINGS (id 229) at 20, and everything else gets a scattered,
-deterministic value from 50-100 so the gap between the two anchors and
-the rest of the catalog reads clearly instead of everything clustering
-near the start.
+POPPYSEED (id 700) sits alone at Linearity Position 0 (world origin);
+every other row's Linearity Position is a flat value shared by its
+whole cluster, linearly interpolated from that cluster's Init Linear
+rank in SRC_clusters.csv (rank 0 -> 40, up through rank 6 -> 140) --
+so entire clusters read as a single slice along the timeline, one
+step further out per rank, instead of scattering row-by-row.
 
 Source files:
 - SRC_clusters.csv
