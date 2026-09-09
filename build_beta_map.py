@@ -1723,31 +1723,33 @@ def build_html(data: dict[str, Any]) -> str:
         }};
       }})();
 
-      // Pivot on the literal world origin (0,0,0), not the bounds' center --
-      // POPPYSEED sits fixed at (0,0,0), so pinning the pivot there (rather
-      // than to wherever the rest of the scatter happens to average out)
-      // keeps it unmistakably "everything starts here" regardless of how
-      // lopsided the scatter gets. `bounds` is still used below, just for
-      // its span (to size the zoom distance), not its center.
-      controls.target.set(0, 0, 0);
+      // Pivot Y/Z on the literal world origin (0,0,0) -- they're a symmetric
+      // radius/angle wrap around the X axis, so 0 is always their true
+      // center regardless of how the scatter lands. X is different: Linear
+      // Time runs 0..2*AXIS_SCALE (POPPYSEED sits at the 0 end), so
+      // centering the pivot at x=0 leaves the entire scatter sitting to one
+      // side of the frame. Pivoting at AXIS_SCALE -- the midpoint of that
+      // range -- keeps POPPYSEED's end and the far end both in view instead
+      // of everything bunching to one side.
+      controls.target.set(AXIS_SCALE, 0, 0);
 
       const spanX = bounds.maxX - bounds.minX;
       const spanY = bounds.maxY - bounds.minY;
       const spanZ = bounds.maxZ - bounds.minZ;
       const diag = Math.max(spanX, spanY, spanZ);
 
-      // Straight-on POV: camera sits directly out along +Z from the origin
+      // Straight-on POV: camera sits directly out along +Z from the target
       // with no X/Y offset, so Linear Time (X) reads horizontal, Maturity
       // Depth (Y) reads vertical, and Multiverse Stability (Z) points
       // straight at the viewer.
       Graph.cameraPosition(
         {{
-          x: 0,
+          x: AXIS_SCALE,
           y: 0,
           z: diag * 1.86
         }},
         {{
-          x: 0,
+          x: AXIS_SCALE,
           y: 0,
           z: 0
         }},
