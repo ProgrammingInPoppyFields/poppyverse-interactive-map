@@ -1569,7 +1569,7 @@ def build_html(data: dict[str, Any]) -> str:
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.max(22, 5 * scale * 5.4 * 1.3) * (node.isTrailer ? 1.5 : node.isIntro ? 1.0 : 1);
+          const idleSize = Math.max(16, 5 * scale * 4.0 * 1.3) * (node.isTrailer ? 1.5 : node.isIntro ? 1.0 : 1);
           const idleOpacity = node.isTrailer ? 0.5 : node.isIntro ? 0.19 : 0.38;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
