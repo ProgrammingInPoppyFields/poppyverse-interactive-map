@@ -41,8 +41,7 @@ Output:
 - Do NOT show axes.
 - Do NOT show axis labels.
   (The reference frame — axes through the origin, the 0,0,0 center marker, and
-  the publish-divide plane at z=0 (separating published nodes (+Z) from
-  unpublished nodes (-Z)) — is hidden by default, but can be revealed via the
+  the orbit rings — is hidden by default, but can be revealed via the
   "Show axes" toggle at the bottom-left.)
 - Do NOT show hover labels.
 - Do NOT show HUD title/subtitle.
@@ -1349,12 +1348,15 @@ def build_html(data: dict[str, Any]) -> str:
         const seed = hash32(String(node.id) + "|" + String(node.cluster));
 
         // [TRAILER] nodes (YouTube trailers) aren't story content scored on
-        // these axes -- they float freely through the whole scene volume
-        // instead of sitting on them. Seeded so they're stable across
-        // reloads, but otherwise untethered from the coordinate system
-        // everything else is pinned to.
+        // Maturity Depth/Multiverse Stability -- they float freely in Y/Z
+        // instead of orbiting. X is different: they're pinned near their
+        // Linearity Position (180, the far end of the timeline) with a
+        // loose spread around it, so they cluster way out past the rest of
+        // the catalog instead of floating anywhere along the whole axis.
+        // Seeded so they're stable across reloads.
         if (node.isTrailer) {{
-          node.x = rand(seed + 10) * 2 * LINEAR_SCALE;
+          const trailerLinN = Math.max(0, Math.min(1, node.linearityPosition / LINEARITY_MAX));
+          node.x = trailerLinN * (LINEAR_SCALE * 2) + (rand(seed + 10) - 0.5) * 2 * (LINEAR_SCALE * 0.15);
           node.y = (rand(seed + 11) - 0.5) * 2 * AXIS_SCALE;
           node.z = (rand(seed + 12) - 0.5) * 2 * AXIS_SCALE;
           node.fx = node.x;
@@ -1876,7 +1878,7 @@ def build_html(data: dict[str, Any]) -> str:
       // axis (see the two rings below), not a straight dimension of its own
       // -- this line just marks the "toward/away from viewer" direction for
       // orientation. Sign still encodes publish status (+Z published, -Z
-      // unpublished, see the divide plane below).
+      // unpublished).
       addAxis({{ x: 0, y: 0, z: -FRAME_R }}, {{ x: 0, y: 0, z: FRAME_R }}, "#FF6B6B", "Multiverse Stability",
         "unpublished side", "published side");
 
@@ -1938,48 +1940,6 @@ def build_html(data: dict[str, Any]) -> str:
       axesGroup.add(makeBoundingBox(14, 0.18));
 
       scene.add(axesGroup);
-
-      // Publish-divide plane at z=0: published nodes (+Z) sit in front of it,
-      // unpublished nodes (-Z) sit behind it -- still true under the orbit
-      // wrap, since publish status picks which half of the circle a node's
-      // angle falls in. Sized/offset to span the full 0..FRAME_X reach of
-      // Linear Time instead of being centered through the origin. Gated
-      // behind the axes toggle, same as the axes/frame and connection lines.
-      const DIVIDE_W = FRAME_X + 60;
-      const DIVIDE_H = FRAME_R * 2;
-      const dividePlane = new THREE.Mesh(
-        new THREE.PlaneGeometry(DIVIDE_W, DIVIDE_H),
-        new THREE.MeshBasicMaterial({{
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.05,
-          side: THREE.DoubleSide,
-          depthWrite: false
-        }})
-      );
-      dividePlane.position.set(FRAME_X / 2, 0, 0);
-      dividePlane.raycast = () => {{}};
-      axesGroup.add(dividePlane);
-
-      const divideEdge = new THREE.LineLoop(
-        new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(0, -DIVIDE_H / 2, 0),
-          new THREE.Vector3(DIVIDE_W, -DIVIDE_H / 2, 0),
-          new THREE.Vector3(DIVIDE_W, DIVIDE_H / 2, 0),
-          new THREE.Vector3(0, DIVIDE_H / 2, 0)
-        ]),
-        new THREE.LineBasicMaterial({{ color: 0xffffff, transparent: true, opacity: 0.25 }})
-      );
-      divideEdge.raycast = () => {{}};
-      axesGroup.add(divideEdge);
-
-      // Pushed well past the Maturity Depth axis's high-end caption ("far
-      // from the timeline", which sits at y = FRAME_R + 46) -- both labels
-      // are pinned to the same x, z=0, so they need real vertical separation
-      // or they sit right on top of each other.
-      const divideLabel = makeAxisLabel("The Draft Horizon", "#FFFFFF");
-      divideLabel.position.set(FRAME_X / 2, DIVIDE_H / 2 + 110, 0);
-      axesGroup.add(divideLabel);
 
       const axesToggle = document.getElementById("axesToggle");
       axesToggle.checked = false;
