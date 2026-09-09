@@ -1042,7 +1042,7 @@ def build_html(data: dict[str, Any]) -> str:
     // with publish status still separating published (+Z) from unpublished
     // (-Z). See prepareGraphData() -- it's just a read now, not a formula.
     const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
-    const LINEAR_SCALE = 1120;  // max reach of Linear Time (x2, since it starts at 0) -- stretched well past AXIS_SCALE so the timeline reads long
+    const LINEAR_SCALE = 672;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only, matches the compressed 0..1344 Final X range baked into SRC_toc.csv
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1611,8 +1611,8 @@ def build_html(data: dict[str, Any]) -> str:
       const controls = Graph.controls();
       controls.enableRotate = true;
       controls.enablePan = true;
-      controls.minDistance = 20;
-      controls.maxDistance = 4000;
+      controls.minDistance = 5;
+      controls.maxDistance = 8000;
 
       const bounds = (() => {{
         let minX = Infinity;

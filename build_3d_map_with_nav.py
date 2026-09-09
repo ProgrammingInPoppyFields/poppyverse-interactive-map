@@ -1593,8 +1593,8 @@ def build_html(data: dict[str, Any]) -> str:
       const controls = Graph.controls();
       controls.enableRotate = true;
       controls.enablePan = true;
-      controls.minDistance = 20;
-      controls.maxDistance = 4000;
+      controls.minDistance = 5;
+      controls.maxDistance = 8000;
 
       const bounds = (() => {{
         let minX = Infinity;
@@ -1760,7 +1760,7 @@ def build_html(data: dict[str, Any]) -> str:
       // Stability are a radius/angle pair wrapped around Linear Time, sharing
       // one symmetric reach (FRAME_R) since either can land on either side
       // of 0.
-      const LINEAR_SCALE = 1120;
+      const LINEAR_SCALE = 672; // reference-frame sizing only, matches the compressed 0..1344 Final X range baked into SRC_toc.csv
       const FRAME_X = LINEAR_SCALE * 2 + 30;
       const FRAME_R = AXIS_SCALE + 30;
       addAxis({{ x: 0, y: 0, z: 0 }}, {{ x: FRAME_X, y: 0, z: 0 }}, "#4D96FF", "Linear Time",
