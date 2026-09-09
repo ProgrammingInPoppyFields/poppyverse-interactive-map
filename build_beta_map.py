@@ -1392,13 +1392,16 @@ def build_html(data: dict[str, Any]) -> str:
         const jy = (rand(seed + 4) - 0.5) * 2 * POINT_JITTER;
         const jz = (rand(seed + 5) - 0.5) * 2 * POINT_JITTER;
 
-        // A zero radius means this node's (Y) Relatability score is 0 --
-        // POPPYSEED and BEGINNINGS both live here. Skip every jitter for
-        // these so they sit at the *exact* (x, 0, 0) point, visibly
-        // skewered through dead-center by the Linear Time axis, instead
-        // of getting nudged off it by the same random wobble everything
-        // else gets.
-        const onAxis = radius === 0;
+        // POPPYSEED and BEGINNINGS are the only two nodes meant to sit at
+        // the *exact* (x, 0, 0) point, visibly skewered dead-center by the
+        // Linear Time axis. This used to key off radius === 0 instead of
+        // the id directly, but welcome to the poppyverse's whole cluster
+        // also has a zero orbit radius (Depth 0), so that check was
+        // suppressing jitter for ~110 other rows too and stacking them
+        // all on top of each other. Every other zero-radius row still
+        // gets normal jitter -- it just orbits at radius 0 before the
+        // nudge, same as always.
+        const onAxis = node.id === "700" || node.id === "229";
 
         // X starts at 0 (POPPYSEED's home) instead of being centered in the
         // frame, so the whole scatter visibly grows outward from the origin.
