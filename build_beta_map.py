@@ -1,13 +1,26 @@
 #!/usr/bin/env python3
 """
-Build the 3D Poppyverse map.
+Build the Poppyverse Beta Map -- an experimental layout that replaces the
+X/Y/Z axes from the main 3D map with a different coordinate system:
+  X <- Linearity Position (a hand-assigned narrative/reading-order rank,
+       NOT the (X) Relativity score the main map uses)
+  Y <- (Y) Relatability, relabeled "Maturity Depth" (reused as a
+       placeholder until that axis gets its own real data)
+  Z <- (Z) Depth, relabeled "Multiverse Stability" (same placeholder
+       situation, publish-divide sign convention kept)
+
+POPPYSEED (id 700) sits alone at Linearity Position 0, BEGINNINGS (id
+229) at 1, then the rest of "welcome to the poppyverse" fans out from
+there; every other cluster occupies its own contiguous block further
+out so the whole catalog still renders, just not narratively ordered
+outside that one cluster yet.
 
 Source files:
 - SRC_clusters.csv
 - SRC_toc.csv
 
 Output:
-- 3d_map.html
+- beta_map.html
 
 3D visual rules:
 - Keep graph nodes.
@@ -44,7 +57,7 @@ ROOT = Path(__file__).resolve().parent
 
 CLUSTERS_CSV = ROOT / "SRC_clusters.csv"
 TOC_CSV = ROOT / "SRC_toc.csv"
-OUTPUT_HTML = ROOT / "3d_map.html"
+OUTPUT_HTML = ROOT / "beta_map.html"
 
 POPPY_PINK = "#FF1447"
 TUMBLR_ARCHIVE_URL = "https://inpoppyfields.tumblr.com/"
@@ -262,6 +275,7 @@ def build_data() -> dict[str, Any]:
             "xValue": parse_float(get_first(row, ["(X) Relativity", "X", "Relativity"]), 0.0),
             "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
             "zValue": parse_float(get_first(row, ["(Z) Depth", "Z", "Depth"]), 0.0),
+            "linearityPosition": parse_float(get_first(row, ["Linearity Position"]), 0.0),
         }
 
         nodes.append(node)
@@ -334,7 +348,7 @@ def json_script(data: dict[str, Any]) -> str:
 
 
 def build_html(data: dict[str, Any]) -> str:
-    nav = make_nav("3d")
+    nav = make_nav("beta")
     data_blob = json_script(data)
 
     return f"""<!DOCTYPE html>
@@ -342,7 +356,7 @@ def build_html(data: dict[str, Any]) -> str:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Poppyverse 3D Map</title>
+  <title>Poppyverse Beta Map</title>
   {favicon_html()}
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1015,11 +1029,14 @@ def build_html(data: dict[str, Any]) -> str:
 
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
-    // Simple 3D scatter layout, centered at 0,0,0. X/Y come straight from
-    // Relativity/Relatability; Z's magnitude comes from Depth but its SIGN is
-    // forced by publish status, so published/unpublished nodes always land on
-    // opposite sides of the z=0 divide plane.
-    const AXIS_MAX = 10;        // CSV metrics (Relativity / Relatability / Depth) are scored 0..10
+    // BETA MAP layout: X comes from Linearity Position (a narrative/reading-
+    // order rank, NOT Relativity), Y/Z still come from Relatability/Depth
+    // (relabeled Maturity Depth / Multiverse Stability) as placeholders.
+    // Z's magnitude comes from that placeholder Depth value but its SIGN is
+    // still forced by publish status, so published/unpublished nodes always
+    // land on opposite sides of the z=0 divide plane.
+    const AXIS_MAX = 10;        // CSV metrics (Relatability / Depth) are scored 0..10
+    const LINEARITY_MAX = Math.max(1, ...DATA.nodes.map(n => Number(n.linearityPosition) || 0));
     const AXIS_SCALE = 560;     // half-extent of the X/Y spread (bigger = dots spread further apart)
     const DEPTH_GAP = 70;       // minimum distance any node sits from the z=0 divide plane
     const DEPTH_SPAN = 560;     // additional Z distance added on top of DEPTH_GAP, scaled by Depth score
@@ -1135,17 +1152,17 @@ def build_html(data: dict[str, Any]) -> str:
 
     function renderCoordMeters(node) {{
       const axes = [
-        ["Relativity", node.xValue],
-        ["Relatability", node.yValue],
-        ["Depth", node.zValue]
+        ["Linear Time", node.linearityPosition, LINEARITY_MAX],
+        ["Maturity Depth", node.yValue, AXIS_MAX],
+        ["Multiverse Stability", node.zValue, AXIS_MAX]
       ];
 
-      const rows = axes.map(([label, value]) => {{
-        const v = Math.max(0, Math.min(AXIS_MAX, Number(value) || 0));
-        const pct = (v / AXIS_MAX) * 100;
+      const rows = axes.map(([label, value, max]) => {{
+        const v = Math.max(0, Math.min(max, Number(value) || 0));
+        const pct = (v / max) * 100;
         return `
           <div class="coord-meter">
-            <div class="coord-meter-label"><span>${{label}}</span><span>${{v}}/${{AXIS_MAX}}</span></div>
+            <div class="coord-meter-label"><span>${{label}}</span><span>${{v}}/${{max}}</span></div>
             <div class="coord-meter-track"><div class="coord-meter-fill" style="width:${{pct}}%"></div></div>
           </div>
         `;
@@ -1308,20 +1325,21 @@ def build_html(data: dict[str, Any]) -> str:
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
       DATA.nodes.forEach(node => {{
-        // --- Simple 3D scatter layout, centered on 0,0,0. ---
+        // --- BETA MAP scatter layout, centered on 0,0,0. ---
         // Cluster no longer affects position (it only colors the node):
-        //   X <- (X) Relativity
-        //   Y <- (Y) Relatability
-        //   Z <- (Z) Depth magnitude, SIGNED by publish status (has a Content
-        //        URL -> +Z, no Content URL -> -Z) so the two populations always
-        //        land on opposite sides of the z=0 publish-divide plane.
+        //   X <- Linearity Position (narrative/reading-order rank)
+        //   Y <- (Y) Relatability, standing in for "Maturity Depth"
+        //   Z <- (Z) Depth magnitude, standing in for "Multiverse Stability",
+        //        SIGNED by publish status (has a Content URL -> +Z, no
+        //        Content URL -> -Z) so the two populations always land on
+        //        opposite sides of the z=0 publish-divide plane.
         const seed = hash32(String(node.id) + "|" + String(node.cluster));
 
         // [TRAILER] nodes (YouTube trailers) aren't story content scored on
-        // Relativity/Relatability/Depth -- they float freely through the
-        // whole scene volume instead of sitting on those axes. Seeded so
-        // they're stable across reloads, but otherwise untethered from the
-        // coordinate system everything else is pinned to.
+        // these axes -- they float freely through the whole scene volume
+        // instead of sitting on them. Seeded so they're stable across
+        // reloads, but otherwise untethered from the coordinate system
+        // everything else is pinned to.
         if (node.isTrailer) {{
           node.x = (rand(seed + 10) - 0.5) * 2 * AXIS_SCALE;
           node.y = (rand(seed + 11) - 0.5) * 2 * AXIS_SCALE;
@@ -1335,7 +1353,7 @@ def build_html(data: dict[str, Any]) -> str:
 
         // Normalize each metric to 0..1, then add a small seeded jitter so nodes
         // that share identical scores don't land on the exact same point.
-        const relN   = Math.max(0, Math.min(1, node.xValue / AXIS_MAX));
+        const relN   = Math.max(0, Math.min(1, node.linearityPosition / LINEARITY_MAX));
         const relatN = Math.max(0, Math.min(1, node.yValue / AXIS_MAX));
         const depthN = Math.max(0, Math.min(1, node.zValue / AXIS_MAX));
 
@@ -1802,21 +1820,21 @@ def build_html(data: dict[str, Any]) -> str:
       // explaining what that side of the scale actually represents.
       const FRAME_XY = AXIS_SCALE + 30;
       const FRAME_Z = DEPTH_GAP + DEPTH_SPAN + 30;
-      addAxis({{ x: -FRAME_XY, y: 0, z: 0 }}, {{ x: FRAME_XY, y: 0, z: 0 }}, "#4D96FF", "Relativity",
-        "nothing unusual is happening", "reality is breaking");
-      addAxis({{ x: 0, y: -FRAME_XY, z: 0 }}, {{ x: 0, y: FRAME_XY, z: 0 }}, "#6BCB77", "Relatability",
+      addAxis({{ x: -FRAME_XY, y: 0, z: 0 }}, {{ x: FRAME_XY, y: 0, z: 0 }}, "#4D96FF", "Linear Time",
+        "start here", "furthest downstream");
+      addAxis({{ x: 0, y: -FRAME_XY, z: 0 }}, {{ x: 0, y: FRAME_XY, z: 0 }}, "#6BCB77", "Maturity Depth",
         "barely human", "painfully relatable");
 
-      // Depth is a special case: its sign encodes publish status (+Z published,
-      // -Z unpublished, see the divide plane below), not "low vs. high depth."
-      // Depth itself is the *magnitude* -- distance from the z=0 plane in
-      // either direction. So both tips are the "high depth" end, and "low
-      // depth" sits near the origin on both sides, not at either tip.
-      addAxis({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: FRAME_Z }}, "#FF6B6B", "Depth",
-        null, "not bedtime reading");
-      addAxisCaption({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: -1 }}, "#FF6B6B", "not bedtime reading & unpublished");
-      addAxisCaption({{ x: 60, y: 0, z: DEPTH_GAP }}, {{ x: 1, y: 0, z: 0 }}, "#FF6B6B", "light and breezy");
-      addAxisCaption({{ x: 60, y: 0, z: -DEPTH_GAP }}, {{ x: 1, y: 0, z: 0 }}, "#FF6B6B", "light and breezy & unpublished");
+      // Multiverse Stability is a special case: its sign encodes publish status
+      // (+Z published, -Z unpublished, see the divide plane below), not "low vs.
+      // high" on its own. The magnitude is distance from the z=0 plane in either
+      // direction, so both tips are the "least stable" end, and "most stable"
+      // sits near the origin on both sides, not at either tip.
+      addAxis({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: FRAME_Z }}, "#FF6B6B", "Multiverse Stability",
+        null, "reality is fraying");
+      addAxisCaption({{ x: 0, y: 0, z: -FRAME_Z }}, {{ x: 0, y: 0, z: -1 }}, "#FF6B6B", "reality is fraying & unpublished");
+      addAxisCaption({{ x: 60, y: 0, z: DEPTH_GAP }}, {{ x: 1, y: 0, z: 0 }}, "#FF6B6B", "holding steady");
+      addAxisCaption({{ x: 60, y: 0, z: -DEPTH_GAP }}, {{ x: 1, y: 0, z: 0 }}, "#FF6B6B", "holding steady & unpublished");
 
       // Bright marker at the exact center, 0,0,0.
       const originMarker = new THREE.Mesh(
