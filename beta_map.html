@@ -19110,33 +19110,85 @@
       axesGroup.add(makeOrbitRing(0, AXIS_SCALE, "#FFD93D", 0.35));
       axesGroup.add(makeOrbitRing(FRAME_X - 30, AXIS_SCALE, "#FFD93D", 0.2));
 
-      // Glowing wireframe box marking the outer edge of the coordinate space --
-      // 0..FRAME_X on X (offset, since X starts at the origin, not centered
-      // through it), +-FRAME_R on Y/Z. A crisp inner line plus a wider,
-      // fainter outer one (same trick as the published-node rings) fakes a
-      // glow without a real postprocessing pipeline.
-      function makeBoundingBox(inflate, opacity) {
-        const geom = new THREE.BoxGeometry(
-          FRAME_X + inflate,
-          FRAME_R * 2 + inflate,
-          FRAME_R * 2 + inflate
-        );
-        const box = new THREE.LineSegments(
-          new THREE.EdgesGeometry(geom),
-          new THREE.LineBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending
-          })
-        );
-        box.position.set(FRAME_X / 2, 0, 0);
-        box.raycast = () => {};
-        return box;
+      // Longitudinal ribs connecting the two rings -- a cage of straight
+      // lines running the length of the timeline, so the whole scatter
+      // reads as living inside one cylinder instead of two disconnected
+      // circles at either end.
+      function makeCylinderRibs(x0, x1, radius, colorHex, opacity, count) {
+        const group = new THREE.Group();
+        for (let i = 0; i < count; i++) {
+          const t = (i / count) * Math.PI * 2;
+          const y = radius * Math.cos(t);
+          const z = radius * Math.sin(t);
+          const rib = new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(x0, y, z),
+              new THREE.Vector3(x1, y, z)
+            ]),
+            new THREE.LineBasicMaterial({ color: colorHex, transparent: true, opacity })
+          );
+          rib.raycast = () => {};
+          group.add(rib);
+        }
+        return group;
       }
-      axesGroup.add(makeBoundingBox(0, 0.5));
-      axesGroup.add(makeBoundingBox(14, 0.18));
+      axesGroup.add(makeCylinderRibs(0, FRAME_X - 30, AXIS_SCALE, "#FFD93D", 0.16, 12));
+
+      // Glowing wireframe CYLINDER marking the outer edge of the coordinate
+      // space -- two end rings joined by longitudinal ribs, so the whole
+      // shape reads unmistakably as a cylinder (matching the actual
+      // radius/angle coordinate system) instead of a box that would imply a
+      // rectangular boundary. A crisp inner copy plus a wider, fainter outer
+      // one (same trick as the published-node rings) fakes a glow without a
+      // real postprocessing pipeline.
+      function makeBoundingCylinder(inflate, opacity) {
+        const segments = 48;
+        const ribCount = 8;
+        const radius = AXIS_SCALE + inflate / 2;
+        const x0 = -inflate / 2;
+        const x1 = FRAME_X + inflate / 2;
+        const material = new THREE.LineBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+
+        const group = new THREE.Group();
+
+        function ringAt(x) {
+          const pts = [];
+          for (let i = 0; i <= segments; i++) {
+            const t = (i / segments) * Math.PI * 2;
+            pts.push(new THREE.Vector3(x, radius * Math.cos(t), radius * Math.sin(t)));
+          }
+          const ring = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), material);
+          ring.raycast = () => {};
+          return ring;
+        }
+        group.add(ringAt(x0));
+        group.add(ringAt(x1));
+
+        for (let i = 0; i < ribCount; i++) {
+          const t = (i / ribCount) * Math.PI * 2;
+          const y = radius * Math.cos(t);
+          const z = radius * Math.sin(t);
+          const rib = new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(x0, y, z),
+              new THREE.Vector3(x1, y, z)
+            ]),
+            material
+          );
+          rib.raycast = () => {};
+          group.add(rib);
+        }
+
+        return group;
+      }
+      axesGroup.add(makeBoundingCylinder(0, 0.5));
+      axesGroup.add(makeBoundingCylinder(14, 0.18));
 
       scene.add(axesGroup);
 
