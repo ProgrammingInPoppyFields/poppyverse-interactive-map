@@ -66,6 +66,7 @@ def make_nav(active: str) -> str:
         ("About", "about.html", "about"),
         ("2D Map", "2d_map.html", "2d"),
         ("3D Map", "3d_map.html", "3d"),
+        ("Beta Map", "beta_map.html", "beta"),
         ("Tumblr Archive", TUMBLR_ARCHIVE_URL, "archive"),
     ]
 

@@ -133,6 +133,17 @@ def build_steps(args: argparse.Namespace) -> list[BuildStep]:
             )
         )
 
+    if not args.skip_beta:
+        steps.append(
+            BuildStep(
+                name="Beta map",
+                script="build_beta_map.py",
+                output="beta_map.html",
+                needs_sources=True,
+                extra_args=("--output",),
+            )
+        )
+
     return steps
 
 
@@ -162,6 +173,7 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--skip-2d", action="store_true", help="Do not rebuild 2d_map.html.")
     parser.add_argument("--skip-3d", action="store_true", help="Do not rebuild 3d_map.html.")
+    parser.add_argument("--skip-beta", action="store_true", help="Do not rebuild beta_map.html.")
     return parser.parse_args(argv)
 
 
