@@ -1483,7 +1483,8 @@ def build_html(data: dict[str, Any]) -> str:
 
           // EXPERIMENTAL: [MANGA] nodes get a faceted, low-poly core instead of
           // a smooth sphere -- a paneled silhouette instead of an orbital
-          // accessory, so it doesn't compete with the isIntro ring treatment.
+          // accessory, so it doesn't compete with the published-node ring
+          // treatment below.
           // [META] nodes get a cube -- a distinct, unmissable silhouette for
           // "you're looking at authorial commentary, not a story," even
           // though the node itself now lives in its story's own cluster.
@@ -1568,7 +1569,7 @@ def build_html(data: dict[str, Any]) -> str:
             }}
           }}
 
-          if (node.isIntro) {{
+          if (node.contentUrl) {{
             const ringGlowColor = new THREE.Color(colorHex).lerp(new THREE.Color(0xffffff), 0.35);
 
             const ring = new THREE.Mesh(
@@ -1906,8 +1907,8 @@ def build_html(data: dict[str, Any]) -> str:
       // Glowing wireframe box marking the outer edge of the coordinate space --
       // 0..FRAME_X on X (offset, since X starts at the origin, not centered
       // through it), +-FRAME_R on Y/Z. A crisp inner line plus a wider,
-      // fainter outer one (same trick as the INTRO rings) fakes a glow
-      // without a real postprocessing pipeline.
+      // fainter outer one (same trick as the published-node rings) fakes a
+      // glow without a real postprocessing pipeline.
       function makeBoundingBox(inflate, opacity) {{
         const geom = new THREE.BoxGeometry(
           FRAME_X + inflate,
