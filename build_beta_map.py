@@ -1,27 +1,25 @@
 #!/usr/bin/env python3
 """
 Build the Poppyverse Beta Map -- an experimental layout that replaces the
-X/Y/Z axes from the main 3D map with a different coordinate system:
-  X <- Linearity Position, relabeled "Linear Time" (a hand-assigned
-       narrative/reading-order rank, NOT the (X) Relativity score the
-       main map uses). Starts at 0 -- POPPYSEED's fixed position -- and
-       runs outward from there, instead of being centered through the
-       origin, so the whole scatter visibly grows from a single start
-       point read left-to-right on screen.
-  Y, Z <- (Y) Relatability and (Z) Depth, relabeled "Maturity Depth" and
-       "Multiverse Stability", no longer independent straight axes but a
-       radius/angle pair that wraps the scatter around the Linear Time
-       axis: Maturity Depth sets how far a node orbits from the timeline,
-       Multiverse Stability sets its angle around it. Publish status still
-       picks which hemisphere of the circle a node falls in, so Z's sign
-       keeps separating published (+Z) from unpublished (-Z) nodes.
+X/Y/Z axes from the main 3D map with a different coordinate system, baked
+directly into SRC_toc.csv's Final X/Y/Z columns rather than computed live:
+  Final X <- Linear Time position. POPPYSEED sits at the literal origin
+       (0); every other row is derived from Linearity Position, which is
+       itself a per-cluster hand-assigned narrative/reading-order value
+       (NOT the (X) Relativity score the main map uses), so the whole
+       scatter grows outward from a single start point read left-to-right.
+  Final Y, Z <- a radius/angle pair wrapped around the Linear Time axis:
+       Maturity Depth ((Y) Relatability) sets how far a node orbits from
+       the timeline, Multiverse Stability ((Z) Depth) sets its angle
+       around it. Publish status picks which hemisphere of the circle a
+       node falls in, so Z's sign separates published (+Z) from
+       unpublished (-Z) nodes.
 
-POPPYSEED (id 700) sits alone at Linearity Position 0 (world origin);
-every other row's Linearity Position is a flat value shared by its
-whole cluster, linearly interpolated from that cluster's Init Linear
-rank in SRC_clusters.csv (rank 0 -> 40, up through rank 6 -> 140) --
-so entire clusters read as a single slice along the timeline, one
-step further out per rank, instead of scattering row-by-row.
+These were computed once (including every node's jitter) and written back
+as plain numbers, so any node's position can be hand-tuned directly in the
+CSV. POPPYSEED (id 700) is 0,0,0; BEGINNINGS (id 229) sits a short way out
+along Linear Time alone; every other cluster occupies its own band further
+out, with trailer rows floating loosely near the far end of the timeline.
 
 Source files:
 - SRC_clusters.csv
@@ -283,6 +281,9 @@ def build_data() -> dict[str, Any]:
             "yValue": parse_float(get_first(row, ["(Y) Relatability", "Y", "Relatability"]), 0.0),
             "zValue": parse_float(get_first(row, ["(Z) Depth", "Z", "Depth"]), 0.0),
             "linearityPosition": parse_float(get_first(row, ["Linearity Position"]), 0.0),
+            "finalX": parse_float(get_first(row, ["Final X"]), 0.0),
+            "finalY": parse_float(get_first(row, ["Final Y"]), 0.0),
+            "finalZ": parse_float(get_first(row, ["Final Z"]), 0.0),
         }
 
         nodes.append(node)
@@ -1036,21 +1037,18 @@ def build_html(data: dict[str, Any]) -> str:
 
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
-    // BETA MAP layout: X comes from Linearity Position (a narrative/reading-
-    // order rank, NOT Relativity), starting at 0 so POPPYSEED anchors the
-    // origin and everything else grows outward from it. Y/Z are no longer
-    // independent placeholders -- together they form a radius/angle pair
-    // (Y = r*cos(theta), Z = r*sin(theta)) that wraps around the X axis:
-    // Relatability (Maturity Depth) sets the radius, Depth (Multiverse
-    // Stability) sets the angle. Publish status still forces the angle into
-    // one hemisphere or the other, so Z's SIGN always separates published
-    // (+Z) from unpublished (-Z) nodes across the z=0 divide plane.
+    // BETA MAP layout is baked: each node's Final X/Y/Z (in SRC_toc.csv) is
+    // its literal position, computed once and written back as a plain
+    // number instead of derived live from a hash-seeded formula. Final X
+    // is Linear Time position (POPPYSEED anchors the origin at 0); Final
+    // Y/Z are a radius/angle pair wrapped around the X axis -- Relatability
+    // (Maturity Depth) as radius, Depth (Multiverse Stability) as angle,
+    // with publish status still separating published (+Z) from unpublished
+    // (-Z). See prepareGraphData() -- it's just a read now, not a formula.
     const AXIS_MAX = 10;        // CSV metrics (Relatability / Depth) are scored 0..10
     const LINEARITY_MAX = Math.max(1, ...DATA.nodes.map(n => Number(n.linearityPosition) || 0));
     const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
     const LINEAR_SCALE = 1120;  // max reach of Linear Time (x2, since it starts at 0) -- stretched well past AXIS_SCALE so the timeline reads long
-    const JITTER = 0.4;         // seeded spread so nodes with identical scores don't stack
-    const POINT_JITTER = 70;    // absolute (Cartesian) units of random nudge -- breaks up the integer-rating grid into something organic
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1333,111 +1331,20 @@ def build_html(data: dict[str, Any]) -> str:
     function prepareGraphData() {{
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
-      // Jitter (and, for trailers, the spread around their pinned X) can
-      // otherwise push a node's raw computed position past the cylinder's
-      // own boundary -- clamp every node back inside it: X within the
-      // timeline's 0..LINEAR_SCALE*2 reach, and the Y/Z radius within
-      // AXIS_SCALE, preserving whatever angle it landed at.
-      function clampToCylinder(node) {{
-        node.x = Math.max(0, Math.min(LINEAR_SCALE * 2, node.x));
-        const rMag = Math.hypot(node.y, node.z);
-        if (rMag > AXIS_SCALE) {{
-          const shrink = AXIS_SCALE / rMag;
-          node.y *= shrink;
-          node.z *= shrink;
-        }}
-      }}
-
+      // BETA MAP layout is fully baked: Final X/Y/Z in SRC_toc.csv are the
+      // literal, already-computed positions (Linear Time position, the
+      // Maturity Depth/Multiverse Stability orbit, every node's jitter, all
+      // clamped inside the cylinder) -- there's no live formula left to run
+      // here. Baking this means each node's position is a plain number you
+      // can hand-edit directly in the CSV, instead of an opaque hash-seeded
+      // computation nobody could tune per node.
       DATA.nodes.forEach(node => {{
-        // --- BETA MAP scatter layout, anchored on the origin (0,0,0). ---
-        // Cluster no longer affects position (it only colors the node):
-        //   X <- Linearity Position (narrative/reading-order rank), 0 at
-        //        the origin, growing outward -- never centered/negative.
-        //   Y, Z <- a radius/angle pair wrapped around the X axis:
-        //        radius   <- (Y) Relatability ("Maturity Depth")
-        //        angle    <- (Z) Depth ("Multiverse Stability"), SIGNED by
-        //                    publish status (has a Content URL -> angle in
-        //                    the +Z hemisphere, no Content URL -> -Z) so the
-        //                    two populations always land on opposite sides
-        //                    of the z=0 publish-divide plane.
-        const seed = hash32(String(node.id) + "|" + String(node.cluster));
-
-        // [TRAILER] nodes (YouTube trailers) aren't story content scored on
-        // Maturity Depth/Multiverse Stability -- they float freely in Y/Z
-        // instead of orbiting. X is different: they're pinned near their
-        // Linearity Position (180, the far end of the timeline) with a
-        // loose spread around it, so they cluster way out past the rest of
-        // the catalog instead of floating anywhere along the whole axis.
-        // Seeded so they're stable across reloads.
-        if (node.isTrailer) {{
-          const trailerLinN = Math.max(0, Math.min(1, node.linearityPosition / LINEARITY_MAX));
-          node.x = trailerLinN * (LINEAR_SCALE * 2) + (rand(seed + 10) - 0.5) * 2 * (LINEAR_SCALE * 0.15);
-          node.y = (rand(seed + 11) - 0.5) * 2 * AXIS_SCALE;
-          node.z = (rand(seed + 12) - 0.5) * 2 * AXIS_SCALE;
-          clampToCylinder(node);
-          node.fx = node.x;
-          node.fy = node.y;
-          node.fz = node.z;
-          node.val = node.size;
-          return;
-        }}
-
-        // Normalize each metric to 0..1, then add a small seeded jitter so nodes
-        // that share identical scores don't land on the exact same point.
-        const relN   = Math.max(0, Math.min(1, node.linearityPosition / LINEARITY_MAX));
-        const relatN = Math.max(0, Math.min(1, node.yValue / AXIS_MAX));
-        const depthN = Math.max(0, Math.min(1, node.zValue / AXIS_MAX));
-
-        const published = Boolean(node.contentUrl);
-
-        // Multiverse Stability no longer sets a flat Z offset -- it's the
-        // ANGLE of a cylindrical wrap around the Linear Time (X) axis, so
-        // nodes orbit the timeline instead of just hovering above it.
-        // Maturity Depth becomes the RADIUS of that orbit (bigger score ->
-        // further from the timeline). Publish status still picks which
-        // hemisphere of the circle a node falls in (theta 0..PI vs PI..2PI),
-        // so the z=0 divide plane keeps meaning "published in front (+Z),
-        // unpublished behind (-Z)" -- it's just a curved wrap now, not a
-        // flat offset.
-        const radius = relatN * AXIS_SCALE * (1 + (rand(seed + 1) - 0.5) * JITTER);
-        const thetaBase = depthN * Math.PI;
-        const theta = published ? thetaBase : thetaBase + Math.PI;
-
-        // Final absolute (Cartesian) jitter: a small per-node random nudge on each
-        // axis so any dots that landed on identical coords still separate visibly.
-        // Seeded off the node id, so it's stable across reloads (not Math.random).
-        // welcome to the poppyverse has zero orbit radius AND a single shared
-        // Linearity Position across ~110 rows, so jitter is the *only* thing
-        // separating them -- the normal amount reads as way too clustered, so
-        // this cluster gets a much wider nudge.
-        const isWelcome = node.cluster === "welcome to the poppyverse";
-        const pointJitter = isWelcome ? POINT_JITTER * 4 : POINT_JITTER;
-        const jx = (rand(seed + 3) - 0.5) * 2 * pointJitter;
-        const jy = (rand(seed + 4) - 0.5) * 2 * pointJitter;
-        const jz = (rand(seed + 5) - 0.5) * 2 * pointJitter;
-
-        // POPPYSEED and BEGINNINGS are the only two nodes meant to sit at
-        // the *exact* (x, 0, 0) point, visibly skewered dead-center by the
-        // Linear Time axis. This used to key off radius === 0 instead of
-        // the id directly, but welcome to the poppyverse's whole cluster
-        // also has a zero orbit radius (Depth 0), so that check was
-        // suppressing jitter for ~110 other rows too and stacking them
-        // all on top of each other. Every other zero-radius row still
-        // gets normal jitter -- it just orbits at radius 0 before the
-        // nudge, same as always.
-        const onAxis = node.id === "700" || node.id === "229";
-
-        // X starts at 0 (POPPYSEED's home) instead of being centered in the
-        // frame, so the whole scatter visibly grows outward from the origin.
-        node.x = relN * (LINEAR_SCALE * 2) * (onAxis ? 1 : (1 + (rand(seed) - 0.5) * JITTER)) + (onAxis ? 0 : jx);
-        node.y = radius * Math.cos(theta) + (onAxis ? 0 : jy);
-        node.z = radius * Math.sin(theta) + (onAxis ? 0 : jz);
-        clampToCylinder(node);
-
+        node.x = Number(node.finalX) || 0;
+        node.y = Number(node.finalY) || 0;
+        node.z = Number(node.finalZ) || 0;
         node.fx = node.x;
         node.fy = node.y;
         node.fz = node.z;
-
         node.val = node.size;
       }});
 
