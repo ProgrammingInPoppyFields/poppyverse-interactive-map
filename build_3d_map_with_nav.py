@@ -775,7 +775,9 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     .drawer-cluster {{
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
       margin-top: 14px;
       padding: 5px 9px;
       border-radius: 999px;
@@ -788,18 +790,20 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     .drawer-crossover {{
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
       margin-top: 14px;
       margin-left: 8px;
       padding: 5px 9px;
       border-radius: 999px;
-      background: linear-gradient(135deg, #FFD84D, #FF9A3D);
-      color: #1a1200;
+      background: linear-gradient(135deg, #7a7f87, #555a62);
+      color: #f2f2f2;
       font-size: 11px;
       font-weight: 900;
       letter-spacing: 0.09em;
       text-transform: uppercase;
-      box-shadow: 0 0 14px rgba(255, 189, 77, 0.55);
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.35);
     }}
 
     .drawer-crossover[hidden] {{
