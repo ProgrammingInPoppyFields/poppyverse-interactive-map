@@ -247,6 +247,7 @@ def build_data() -> dict[str, Any]:
             "color": color,
             "description": get_first(row, ["Description", "Desc"]),
             "subparts": get_first(row, ["Sub-parts", "Subparts", "Parts"]),
+            "crossover": get_first(row, ["Crossover"]),
             "characters": parse_list(get_first(row, ["Characters"]), delimiter=";"),
             "connections": parse_list(get_first(row, ["Connections", "Connection"])),
             "contentUrl": normalize_url(get_first(row, ["Content URL", "URL", "Url"])),
@@ -786,6 +787,25 @@ def build_html(data: dict[str, Any]) -> str:
       text-transform: uppercase;
     }}
 
+    .drawer-crossover {{
+      display: inline-block;
+      margin-top: 14px;
+      margin-left: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #FFD84D, #FF9A3D);
+      color: #1a1200;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      box-shadow: 0 0 14px rgba(255, 189, 77, 0.55);
+    }}
+
+    .drawer-crossover::before {{
+      content: "⚡ ";
+    }}
+
     .drawer-body {{
       padding: 22px 24px 44px;
     }}
@@ -946,6 +966,7 @@ def build_html(data: dict[str, Any]) -> str:
       <button id="drawerClose" class="drawer-close" type="button" aria-label="Close drawer">×</button>
       <h2 id="drawerTitle" class="drawer-title"></h2>
       <div id="drawerCluster" class="drawer-cluster"></div>
+      <div id="drawerCrossover" class="drawer-crossover" hidden></div>
     </header>
     <div id="drawerBody" class="drawer-body"></div>
   </aside>
@@ -1001,6 +1022,7 @@ def build_html(data: dict[str, Any]) -> str:
     const drawerClose = document.getElementById("drawerClose");
     const drawerTitle = document.getElementById("drawerTitle");
     const drawerCluster = document.getElementById("drawerCluster");
+    const drawerCrossover = document.getElementById("drawerCrossover");
     const drawerBody = document.getElementById("drawerBody");
 
     let hoveredNode = null;
@@ -1142,6 +1164,14 @@ def build_html(data: dict[str, Any]) -> str:
 
       drawerTitle.textContent = node.label || node.id || "";
       drawerCluster.textContent = node.cluster || "";
+
+      if (node.crossover) {{
+        drawerCrossover.textContent = node.crossover;
+        drawerCrossover.hidden = false;
+      }} else {{
+        drawerCrossover.textContent = "";
+        drawerCrossover.hidden = true;
+      }}
 
       const cover = node.coverUrl
         ? `<img src="${{escapeHtml(node.coverUrl)}}" alt="">`
