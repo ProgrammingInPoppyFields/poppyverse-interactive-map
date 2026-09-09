@@ -1707,11 +1707,15 @@ def build_html(data: dict[str, Any]) -> str:
       const spanZ = bounds.maxZ - bounds.minZ;
       const diag = Math.max(spanX, spanY, spanZ);
 
+      // Straight-on POV: camera sits directly out along +Z from the target
+      // with no X/Y offset, so Linear Time (X) reads horizontal, Maturity
+      // Depth (Y) reads vertical, and Multiverse Stability (Z) points
+      // straight at the viewer.
       Graph.cameraPosition(
         {{
-          x: bounds.cx - diag * 1.15,
-          y: bounds.cy + diag * 0.55,
-          z: bounds.cz + diag * 1.35
+          x: bounds.cx,
+          y: bounds.cy,
+          z: bounds.cz + diag * 1.86
         }},
         {{
           x: bounds.cx,
