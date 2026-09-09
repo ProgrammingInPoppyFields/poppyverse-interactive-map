@@ -1572,27 +1572,20 @@ def build_html(data: dict[str, Any]) -> str:
           if (node.contentUrl) {{
             const ringGlowColor = new THREE.Color(colorHex).lerp(new THREE.Color(0xffffff), 0.35);
 
+            // Single thin band, sized relative to the core sphere's own
+            // radius (5) -- the ring is a child of `core`, which is already
+            // scaled by `scale`, so using core-relative units here (not
+            // multiplying by `scale` again) keeps the ring proportional to
+            // the node instead of doubly-scaled and oversized.
+            const ringInner = 7;
+            const ringOuter = 7.8;
             const ring = new THREE.Mesh(
-              new THREE.RingGeometry(44, 50, 48),
+              new THREE.RingGeometry(ringInner, ringOuter, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.26,
-                depthWrite: false,
-                blending: THREE.AdditiveBlending
-              }})
-            );
-
-            // Wider, fainter halo layered behind the crisp ring to fake a glow/bloom
-            // (there's no postprocessing pipeline here, so this is done by hand).
-            const ringHalo = new THREE.Mesh(
-              new THREE.RingGeometry(39, 55, 48),
-              new THREE.MeshBasicMaterial({{
-                color: ringGlowColor,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.07,
+                opacity: 0.45,
                 depthWrite: false,
                 blending: THREE.AdditiveBlending
               }})
@@ -1602,10 +1595,9 @@ def build_html(data: dict[str, Any]) -> str:
             const tiltJitter = (rand(ringSeed) - 0.5) * (Math.PI / 2.5);
             const spin = rand(ringSeed + 1) * Math.PI * 2;
             const roll = (rand(ringSeed + 2) - 0.5) * (Math.PI / 3);
-            ring.rotation.x = ringHalo.rotation.x = Math.PI / 2.6 + tiltJitter;
-            ring.rotation.y = ringHalo.rotation.y = spin;
-            ring.rotation.z = ringHalo.rotation.z = roll;
-            core.add(ringHalo);
+            ring.rotation.x = Math.PI / 2.6 + tiltJitter;
+            ring.rotation.y = spin;
+            ring.rotation.z = roll;
             core.add(ring);
           }}
 
