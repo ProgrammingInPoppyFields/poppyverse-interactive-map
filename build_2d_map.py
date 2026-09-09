@@ -658,12 +658,13 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     .crossover-badge {{
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       margin-left: 8px;
-      padding: 3px 8px;
+      padding: 4px 9px;
       border-radius: 999px;
-      background: linear-gradient(135deg, #FFD84D, #FF9A3D);
-      color: #1a1200;
+      background: linear-gradient(135deg, #7a7f87, #555a62);
+      color: #f2f2f2;
       font-size: 10px;
       font-weight: 900;
       letter-spacing: 0.07em;
@@ -671,7 +672,7 @@ def build_html(data: dict[str, Any]) -> str:
       text-transform: uppercase;
       white-space: nowrap;
       vertical-align: middle;
-      box-shadow: 0 0 10px rgba(255, 189, 77, 0.5);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }}
 
     .crossover-badge::before {{
