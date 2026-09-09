@@ -18236,16 +18236,17 @@
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
     // BETA MAP layout: X comes from Linearity Position (a narrative/reading-
-    // order rank, NOT Relativity), Y/Z still come from Relatability/Depth
-    // (relabeled Maturity Depth / Multiverse Stability) as placeholders.
-    // Z's magnitude comes from that placeholder Depth value but its SIGN is
-    // still forced by publish status, so published/unpublished nodes always
-    // land on opposite sides of the z=0 divide plane.
+    // order rank, NOT Relativity), starting at 0 so POPPYSEED anchors the
+    // origin and everything else grows outward from it. Y/Z are no longer
+    // independent placeholders -- together they form a radius/angle pair
+    // (Y = r*cos(theta), Z = r*sin(theta)) that wraps around the X axis:
+    // Relatability (Maturity Depth) sets the radius, Depth (Multiverse
+    // Stability) sets the angle. Publish status still forces the angle into
+    // one hemisphere or the other, so Z's SIGN always separates published
+    // (+Z) from unpublished (-Z) nodes across the z=0 divide plane.
     const AXIS_MAX = 10;        // CSV metrics (Relatability / Depth) are scored 0..10
     const LINEARITY_MAX = Math.max(1, ...DATA.nodes.map(n => Number(n.linearityPosition) || 0));
-    const AXIS_SCALE = 560;     // half-extent of the X/Y spread (bigger = dots spread further apart)
-    const DEPTH_GAP = 70;       // minimum distance any node sits from the z=0 divide plane
-    const DEPTH_SPAN = 560;     // additional Z distance added on top of DEPTH_GAP, scaled by Depth score
+    const AXIS_SCALE = 560;     // max reach of Linear Time (x2, since it starts at 0) and the Maturity Depth/Multiverse Stability orbit radius
     const JITTER = 0.4;         // seeded spread so nodes with identical scores don't stack
     const POINT_JITTER = 70;    // absolute (Cartesian) units of random nudge -- breaks up the integer-rating grid into something organic
 
@@ -18531,14 +18532,17 @@
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
       DATA.nodes.forEach(node => {
-        // --- BETA MAP scatter layout, centered on 0,0,0. ---
+        // --- BETA MAP scatter layout, anchored on the origin (0,0,0). ---
         // Cluster no longer affects position (it only colors the node):
-        //   X <- Linearity Position (narrative/reading-order rank)
-        //   Y <- (Y) Relatability, standing in for "Maturity Depth"
-        //   Z <- (Z) Depth magnitude, standing in for "Multiverse Stability",
-        //        SIGNED by publish status (has a Content URL -> +Z, no
-        //        Content URL -> -Z) so the two populations always land on
-        //        opposite sides of the z=0 publish-divide plane.
+        //   X <- Linearity Position (narrative/reading-order rank), 0 at
+        //        the origin, growing outward -- never centered/negative.
+        //   Y, Z <- a radius/angle pair wrapped around the X axis:
+        //        radius   <- (Y) Relatability ("Maturity Depth")
+        //        angle    <- (Z) Depth ("Multiverse Stability"), SIGNED by
+        //                    publish status (has a Content URL -> angle in
+        //                    the +Z hemisphere, no Content URL -> -Z) so the
+        //                    two populations always land on opposite sides
+        //                    of the z=0 publish-divide plane.
         const seed = hash32(String(node.id) + "|" + String(node.cluster));
 
         // [TRAILER] nodes (YouTube trailers) aren't story content scored on
@@ -18547,9 +18551,9 @@
         // reloads, but otherwise untethered from the coordinate system
         // everything else is pinned to.
         if (node.isTrailer) {
-          node.x = (rand(seed + 10) - 0.5) * 2 * AXIS_SCALE;
+          node.x = rand(seed + 10) * 2 * AXIS_SCALE;
           node.y = (rand(seed + 11) - 0.5) * 2 * AXIS_SCALE;
-          node.z = (rand(seed + 12) - 0.5) * 2 * (DEPTH_GAP + DEPTH_SPAN);
+          node.z = (rand(seed + 12) - 0.5) * 2 * AXIS_SCALE;
           node.fx = node.x;
           node.fy = node.y;
           node.fz = node.z;
@@ -18564,7 +18568,19 @@
         const depthN = Math.max(0, Math.min(1, node.zValue / AXIS_MAX));
 
         const published = Boolean(node.contentUrl);
-        const zMag = DEPTH_GAP + DEPTH_SPAN * depthN * (1 + (rand(seed + 2) - 0.5) * JITTER);
+
+        // Multiverse Stability no longer sets a flat Z offset -- it's the
+        // ANGLE of a cylindrical wrap around the Linear Time (X) axis, so
+        // nodes orbit the timeline instead of just hovering above it.
+        // Maturity Depth becomes the RADIUS of that orbit (bigger score ->
+        // further from the timeline). Publish status still picks which
+        // hemisphere of the circle a node falls in (theta 0..PI vs PI..2PI),
+        // so the z=0 divide plane keeps meaning "published in front (+Z),
+        // unpublished behind (-Z)" -- it's just a curved wrap now, not a
+        // flat offset.
+        const radius = relatN * AXIS_SCALE * (1 + (rand(seed + 1) - 0.5) * JITTER);
+        const thetaBase = depthN * Math.PI;
+        const theta = published ? thetaBase : thetaBase + Math.PI;
 
         // Final absolute (Cartesian) jitter: a small per-node random nudge on each
         // axis so any dots that landed on identical coords still separate visibly.
@@ -18573,9 +18589,11 @@
         const jy = (rand(seed + 4) - 0.5) * 2 * POINT_JITTER;
         const jz = (rand(seed + 5) - 0.5) * 2 * POINT_JITTER;
 
-        node.x = (relN - 0.5) * 2 * AXIS_SCALE * (1 + (rand(seed) - 0.5) * JITTER) + jx;
-        node.y = (relatN - 0.5) * 2 * AXIS_SCALE * (1 + (rand(seed + 1) - 0.5) * JITTER) + jy;
-        node.z = (published ? 1 : -1) * zMag + jz;
+        // X starts at 0 (POPPYSEED's home) instead of being centered in the
+        // frame, so the whole scatter visibly grows outward from the origin.
+        node.x = relN * (AXIS_SCALE * 2) * (1 + (rand(seed) - 0.5) * JITTER) + jx;
+        node.y = radius * Math.cos(theta) + jy;
+        node.z = radius * Math.sin(theta) + jz;
 
         node.fx = node.x;
         node.fy = node.y;
@@ -18904,27 +18922,33 @@
         };
       })();
 
-      controls.target.set(bounds.cx, bounds.cy, bounds.cz);
+      // Pivot on the literal world origin (0,0,0), not the bounds' center --
+      // POPPYSEED sits fixed at (0,0,0), so pinning the pivot there (rather
+      // than to wherever the rest of the scatter happens to average out)
+      // keeps it unmistakably "everything starts here" regardless of how
+      // lopsided the scatter gets. `bounds` is still used below, just for
+      // its span (to size the zoom distance), not its center.
+      controls.target.set(0, 0, 0);
 
       const spanX = bounds.maxX - bounds.minX;
       const spanY = bounds.maxY - bounds.minY;
       const spanZ = bounds.maxZ - bounds.minZ;
       const diag = Math.max(spanX, spanY, spanZ);
 
-      // Straight-on POV: camera sits directly out along +Z from the target
+      // Straight-on POV: camera sits directly out along +Z from the origin
       // with no X/Y offset, so Linear Time (X) reads horizontal, Maturity
       // Depth (Y) reads vertical, and Multiverse Stability (Z) points
       // straight at the viewer.
       Graph.cameraPosition(
         {
-          x: bounds.cx,
-          y: bounds.cy,
-          z: bounds.cz + diag * 1.86
+          x: 0,
+          y: 0,
+          z: diag * 1.86
         },
         {
-          x: bounds.cx,
-          y: bounds.cy,
-          z: bounds.cz
+          x: 0,
+          y: 0,
+          z: 0
         },
         1200
       );
@@ -19025,28 +19049,29 @@
         if (highCaption) addAxisCaption(to, dir, colorHex, highCaption);
       }
 
-      // Three axes through the origin so the center (0,0,0) is unmistakable.
-      // Each end gets a short plain-language caption (low value -> high value)
-      // explaining what that side of the scale actually represents.
-      const FRAME_XY = AXIS_SCALE + 30;
-      const FRAME_Z = DEPTH_GAP + DEPTH_SPAN + 30;
-      addAxis({ x: -FRAME_XY, y: 0, z: 0 }, { x: FRAME_XY, y: 0, z: 0 }, "#4D96FF", "Linear Time",
+      // Linear Time runs from the origin (0,0,0) -- POPPYSEED's home -- out to
+      // its max reach, instead of running symmetric through the center, so
+      // the frame itself shows "everything starts here." Maturity Depth and
+      // Multiverse Stability are no longer separate straight dimensions --
+      // together they form a radius/angle pair that wraps around the Linear
+      // Time axis (see prepareGraphData), so they share one symmetric
+      // reach (FRAME_R) since either can land on either side of 0.
+      const FRAME_X = AXIS_SCALE * 2 + 30;
+      const FRAME_R = AXIS_SCALE + 30;
+      addAxis({ x: 0, y: 0, z: 0 }, { x: FRAME_X, y: 0, z: 0 }, "#4D96FF", "Linear Time",
         "start here", "furthest downstream");
-      addAxis({ x: 0, y: -FRAME_XY, z: 0 }, { x: 0, y: FRAME_XY, z: 0 }, "#6BCB77", "Maturity Depth",
-        "barely human", "painfully relatable");
+      addAxis({ x: 0, y: -FRAME_R, z: 0 }, { x: 0, y: FRAME_R, z: 0 }, "#6BCB77", "Maturity Depth",
+        "close to the timeline", "far from the timeline");
 
-      // Multiverse Stability is a special case: its sign encodes publish status
-      // (+Z published, -Z unpublished, see the divide plane below), not "low vs.
-      // high" on its own. The magnitude is distance from the z=0 plane in either
-      // direction, so both tips are the "least stable" end, and "most stable"
-      // sits near the origin on both sides, not at either tip.
-      addAxis({ x: 0, y: 0, z: -FRAME_Z }, { x: 0, y: 0, z: FRAME_Z }, "#FF6B6B", "Multiverse Stability",
-        null, "reality is fraying");
-      addAxisCaption({ x: 0, y: 0, z: -FRAME_Z }, { x: 0, y: 0, z: -1 }, "#FF6B6B", "reality is fraying & unpublished");
-      addAxisCaption({ x: 60, y: 0, z: DEPTH_GAP }, { x: 1, y: 0, z: 0 }, "#FF6B6B", "holding steady");
-      addAxisCaption({ x: 60, y: 0, z: -DEPTH_GAP }, { x: 1, y: 0, z: 0 }, "#FF6B6B", "holding steady & unpublished");
+      // Multiverse Stability is now the ORBIT ANGLE around the Linear Time
+      // axis (see the two rings below), not a straight dimension of its own
+      // -- this line just marks the "toward/away from viewer" direction for
+      // orientation. Sign still encodes publish status (+Z published, -Z
+      // unpublished, see the divide plane below).
+      addAxis({ x: 0, y: 0, z: -FRAME_R }, { x: 0, y: 0, z: FRAME_R }, "#FF6B6B", "Multiverse Stability",
+        "unpublished side", "published side");
 
-      // Bright marker at the exact center, 0,0,0.
+      // Bright marker at the exact center, 0,0,0 -- POPPYSEED's fixed spot.
       const originMarker = new THREE.Mesh(
         new THREE.SphereGeometry(6, 16, 16),
         new THREE.MeshBasicMaterial({ color: 0xffffff })
@@ -19054,16 +19079,37 @@
       originMarker.raycast = () => {};
       axesGroup.add(originMarker);
 
+      // Orbit rings: static guides tracing the max Maturity-Depth radius as
+      // Multiverse Stability sweeps a full circle around the Linear Time
+      // axis -- one at the origin, one at the far end, so the "tube" the
+      // scatter wraps around is visible at both ends of the timeline.
+      function makeOrbitRing(xPos, radius, colorHex, opacity) {
+        const segments = 64;
+        const pts = [];
+        for (let i = 0; i <= segments; i++) {
+          const t = (i / segments) * Math.PI * 2;
+          pts.push(new THREE.Vector3(xPos, radius * Math.cos(t), radius * Math.sin(t)));
+        }
+        const ring = new THREE.LineLoop(
+          new THREE.BufferGeometry().setFromPoints(pts),
+          new THREE.LineBasicMaterial({ color: colorHex, transparent: true, opacity })
+        );
+        ring.raycast = () => {};
+        return ring;
+      }
+      axesGroup.add(makeOrbitRing(0, AXIS_SCALE, "#FFD93D", 0.35));
+      axesGroup.add(makeOrbitRing(FRAME_X - 30, AXIS_SCALE, "#FFD93D", 0.2));
+
       // Glowing wireframe box marking the outer edge of the coordinate space --
-      // the max reach of every axis (FRAME_XY on X/Y, FRAME_Z on Z) stitched
-      // into one bounding frame. A crisp inner line plus a wider, fainter
-      // outer one (same trick as the INTRO rings) fakes a glow without a real
-      // postprocessing pipeline.
+      // 0..FRAME_X on X (offset, since X starts at the origin, not centered
+      // through it), +-FRAME_R on Y/Z. A crisp inner line plus a wider,
+      // fainter outer one (same trick as the INTRO rings) fakes a glow
+      // without a real postprocessing pipeline.
       function makeBoundingBox(inflate, opacity) {
         const geom = new THREE.BoxGeometry(
-          FRAME_XY * 2 + inflate,
-          FRAME_XY * 2 + inflate,
-          FRAME_Z * 2 + inflate
+          FRAME_X + inflate,
+          FRAME_R * 2 + inflate,
+          FRAME_R * 2 + inflate
         );
         const box = new THREE.LineSegments(
           new THREE.EdgesGeometry(geom),
@@ -19075,6 +19121,7 @@
             blending: THREE.AdditiveBlending
           })
         );
+        box.position.set(FRAME_X / 2, 0, 0);
         box.raycast = () => {};
         return box;
       }
@@ -19084,11 +19131,15 @@
       scene.add(axesGroup);
 
       // Publish-divide plane at z=0: published nodes (+Z) sit in front of it,
-      // unpublished nodes (-Z) sit behind it. Gated behind the axes toggle,
-      // same as the axes/frame and connection lines.
-      const DIVIDE_SIZE = (AXIS_SCALE + 60) * 2;
+      // unpublished nodes (-Z) sit behind it -- still true under the orbit
+      // wrap, since publish status picks which half of the circle a node's
+      // angle falls in. Sized/offset to span the full 0..FRAME_X reach of
+      // Linear Time instead of being centered through the origin. Gated
+      // behind the axes toggle, same as the axes/frame and connection lines.
+      const DIVIDE_W = FRAME_X + 60;
+      const DIVIDE_H = FRAME_R * 2;
       const dividePlane = new THREE.Mesh(
-        new THREE.PlaneGeometry(DIVIDE_SIZE, DIVIDE_SIZE),
+        new THREE.PlaneGeometry(DIVIDE_W, DIVIDE_H),
         new THREE.MeshBasicMaterial({
           color: 0xffffff,
           transparent: true,
@@ -19097,27 +19148,28 @@
           depthWrite: false
         })
       );
+      dividePlane.position.set(FRAME_X / 2, 0, 0);
       dividePlane.raycast = () => {};
       axesGroup.add(dividePlane);
 
       const divideEdge = new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(-DIVIDE_SIZE / 2, -DIVIDE_SIZE / 2, 0),
-          new THREE.Vector3(DIVIDE_SIZE / 2, -DIVIDE_SIZE / 2, 0),
-          new THREE.Vector3(DIVIDE_SIZE / 2, DIVIDE_SIZE / 2, 0),
-          new THREE.Vector3(-DIVIDE_SIZE / 2, DIVIDE_SIZE / 2, 0)
+          new THREE.Vector3(0, -DIVIDE_H / 2, 0),
+          new THREE.Vector3(DIVIDE_W, -DIVIDE_H / 2, 0),
+          new THREE.Vector3(DIVIDE_W, DIVIDE_H / 2, 0),
+          new THREE.Vector3(0, DIVIDE_H / 2, 0)
         ]),
         new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 })
       );
       divideEdge.raycast = () => {};
       axesGroup.add(divideEdge);
 
-      // Pushed well past the Relatability axis's high-end caption ("painfully
-      // relatable", which sits at y = FRAME_XY + 46 = 556) -- both labels are
-      // pinned to x=0, z=0, so they need real vertical separation or they sit
-      // right on top of each other.
+      // Pushed well past the Maturity Depth axis's high-end caption ("far
+      // from the timeline", which sits at y = FRAME_R + 46) -- both labels
+      // are pinned to the same x, z=0, so they need real vertical separation
+      // or they sit right on top of each other.
       const divideLabel = makeAxisLabel("The Draft Horizon", "#FFFFFF");
-      divideLabel.position.set(0, DIVIDE_SIZE / 2 + 110, 0);
+      divideLabel.position.set(FRAME_X / 2, DIVIDE_H / 2 + 110, 0);
       axesGroup.add(divideLabel);
 
       const axesToggle = document.getElementById("axesToggle");
