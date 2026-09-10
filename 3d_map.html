@@ -18397,7 +18397,7 @@
       addAxis({ x: 0, y: 0, z: 0 }, { x: FRAME_X, y: 0, z: 0 }, "#4D96FF", "Linear Time",
         "start here", "furthest downstream");
       addAxis({ x: 0, y: -FRAME_R, z: 0 }, { x: 0, y: FRAME_R, z: 0 }, "#6BCB77", "Maturity Depth (radius)",
-        "close to the timeline", "far from the timeline");
+        null, null);
 
       // Multiverse Stability is the ORBIT ANGLE around the Linear Time axis
       // (see the ring below, ticked at 0/90/180/270 degrees) -- this
@@ -18438,11 +18438,17 @@
       // Degree tick labels on the origin ring -- 0/90/180/270 degrees, so
       // it's visually obvious Multiverse Stability is a rotation, not a
       // straight gauge, and roughly where a given score's angle lands.
+      // 90/270 sit right on the Multiverse Stability axis line (colored to
+      // match it); 90 also gets an X nudge so it doesn't sit on top of the
+      // "Multiverse Stability" axis label itself, which is pinned at the
+      // same (0,0,FRAME_R) spot.
+      const tickColors = { 0: "#FFD93D", 90: "#FF6B6B", 180: "#FFD93D", 270: "#FF6B6B" };
+      const tickXOffset = { 90: 90 };
       [0, 90, 180, 270].forEach(deg => {
         const t = (deg / 360) * Math.PI * 2;
         const tickRadius = AXIS_SCALE + 34;
-        const label = makeAxisLabel(deg + "°", "#FFD93D", { fontPx: 22, opacity: 0.7, spriteHeight: 24 });
-        label.position.set(0, tickRadius * Math.cos(t), tickRadius * Math.sin(t));
+        const label = makeAxisLabel(deg + "°", tickColors[deg], { fontPx: 22, opacity: 0.7, spriteHeight: 24 });
+        label.position.set(tickXOffset[deg] || 0, tickRadius * Math.cos(t), tickRadius * Math.sin(t));
         axesGroup.add(label);
       });
 
