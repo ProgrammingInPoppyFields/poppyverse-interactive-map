@@ -17757,22 +17757,29 @@
     }
 
     function renderCoordMeters(node) {
-      // Plain literal values, not 0-10 score bars -- these are baked
-      // scatter-plot coordinates (unbounded, signable), not narrative
-      // scores, so a percentage-fill meter doesn't apply here. Labeled by
-      // what they actually mean (see the Legend's Coordinate System
-      // section), not the raw Final X/Y/Z column names, and colored to
-      // match their axis in the 3D scene.
+      // Final Y/Z are the Cartesian PROJECTION of Maturity (radius) and
+      // Stability (angle) -- y = r*cos(theta), z = r*sin(theta) -- so
+      // neither one alone IS Maturity or Stability, and showing them raw
+      // is exactly what made "negative Maturity/Stability" look meaningless
+      // (they're not scores at all, just a rotated point's coordinates).
+      // Converting back to polar here fixes that: radius via hypot() can't
+      // be negative (it's a distance), and the angle is normalized to
+      // 0-360 degrees, matching the ring in the 3D scene.
+      const y = Number(node.finalY) || 0;
+      const z = Number(node.finalZ) || 0;
+      const radius = Math.hypot(y, z);
+      const angleDeg = (Math.atan2(z, y) * 180 / Math.PI + 360) % 360;
+
       const axes = [
-        ["#4D96FF", "Linearity", node.finalX],
-        ["#6BCB77", "Maturity", node.finalY],
-        ["#FF6B6B", "Stability", node.finalZ]
+        ["#4D96FF", "Linearity", node.finalX, ""],
+        ["#6BCB77", "Maturity", radius, ""],
+        ["#FF6B6B", "Stability", angleDeg, "°"]
       ];
 
-      const bubbles = axes.map(([color, label, value]) => `
+      const bubbles = axes.map(([color, label, value, unit]) => `
         <div class="coord-bubble" style="--bubble-color:${escapeHtml(color)};">
           <span class="coord-bubble-label">${escapeHtml(label)}</span>
-          <span class="coord-bubble-value">${(Number(value) || 0).toFixed(1)}</span>
+          <span class="coord-bubble-value">${(Number(value) || 0).toFixed(1)}${unit}</span>
         </div>
       `).join("");
 
