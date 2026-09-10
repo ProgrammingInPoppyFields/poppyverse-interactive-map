@@ -1,6 +1,22 @@
 #!/usr/bin/env python3
 """
-Build the 3D Poppyverse map.
+Build the Poppyverse 3D Map -- a coordinate system baked directly into
+SRC_toc.csv's Final X/Y/Z columns rather than computed live:
+  Final X <- Linear Time position. POPPYSEED sits at the literal origin
+       (0); every other row is derived from a per-cluster hand-assigned
+       narrative/reading-order value, so the whole scatter grows outward
+       from a single start point read left-to-right.
+  Final Y, Z <- a radius/angle pair wrapped around the Linear Time axis:
+       Maturity Depth sets the RADIUS (always >= 0 -- a distance can't be
+       negative, so there's no "negative Maturity" to puzzle over),
+       Multiverse Stability sets the ANGLE, sweeping the full 0-360
+       degrees as its score goes 0-10. No publish-status hemisphere.
+
+These were computed once (including every node's jitter) and written back
+as plain numbers, so any node's position can be hand-tuned directly in the
+CSV. POPPYSEED (id 700) is 0,0,0; BEGINNINGS (id 229) sits a short way out
+along Linear Time alone; every other cluster occupies its own band further
+out, with trailer rows floating loosely near the far end of the timeline.
 
 Source files:
 - SRC_clusters.csv
@@ -156,7 +172,6 @@ def make_nav(active: str) -> str:
         ("About", "about.html", "about"),
         ("2D Map", "2d_map.html", "2d"),
         ("3D Map", "3d_map.html", "3d"),
-        ("Beta Map", "beta_map.html", "beta"),
         ("Tumblr Archive", TUMBLR_ARCHIVE_URL, "archive"),
     ]
 
@@ -1014,12 +1029,16 @@ def build_html(data: dict[str, Any]) -> str:
 
     const DATA = JSON.parse(document.getElementById("poppy-data").textContent);
 
-    // Node positions are baked: each node's Final X/Y/Z (in SRC_toc.csv) is
-    // its literal position, computed once (the same Linear Time / Maturity
-    // Depth / Multiverse Stability layout Beta Map uses) and written back as
-    // a plain number instead of derived live from a formula. See
-    // prepareGraphData() -- it's just a read now.
-    const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius (reference-frame sizing only)
+    // 3D MAP layout is baked: each node's Final X/Y/Z (in SRC_toc.csv) is
+    // its literal position, computed once and written back as a plain
+    // number instead of derived live from a hash-seeded formula. Final X is
+    // Linear Time position (POPPYSEED anchors the origin at 0); Final Y/Z
+    // are a radius/angle pair wrapped around the X axis -- Maturity Depth
+    // as radius (always >= 0), Multiverse Stability as angle (a full
+    // 0-360 degree sweep, no publish-status hemisphere). See
+    // prepareGraphData() -- it's just a read now, not a formula.
+    const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
+    const LINEAR_SCALE = 672;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only, matches the compressed 0..1344 Final X range baked into SRC_toc.csv
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1300,10 +1319,13 @@ def build_html(data: dict[str, Any]) -> str:
     function prepareGraphData() {{
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
-      // 3D Map now plots the same baked Final X/Y/Z coordinates as Beta Map
-      // (SRC_toc.csv), computed once (Linear Time position, the Maturity
-      // Depth/Multiverse Stability orbit, every node's jitter) and written
-      // back as plain numbers -- there's no live formula left to run here.
+      // 3D MAP layout is fully baked: Final X/Y/Z in SRC_toc.csv are the
+      // literal, already-computed positions (Linear Time position, the
+      // Maturity Depth/Multiverse Stability orbit, every node's jitter, all
+      // clamped inside the cylinder) -- there's no live formula left to run
+      // here. Baking this means each node's position is a plain number you
+      // can hand-edit directly in the CSV, instead of an opaque hash-seeded
+      // computation nobody could tune per node.
       DATA.nodes.forEach(node => {{
         node.x = Number(node.finalX) || 0;
         node.y = Number(node.finalY) || 0;
@@ -1394,7 +1416,8 @@ def build_html(data: dict[str, Any]) -> str:
 
           // EXPERIMENTAL: [MANGA] nodes get a faceted, low-poly core instead of
           // a smooth sphere -- a paneled silhouette instead of an orbital
-          // accessory, so it doesn't compete with the isIntro ring treatment.
+          // accessory, so it doesn't compete with the published-node ring
+          // treatment below.
           // [META] nodes get a cube -- a distinct, unmissable silhouette for
           // "you're looking at authorial commentary, not a story," even
           // though the node itself now lives in its story's own cluster.
@@ -1479,30 +1502,23 @@ def build_html(data: dict[str, Any]) -> str:
             }}
           }}
 
-          if (node.isIntro) {{
+          if (node.contentUrl) {{
             const ringGlowColor = new THREE.Color(colorHex).lerp(new THREE.Color(0xffffff), 0.35);
 
+            // Single thin band, sized relative to the core sphere's own
+            // radius (5) -- the ring is a child of `core`, which is already
+            // scaled by `scale`, so using core-relative units here (not
+            // multiplying by `scale` again) keeps the ring proportional to
+            // the node instead of doubly-scaled and oversized.
+            const ringInner = 7;
+            const ringOuter = 7.8;
             const ring = new THREE.Mesh(
-              new THREE.RingGeometry(44, 50, 48),
+              new THREE.RingGeometry(ringInner, ringOuter, 48),
               new THREE.MeshBasicMaterial({{
                 color: ringGlowColor,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.26,
-                depthWrite: false,
-                blending: THREE.AdditiveBlending
-              }})
-            );
-
-            // Wider, fainter halo layered behind the crisp ring to fake a glow/bloom
-            // (there's no postprocessing pipeline here, so this is done by hand).
-            const ringHalo = new THREE.Mesh(
-              new THREE.RingGeometry(39, 55, 48),
-              new THREE.MeshBasicMaterial({{
-                color: ringGlowColor,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.07,
+                opacity: 0.45,
                 depthWrite: false,
                 blending: THREE.AdditiveBlending
               }})
@@ -1512,10 +1528,9 @@ def build_html(data: dict[str, Any]) -> str:
             const tiltJitter = (rand(ringSeed) - 0.5) * (Math.PI / 2.5);
             const spin = rand(ringSeed + 1) * Math.PI * 2;
             const roll = (rand(ringSeed + 2) - 0.5) * (Math.PI / 3);
-            ring.rotation.x = ringHalo.rotation.x = Math.PI / 2.6 + tiltJitter;
-            ring.rotation.y = ringHalo.rotation.y = spin;
-            ring.rotation.z = ringHalo.rotation.z = roll;
-            core.add(ringHalo);
+            ring.rotation.x = Math.PI / 2.6 + tiltJitter;
+            ring.rotation.y = spin;
+            ring.rotation.z = roll;
             core.add(ring);
           }}
 
@@ -1634,23 +1649,35 @@ def build_html(data: dict[str, Any]) -> str:
         }};
       }})();
 
-      controls.target.set(bounds.cx, bounds.cy, bounds.cz);
+      // Pivot Y/Z on the literal world origin (0,0,0) -- they're a symmetric
+      // radius/angle wrap around the X axis, so 0 is always their true
+      // center regardless of how the scatter lands. X is different: Linear
+      // Time runs 0..2*LINEAR_SCALE (POPPYSEED sits at the 0 end), so
+      // centering the pivot at x=0 leaves the entire scatter sitting to one
+      // side of the frame. Pivoting at LINEAR_SCALE -- the midpoint of that
+      // range -- keeps POPPYSEED's end and the far end both in view instead
+      // of everything bunching to one side.
+      controls.target.set(LINEAR_SCALE, 0, 0);
 
       const spanX = bounds.maxX - bounds.minX;
       const spanY = bounds.maxY - bounds.minY;
       const spanZ = bounds.maxZ - bounds.minZ;
       const diag = Math.max(spanX, spanY, spanZ);
 
+      // Straight-on POV: camera sits directly out along +Z from the target
+      // with no X/Y offset, so Linear Time (X) reads horizontal, Maturity
+      // Depth (Y) reads vertical, and Multiverse Stability (Z) points
+      // straight at the viewer.
       Graph.cameraPosition(
         {{
-          x: bounds.cx - diag * 1.15,
-          y: bounds.cy + diag * 0.55,
-          z: bounds.cz + diag * 1.35
+          x: LINEAR_SCALE,
+          y: 0,
+          z: diag * 1.86
         }},
         {{
-          x: bounds.cx,
-          y: bounds.cy,
-          z: bounds.cz
+          x: LINEAR_SCALE,
+          y: 0,
+          z: 0
         }},
         1200
       );
@@ -1751,16 +1778,14 @@ def build_html(data: dict[str, Any]) -> str:
         if (highCaption) addAxisCaption(to, dir, colorHex, highCaption);
       }}
 
-      // Node positions are the same baked Linear Time / Maturity Depth /
-      // Multiverse Stability coordinates Beta Map uses (see prepareGraphData):
-      // Linear Time runs 0..2*LINEAR_SCALE (POPPYSEED at the 0 end) instead
-      // of being centered through the origin, so the frame reflects that
-      // instead of assuming a symmetric spread. Maturity Depth and
+      // Linear Time runs from the origin (0,0,0) -- POPPYSEED's home -- out to
+      // its max reach, instead of running symmetric through the center, so
+      // the frame itself shows "everything starts here." Maturity Depth and
       // Multiverse Stability are a radius/angle pair wrapped around the
-      // Linear Time axis: Maturity Depth is the RADIUS (always >= 0 -- a
-      // distance can't be negative), Multiverse Stability is the ANGLE,
-      // sweeping the full 0-360 degrees as its score goes 0-10.
-      const LINEAR_SCALE = 672; // reference-frame sizing only, matches the compressed 0..1344 Final X range baked into SRC_toc.csv
+      // Linear Time axis (see prepareGraphData): Maturity Depth is the
+      // RADIUS (always >= 0 -- a distance can't be negative, so there's no
+      // "negative Maturity" to puzzle over), Multiverse Stability is the
+      // ANGLE, sweeping the full 0-360 degrees as its score goes 0-10.
       const FRAME_X = LINEAR_SCALE * 2 + 30;
       const FRAME_R = AXIS_SCALE + 30;
       addAxis({{ x: 0, y: 0, z: 0 }}, {{ x: FRAME_X, y: 0, z: 0 }}, "#4D96FF", "Linear Time",
@@ -1844,8 +1869,8 @@ def build_html(data: dict[str, Any]) -> str:
       // shape reads unmistakably as a cylinder (matching the actual
       // radius/angle coordinate system) instead of a box that would imply a
       // rectangular boundary. A crisp inner copy plus a wider, fainter outer
-      // one (same trick as the INTRO rings) fakes a glow without a real
-      // postprocessing pipeline.
+      // one (same trick as the published-node rings) fakes a glow without a
+      // real postprocessing pipeline.
       function makeBoundingCylinder(inflate, opacity) {{
         const segments = 48;
         const ribCount = 8;
