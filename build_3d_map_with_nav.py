@@ -19,10 +19,9 @@ Output:
 - Keep the Legend (node shapes + multiverse colors).
 - Do NOT show axes.
 - Do NOT show axis labels.
-  (The reference frame — axes through the origin, the 0,0,0 center marker, and
-  the publish-divide plane at z=0 (separating published nodes (+Z) from
-  unpublished nodes (-Z)) — is hidden by default, but can be revealed via the
-  "Show axes" toggle at the bottom-left.)
+  (The reference frame — axes through the origin and the 0,0,0 center
+  marker — is hidden by default, but can be revealed via the "Show axes"
+  toggle at the bottom-left.)
 - Do NOT show hover labels.
 - Do NOT show HUD title/subtitle.
 - Do NOT show content ratings in clicked cards.
@@ -1020,7 +1019,7 @@ def build_html(data: dict[str, Any]) -> str:
     // Depth / Multiverse Stability layout Beta Map uses) and written back as
     // a plain number instead of derived live from a formula. See
     // prepareGraphData() -- it's just a read now.
-    const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius (reference-frame sizing only)
+    const AXIS_SCALE = 560;     // max reach of Final Y/Final Z (reference-frame sizing only)
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1302,9 +1301,9 @@ def build_html(data: dict[str, Any]) -> str:
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
       // 3D Map now plots the same baked Final X/Y/Z coordinates as Beta Map
-      // (SRC_toc.csv), computed once (Linear Time position, the Maturity
-      // Depth/Multiverse Stability orbit, every node's jitter) and written
-      // back as plain numbers -- there's no live formula left to run here.
+      // (SRC_toc.csv), computed once (Linear Time position, Maturity Depth,
+      // Multiverse Stability, every node's jitter) and written back as
+      // plain numbers -- there's no live formula left to run here.
       DATA.nodes.forEach(node => {{
         node.x = Number(node.finalX) || 0;
         node.y = Number(node.finalY) || 0;
@@ -1752,14 +1751,14 @@ def build_html(data: dict[str, Any]) -> str:
         if (highCaption) addAxisCaption(to, dir, colorHex, highCaption);
       }}
 
-      // Node positions are now the same baked Linear Time / Maturity Depth /
+      // Node positions are the same baked Linear Time / Maturity Depth /
       // Multiverse Stability coordinates Beta Map uses (see prepareGraphData):
       // Linear Time runs 0..2*LINEAR_SCALE (POPPYSEED at the 0 end) instead
       // of being centered through the origin, so the frame reflects that
-      // instead of assuming a symmetric spread. Maturity Depth/Multiverse
-      // Stability are a radius/angle pair wrapped around Linear Time, sharing
-      // one symmetric reach (FRAME_R) since either can land on either side
-      // of 0.
+      // instead of assuming a symmetric spread. Maturity Depth and
+      // Multiverse Stability are independent straight axes -- no cos/sin,
+      // no radius/angle pair, no publish-status hemisphere. Each one
+      // directly, monotonically reflects its own score.
       const LINEAR_SCALE = 672; // reference-frame sizing only, matches the compressed 0..1344 Final X range baked into SRC_toc.csv
       const FRAME_X = LINEAR_SCALE * 2 + 30;
       const FRAME_R = AXIS_SCALE + 30;
@@ -1767,13 +1766,8 @@ def build_html(data: dict[str, Any]) -> str:
         "start here", "furthest downstream");
       addAxis({{ x: 0, y: -FRAME_R, z: 0 }}, {{ x: 0, y: FRAME_R, z: 0 }}, "#6BCB77", "Maturity Depth",
         "close to the timeline", "far from the timeline");
-
-      // Multiverse Stability is the orbit angle around Linear Time, not a
-      // straight dimension of its own -- this line just marks the
-      // toward/away-from-viewer direction. Sign still encodes publish status
-      // (+Z published, -Z unpublished, see the divide plane below).
       addAxis({{ x: 0, y: 0, z: -FRAME_R }}, {{ x: 0, y: 0, z: FRAME_R }}, "#FF6B6B", "Multiverse Stability",
-        "unpublished side", "published side");
+        "reality holds together", "fourth-wall bleed");
 
       // Bright marker at the exact center, 0,0,0 -- POPPYSEED's fixed spot.
       const originMarker = new THREE.Mesh(
@@ -1784,10 +1778,10 @@ def build_html(data: dict[str, Any]) -> str:
       axesGroup.add(originMarker);
 
       // Glowing wireframe box marking the outer edge of the coordinate space --
-      // 0..FRAME_X on X (offset, since Linear Time starts at the origin, not
-      // centered through it), +-FRAME_R on Y/Z. A crisp inner line plus a
-      // wider, fainter outer one (same trick as the INTRO rings) fakes a
-      // glow without a real postprocessing pipeline.
+      // a long rectangular tube (0..FRAME_X on X, +-FRAME_R on Y/Z), since
+      // Y and Z are independent axes, not a radius/angle pair. A crisp
+      // inner line plus a wider, fainter outer one (same trick as the INTRO
+      // rings) fakes a glow without a real postprocessing pipeline.
       function makeBoundingBox(inflate, opacity) {{
         const geom = new THREE.BoxGeometry(
           FRAME_X + inflate,
@@ -1812,48 +1806,6 @@ def build_html(data: dict[str, Any]) -> str:
       axesGroup.add(makeBoundingBox(14, 0.18));
 
       scene.add(axesGroup);
-
-      // Publish-divide plane at z=0: published nodes (+Z) sit in front of it,
-      // unpublished nodes (-Z) sit behind it -- still true under the orbit
-      // wrap, since publish status picks which half of the circle a node's
-      // angle falls in. Sized/offset to span the full 0..FRAME_X reach of
-      // Linear Time instead of being centered through the origin. Gated
-      // behind the axes toggle, same as the axes/frame and connection lines.
-      const DIVIDE_W = FRAME_X + 60;
-      const DIVIDE_H = FRAME_R * 2;
-      const dividePlane = new THREE.Mesh(
-        new THREE.PlaneGeometry(DIVIDE_W, DIVIDE_H),
-        new THREE.MeshBasicMaterial({{
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.05,
-          side: THREE.DoubleSide,
-          depthWrite: false
-        }})
-      );
-      dividePlane.position.set(FRAME_X / 2, 0, 0);
-      dividePlane.raycast = () => {{}};
-      axesGroup.add(dividePlane);
-
-      const divideEdge = new THREE.LineLoop(
-        new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(0, -DIVIDE_H / 2, 0),
-          new THREE.Vector3(DIVIDE_W, -DIVIDE_H / 2, 0),
-          new THREE.Vector3(DIVIDE_W, DIVIDE_H / 2, 0),
-          new THREE.Vector3(0, DIVIDE_H / 2, 0)
-        ]),
-        new THREE.LineBasicMaterial({{ color: 0xffffff, transparent: true, opacity: 0.25 }})
-      );
-      divideEdge.raycast = () => {{}};
-      axesGroup.add(divideEdge);
-
-      // Pushed well past the Maturity Depth axis's high-end caption ("far
-      // from the timeline", which sits at y = FRAME_R + 46) -- both labels
-      // are pinned to the same x, z=0, so they need real vertical separation
-      // or they sit right on top of each other.
-      const divideLabel = makeAxisLabel("The Draft Horizon", "#FFFFFF");
-      divideLabel.position.set(FRAME_X / 2, DIVIDE_H / 2 + 110, 0);
-      axesGroup.add(divideLabel);
 
       const axesToggle = document.getElementById("axesToggle");
       axesToggle.checked = false;
