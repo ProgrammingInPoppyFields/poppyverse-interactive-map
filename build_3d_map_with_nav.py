@@ -19,9 +19,9 @@ Output:
 - Keep the Legend (node shapes + multiverse colors).
 - Do NOT show axes.
 - Do NOT show axis labels.
-  (The reference frame — axes through the origin and the 0,0,0 center
-  marker — is hidden by default, but can be revealed via the "Show axes"
-  toggle at the bottom-left.)
+  (The reference frame — axes through the origin, the 0,0,0 center marker,
+  and the orbit rings — is hidden by default, but can be revealed via the
+  "Show axes" toggle at the bottom-left.)
 - Do NOT show hover labels.
 - Do NOT show HUD title/subtitle.
 - Do NOT show content ratings in clicked cards.
@@ -1019,7 +1019,7 @@ def build_html(data: dict[str, Any]) -> str:
     // Depth / Multiverse Stability layout Beta Map uses) and written back as
     // a plain number instead of derived live from a formula. See
     // prepareGraphData() -- it's just a read now.
-    const AXIS_SCALE = 560;     // max reach of Final Y/Final Z (reference-frame sizing only)
+    const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius (reference-frame sizing only)
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1301,9 +1301,9 @@ def build_html(data: dict[str, Any]) -> str:
       nodeById = new Map(DATA.nodes.map(node => [String(node.id), node]));
 
       // 3D Map now plots the same baked Final X/Y/Z coordinates as Beta Map
-      // (SRC_toc.csv), computed once (Linear Time position, Maturity Depth,
-      // Multiverse Stability, every node's jitter) and written back as
-      // plain numbers -- there's no live formula left to run here.
+      // (SRC_toc.csv), computed once (Linear Time position, the Maturity
+      // Depth/Multiverse Stability orbit, every node's jitter) and written
+      // back as plain numbers -- there's no live formula left to run here.
       DATA.nodes.forEach(node => {{
         node.x = Number(node.finalX) || 0;
         node.y = Number(node.finalY) || 0;
@@ -1756,18 +1756,24 @@ def build_html(data: dict[str, Any]) -> str:
       // Linear Time runs 0..2*LINEAR_SCALE (POPPYSEED at the 0 end) instead
       // of being centered through the origin, so the frame reflects that
       // instead of assuming a symmetric spread. Maturity Depth and
-      // Multiverse Stability are independent straight axes -- no cos/sin,
-      // no radius/angle pair, no publish-status hemisphere. Each one
-      // directly, monotonically reflects its own score.
+      // Multiverse Stability are a radius/angle pair wrapped around the
+      // Linear Time axis: Maturity Depth is the RADIUS (always >= 0 -- a
+      // distance can't be negative), Multiverse Stability is the ANGLE,
+      // sweeping the full 0-360 degrees as its score goes 0-10.
       const LINEAR_SCALE = 672; // reference-frame sizing only, matches the compressed 0..1344 Final X range baked into SRC_toc.csv
       const FRAME_X = LINEAR_SCALE * 2 + 30;
       const FRAME_R = AXIS_SCALE + 30;
       addAxis({{ x: 0, y: 0, z: 0 }}, {{ x: FRAME_X, y: 0, z: 0 }}, "#4D96FF", "Linear Time",
         "start here", "furthest downstream");
-      addAxis({{ x: 0, y: -FRAME_R, z: 0 }}, {{ x: 0, y: FRAME_R, z: 0 }}, "#6BCB77", "Maturity Depth",
+      addAxis({{ x: 0, y: -FRAME_R, z: 0 }}, {{ x: 0, y: FRAME_R, z: 0 }}, "#6BCB77", "Maturity Depth (radius)",
         "close to the timeline", "far from the timeline");
-      addAxis({{ x: 0, y: 0, z: -FRAME_R }}, {{ x: 0, y: 0, z: FRAME_R }}, "#FF6B6B", "Multiverse Stability",
-        "reality holds together", "fourth-wall bleed");
+
+      // Multiverse Stability is the ORBIT ANGLE around the Linear Time axis
+      // (see the ring below, ticked at 0/90/180/270 degrees) -- this
+      // straight line just marks the toward/away-from-viewer direction for
+      // orientation, it isn't a score gauge on its own.
+      addAxis({{ x: 0, y: 0, z: -FRAME_R }}, {{ x: 0, y: 0, z: FRAME_R }}, "#FF6B6B", "Multiverse Stability (angle)",
+        null, null);
 
       // Bright marker at the exact center, 0,0,0 -- POPPYSEED's fixed spot.
       const originMarker = new THREE.Mesh(
@@ -1777,33 +1783,117 @@ def build_html(data: dict[str, Any]) -> str:
       originMarker.raycast = () => {{}};
       axesGroup.add(originMarker);
 
-      // Glowing wireframe box marking the outer edge of the coordinate space --
-      // a long rectangular tube (0..FRAME_X on X, +-FRAME_R on Y/Z), since
-      // Y and Z are independent axes, not a radius/angle pair. A crisp
-      // inner line plus a wider, fainter outer one (same trick as the INTRO
-      // rings) fakes a glow without a real postprocessing pipeline.
-      function makeBoundingBox(inflate, opacity) {{
-        const geom = new THREE.BoxGeometry(
-          FRAME_X + inflate,
-          FRAME_R * 2 + inflate,
-          FRAME_R * 2 + inflate
+      // Orbit rings: static guides tracing the max Maturity-Depth radius as
+      // Multiverse Stability sweeps a full circle around the Linear Time
+      // axis -- one at the origin, one at the far end, so the "tube" the
+      // scatter wraps around is visible at both ends of the timeline.
+      function makeOrbitRing(xPos, radius, colorHex, opacity) {{
+        const segments = 64;
+        const pts = [];
+        for (let i = 0; i <= segments; i++) {{
+          const t = (i / segments) * Math.PI * 2;
+          pts.push(new THREE.Vector3(xPos, radius * Math.cos(t), radius * Math.sin(t)));
+        }}
+        const ring = new THREE.LineLoop(
+          new THREE.BufferGeometry().setFromPoints(pts),
+          new THREE.LineBasicMaterial({{ color: colorHex, transparent: true, opacity }})
         );
-        const box = new THREE.LineSegments(
-          new THREE.EdgesGeometry(geom),
-          new THREE.LineBasicMaterial({{
-            color: 0xffffff,
-            transparent: true,
-            opacity,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending
-          }})
-        );
-        box.position.set(FRAME_X / 2, 0, 0);
-        box.raycast = () => {{}};
-        return box;
+        ring.raycast = () => {{}};
+        return ring;
       }}
-      axesGroup.add(makeBoundingBox(0, 0.5));
-      axesGroup.add(makeBoundingBox(14, 0.18));
+      axesGroup.add(makeOrbitRing(0, AXIS_SCALE, "#FFD93D", 0.35));
+      axesGroup.add(makeOrbitRing(FRAME_X - 30, AXIS_SCALE, "#FFD93D", 0.2));
+
+      // Degree tick labels on the origin ring -- 0/90/180/270 degrees, so
+      // it's visually obvious Multiverse Stability is a rotation, not a
+      // straight gauge, and roughly where a given score's angle lands.
+      [0, 90, 180, 270].forEach(deg => {{
+        const t = (deg / 360) * Math.PI * 2;
+        const tickRadius = AXIS_SCALE + 34;
+        const label = makeAxisLabel(deg + "°", "#FFD93D", {{ fontPx: 22, opacity: 0.7, spriteHeight: 24 }});
+        label.position.set(0, tickRadius * Math.cos(t), tickRadius * Math.sin(t));
+        axesGroup.add(label);
+      }});
+
+      // Longitudinal ribs connecting the two rings -- a cage of straight
+      // lines running the length of the timeline, so the whole scatter
+      // reads as living inside one cylinder instead of two disconnected
+      // circles at either end.
+      function makeCylinderRibs(x0, x1, radius, colorHex, opacity, count) {{
+        const group = new THREE.Group();
+        for (let i = 0; i < count; i++) {{
+          const t = (i / count) * Math.PI * 2;
+          const y = radius * Math.cos(t);
+          const z = radius * Math.sin(t);
+          const rib = new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(x0, y, z),
+              new THREE.Vector3(x1, y, z)
+            ]),
+            new THREE.LineBasicMaterial({{ color: colorHex, transparent: true, opacity }})
+          );
+          rib.raycast = () => {{}};
+          group.add(rib);
+        }}
+        return group;
+      }}
+      axesGroup.add(makeCylinderRibs(0, FRAME_X - 30, AXIS_SCALE, "#FFD93D", 0.16, 12));
+
+      // Glowing wireframe CYLINDER marking the outer edge of the coordinate
+      // space -- two end rings joined by longitudinal ribs, so the whole
+      // shape reads unmistakably as a cylinder (matching the actual
+      // radius/angle coordinate system) instead of a box that would imply a
+      // rectangular boundary. A crisp inner copy plus a wider, fainter outer
+      // one (same trick as the INTRO rings) fakes a glow without a real
+      // postprocessing pipeline.
+      function makeBoundingCylinder(inflate, opacity) {{
+        const segments = 48;
+        const ribCount = 8;
+        const radius = AXIS_SCALE + inflate / 2;
+        const x0 = -inflate / 2;
+        const x1 = FRAME_X + inflate / 2;
+        const material = new THREE.LineBasicMaterial({{
+          color: 0xffffff,
+          transparent: true,
+          opacity,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        }});
+
+        const group = new THREE.Group();
+
+        function ringAt(x) {{
+          const pts = [];
+          for (let i = 0; i <= segments; i++) {{
+            const t = (i / segments) * Math.PI * 2;
+            pts.push(new THREE.Vector3(x, radius * Math.cos(t), radius * Math.sin(t)));
+          }}
+          const ring = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), material);
+          ring.raycast = () => {{}};
+          return ring;
+        }}
+        group.add(ringAt(x0));
+        group.add(ringAt(x1));
+
+        for (let i = 0; i < ribCount; i++) {{
+          const t = (i / ribCount) * Math.PI * 2;
+          const y = radius * Math.cos(t);
+          const z = radius * Math.sin(t);
+          const rib = new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(x0, y, z),
+              new THREE.Vector3(x1, y, z)
+            ]),
+            material
+          );
+          rib.raycast = () => {{}};
+          group.add(rib);
+        }}
+
+        return group;
+      }}
+      axesGroup.add(makeBoundingCylinder(0, 0.5));
+      axesGroup.add(makeBoundingCylinder(14, 0.18));
 
       scene.add(axesGroup);
 
