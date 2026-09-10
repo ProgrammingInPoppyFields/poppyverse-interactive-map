@@ -1328,7 +1328,6 @@ def build_html(data: dict[str, Any]) -> str:
         ["▲", "Manga Panels", "Reference art and panel pages -- no story text."],
         ["■", "Author Notes", "Commentary from behind the curtain, not story canon."],
         ["☄", "Trailers", "Click to watch on YouTube."],
-        ["🪐", "Intro", "The first stop for a given branch or arc."],
         ["●", "Stories", "The actual narrative content. Click to read."]
       ];
 
