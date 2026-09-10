@@ -874,34 +874,37 @@ def build_html(data: dict[str, Any]) -> str:
       line-height: 1.65;
     }}
 
-    .coord-meters {{
+    .coord-bubbles {{
       display: flex;
-      flex-direction: column;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
     }}
 
-    .coord-meter-label {{
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 11px;
+    .coord-bubble {{
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      min-width: 76px;
+      padding: 8px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--bubble-color);
+    }}
+
+    .coord-bubble-label {{
+      color: var(--bubble-color);
+      font-size: 10px;
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }}
 
-    .coord-meter-track {{
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
-      overflow: hidden;
-    }}
-
-    .coord-meter-fill {{
-      height: 100%;
-      border-radius: 999px;
-      background: var(--active-color);
+    .coord-bubble-value {{
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 15px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
     }}
 
     .connection-link {{
@@ -1148,22 +1151,26 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     function renderCoordMeters(node) {{
-      // Plain literal values, not 0-10 score bars -- Final X/Y/Z are baked
-      // scatter-plot coordinates (unbounded, signable), not narrative scores,
-      // so a percentage-fill meter doesn't apply here the way it used to.
+      // Plain literal values, not 0-10 score bars -- these are baked
+      // scatter-plot coordinates (unbounded, signable), not narrative
+      // scores, so a percentage-fill meter doesn't apply here. Labeled by
+      // what they actually mean (see the Legend's Coordinate System
+      // section), not the raw Final X/Y/Z column names, and colored to
+      // match their axis in the 3D scene.
       const axes = [
-        ["Final X", node.finalX],
-        ["Final Y", node.finalY],
-        ["Final Z", node.finalZ]
+        ["#4D96FF", "Linearity", node.finalX],
+        ["#6BCB77", "Maturity", node.finalY],
+        ["#FF6B6B", "Stability", node.finalZ]
       ];
 
-      const rows = axes.map(([label, value]) => `
-        <div class="coord-meter">
-          <div class="coord-meter-label"><span>${{label}}</span><span>${{(Number(value) || 0).toFixed(1)}}</span></div>
+      const bubbles = axes.map(([color, label, value]) => `
+        <div class="coord-bubble" style="--bubble-color:${{escapeHtml(color)}};">
+          <span class="coord-bubble-label">${{escapeHtml(label)}}</span>
+          <span class="coord-bubble-value">${{(Number(value) || 0).toFixed(1)}}</span>
         </div>
       `).join("");
 
-      return `<div class="coord-meters">${{rows}}</div>`;
+      return `<div class="coord-bubbles">${{bubbles}}</div>`;
     }}
 
     function renderConnections(items) {{
