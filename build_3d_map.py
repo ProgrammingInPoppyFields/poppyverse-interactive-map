@@ -907,6 +907,13 @@ def build_html(data: dict[str, Any]) -> str:
       font-variant-numeric: tabular-nums;
     }}
 
+    .coord-bubble-range {{
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 10px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }}
+
     .connection-link {{
       color: var(--active-color);
       text-decoration: none;
@@ -1164,16 +1171,21 @@ def build_html(data: dict[str, Any]) -> str:
       const radius = Math.hypot(y, z);
       const angleDeg = (Math.atan2(z, y) * 180 / Math.PI + 360) % 360;
 
+      // Range shown alongside each value so a lone number has context --
+      // these are the hard bounds baked into the layout (LINEAR_SCALE*2,
+      // AXIS_SCALE, and a full circle), not just whatever this dataset
+      // happens to span.
       const axes = [
-        ["#4D96FF", "Linearity", node.finalX, ""],
-        ["#6BCB77", "Maturity", radius, ""],
-        ["#FF6B6B", "Stability", angleDeg, "°"]
+        ["#4D96FF", "Linearity", node.finalX, "", 0, LINEAR_SCALE * 2],
+        ["#6BCB77", "Maturity", radius, "", 0, AXIS_SCALE],
+        ["#FF6B6B", "Stability", angleDeg, "°", 0, 360]
       ];
 
-      const bubbles = axes.map(([color, label, value, unit]) => `
+      const bubbles = axes.map(([color, label, value, unit, min, max]) => `
         <div class="coord-bubble" style="--bubble-color:${{escapeHtml(color)}};">
           <span class="coord-bubble-label">${{escapeHtml(label)}}</span>
           <span class="coord-bubble-value">${{(Number(value) || 0).toFixed(1)}}${{unit}}</span>
+          <span class="coord-bubble-range">${{min}}-${{max}}${{unit}}</span>
         </div>
       `).join("");
 
@@ -1287,9 +1299,9 @@ def build_html(data: dict[str, Any]) -> str:
       legendRows.appendChild(axisLabel);
 
       const axes = [
-        ["#4D96FF", "Linearity", "Reading/narrative order. POPPYSEED sits at the origin; everything else grows outward from there, left to right."],
-        ["#6BCB77", "Maturity", "How far a piece sits from the timeline -- distance only, not direction."],
-        ["#FF6B6B", "Stability", "How much multiversal 4th-wall/dimensional mess is going on -- an angle (0-360°) around the timeline, not a straight scale."]
+        ["#4D96FF", "Linearity", `Reading/narrative order. POPPYSEED sits at the origin; everything else grows outward from there, left to right. Range: 0-${{LINEAR_SCALE * 2}}.`],
+        ["#6BCB77", "Maturity", `How far a piece sits from the timeline -- distance only, not direction. Range: 0-${{AXIS_SCALE}}.`],
+        ["#FF6B6B", "Stability", "How much multiversal 4th-wall/dimensional mess is going on -- an angle around the timeline, not a straight scale. Range: 0-360°."]
       ];
 
       axes.forEach(([color, name, desc]) => {{
