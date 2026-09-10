@@ -1267,6 +1267,32 @@ def build_html(data: dict[str, Any]) -> str:
     function buildLegend() {{
       legendRows.innerHTML = "";
 
+      const axisLabel = document.createElement("p");
+      axisLabel.className = "legend-section-label";
+      axisLabel.textContent = "Coordinate System";
+      legendRows.appendChild(axisLabel);
+
+      const axes = [
+        ["#4D96FF", "Linearity", "Reading/narrative order. POPPYSEED sits at the origin; everything else grows outward from there, left to right."],
+        ["#6BCB77", "Maturity", "How far a piece sits from the timeline -- distance only, not direction."],
+        ["#FF6B6B", "Stability", "How much multiversal 4th-wall/dimensional mess is going on -- an angle (0-360°) around the timeline, not a straight scale."]
+      ];
+
+      axes.forEach(([color, name, desc]) => {{
+        const row = document.createElement("div");
+        row.className = "legend-row";
+
+        row.innerHTML = `
+          <div class="legend-swatch" style="background:${{escapeHtml(color)}}; color:${{escapeHtml(color)}};"></div>
+          <div>
+            <p class="legend-name" style="color:${{escapeHtml(color)}};">${{escapeHtml(name)}}</p>
+            <p class="legend-desc">${{escapeHtml(desc)}}</p>
+          </div>
+        `;
+
+        legendRows.appendChild(row);
+      }});
+
       const shapeLabel = document.createElement("p");
       shapeLabel.className = "legend-section-label";
       shapeLabel.textContent = "Node Shapes";
@@ -1836,7 +1862,7 @@ def build_html(data: dict[str, Any]) -> str:
       // match it); 90 also gets an X nudge so it doesn't sit on top of the
       // "Multiverse Stability" axis label itself, which is pinned at the
       // same (0,0,FRAME_R) spot.
-      const tickColors = {{ 0: "#FFD93D", 90: "#FF6B6B", 180: "#FFD93D", 270: "#FF6B6B" }};
+      const tickColors = {{ 0: "#FF6B6B", 90: "#FF6B6B", 180: "#FF6B6B", 270: "#FF6B6B" }};
       const tickXOffset = {{ 90: 90 }};
       [0, 90, 180, 270].forEach(deg => {{
         const t = (deg / 360) * Math.PI * 2;
