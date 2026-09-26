@@ -17493,7 +17493,7 @@
       "isMeta": false,
       "isTrailer": false,
       "size": 3.0,
-      "finalX": 1344.0,
+      "finalX": 1413.36,
       "finalY": -82.62,
       "finalZ": 3.55
     },
@@ -17522,7 +17522,7 @@
       "isMeta": false,
       "isTrailer": false,
       "size": 1.0,
-      "finalX": 1344.0,
+      "finalX": 1407.75,
       "finalY": -151.99,
       "finalZ": -7.94
     },
@@ -17551,7 +17551,7 @@
       "isMeta": false,
       "isTrailer": false,
       "size": 1.0,
-      "finalX": 1344.0,
+      "finalX": 1377.69,
       "finalY": -113.93,
       "finalZ": -16.43
     },
@@ -17581,7 +17581,7 @@
       "isMeta": false,
       "isTrailer": false,
       "size": 1.0,
-      "finalX": 1233.6,
+      "finalX": 1348.37,
       "finalY": -91.18,
       "finalZ": -23.22
     }
@@ -17787,7 +17787,7 @@
     // 0-360 degree sweep, no publish-status hemisphere). See
     // prepareGraphData() -- it's just a read now, not a formula.
     const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
-    const LINEAR_SCALE = 672;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only, matches the compressed 0..1344 Final X range baked into SRC_toc.csv
+    const LINEAR_SCALE = 720;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only. Was 672 (max 1344); widened so pelagoverse (the newest cluster) has headroom to sit strictly beyond every older cluster's Final X, since "newest" should mean "highest Linearity."
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
