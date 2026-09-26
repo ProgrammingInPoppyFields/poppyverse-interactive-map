@@ -1048,7 +1048,7 @@ def build_html(data: dict[str, Any]) -> str:
     // 0-360 degree sweep, no publish-status hemisphere). See
     // prepareGraphData() -- it's just a read now, not a formula.
     const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
-    const LINEAR_SCALE = 720;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only. Was 672 (max 1344); widened so pelagoverse (the newest cluster) has headroom to sit strictly beyond every older cluster's Final X, since "newest" should mean "highest Linearity."
+    const LINEAR_SCALE = 420;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only. Final X is now literal days since the earliest resolvable file creation date on the source drive (span ~822 days as of 2026-09-26), not a hash/eyeball position; rows with no resolvable file (POPPYSEED included) are pinned at 0.
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1176,7 +1176,7 @@ def build_html(data: dict[str, Any]) -> str:
       // AXIS_SCALE, and a full circle), not just whatever this dataset
       // happens to span.
       const axes = [
-        ["#4D96FF", "Linearity", node.finalX, "", 0, LINEAR_SCALE * 2],
+        ["#4D96FF", "Linearity", node.finalX, " days", 0, LINEAR_SCALE * 2],
         ["#6BCB77", "Maturity", radius, "", 0, AXIS_SCALE],
         ["#FF6B6B", "Stability", angleDeg, "°", 0, 360]
       ];
@@ -1299,7 +1299,7 @@ def build_html(data: dict[str, Any]) -> str:
       legendRows.appendChild(axisLabel);
 
       const axes = [
-        ["#4D96FF", "Linearity", `Reading/narrative order. POPPYSEED sits at the origin; everything else grows outward from there, left to right. Range: 0-${{LINEAR_SCALE * 2}}.`],
+        ["#4D96FF", "Linearity", `Days since the earliest cataloged story's file was created. POPPYSEED and anything else with no resolvable file sit pinned at the origin; everything else grows outward from there, left to right, by real elapsed time. Range: 0-${{LINEAR_SCALE * 2}} days.`],
         ["#6BCB77", "Maturity", `How far a piece sits from the timeline -- distance only, not direction. Range: 0-${{AXIS_SCALE}}.`],
         ["#FF6B6B", "Stability", "How much multiversal 4th-wall/dimensional mess is going on -- an angle around the timeline, not a straight scale. Range: 0-360°."]
       ];
