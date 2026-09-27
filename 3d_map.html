@@ -13490,16 +13490,20 @@
           );
 
           const sizeVal = Number(node.size) || 1;
-          // Square-root curve instead of pure linear: after consolidating many
-          // rows into mega-entries (some now Size 20+), a linear scale blew
-          // those nodes' glow up ~25x past a Size-1 node, and overlapping
-          // additive-blended glows that large washed the whole view out into
-          // one blinding blob. Sqrt keeps big entries visibly bigger without
-          // that runaway growth.
-          // [TRAILER] nodes get a flat multiplier on top -- they need to read
-          // as "notice me" even at low Size values, since there's no axis
-          // score driving their prominence the way there is for story nodes.
-          const scale = Math.sqrt(sizeVal) * 0.65 * (node.isTrailer ? 1.8 : 1);
+          // Core (solid, opaque) and glow (translucent, additive-blended) now
+          // scale on DIFFERENT curves. Coupling them together was the problem
+          // in both directions: a shared linear curve let mega-rows' glow
+          // blow out into a blinding blob, and the fix-for-that floor then
+          // clamped every ordinary Size 1-3 row (the vast majority of nodes)
+          // to nearly the same glow size, which also flattened their core
+          // size since core scale was read from that same clamped value --
+          // so nothing looked distinctly bigger even though Size varies from
+          // 1 to 26 post-merge.
+          // Core: pow(sizeVal, 0.75), no floor -- a real, unclamped, visibly
+          // dramatic size difference between a single-entry row and a
+          // 26-sub-part mega-row, since an opaque mesh can't wash out a view
+          // the way an oversized additive glow can.
+          const scale = Math.pow(sizeVal, 0.75) * 0.6 * (node.isTrailer ? 1.6 : 1);
           core.scale.set(scale, scale, scale);
 
           if (node.isManga) {
@@ -13595,7 +13599,13 @@
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.min(100, Math.max(24, 5 * scale * 4.0 * 1.3)) * (node.isTrailer ? 1.2 : node.isIntro ? 1.0 : 1);
+          // Glow: sqrt(sizeVal) on its own, independent multiplier and cap --
+          // grows much more gently than the core above, on purpose. A bigger
+          // story should read as a bigger solid shape first; letting its
+          // glow grow at the same aggressive rate is what caused the
+          // original blown-out-blob problem.
+          const glowScale = Math.sqrt(sizeVal) * 0.55 * (node.isTrailer ? 1.3 : 1);
+          const idleSize = Math.min(85, Math.max(18, 5 * glowScale * 4.0 * 1.3)) * (node.isIntro ? 1.0 : 1);
           const idleOpacity = node.isTrailer ? 0.4 : node.isIntro ? 0.19 : 0.36;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
