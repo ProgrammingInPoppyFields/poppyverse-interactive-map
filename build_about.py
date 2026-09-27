@@ -238,6 +238,25 @@ def build_html() -> str:
         0 0 70px rgba(0, 0, 0, 0.92);
     }}
 
+    .content-note {{
+      width: min(640px, 100%);
+      margin: 0 auto 24px;
+      padding: 10px 20px;
+      border: 1px solid rgba(255, 20, 71, 0.3);
+      border-radius: 999px;
+      background: rgba(255, 20, 71, 0.09);
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 12.5px;
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+      text-align: center;
+    }}
+
+    .content-note strong {{
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 700;
+    }}
+
     .card {{
       padding: 32px;
       border: 1px solid rgba(255, 255, 255, 0.18);
@@ -306,6 +325,11 @@ def build_html() -> str:
   <main class="page">
     <section class="shell">
       <h1 class="page-title">ABOUT</h1>
+
+      <p class="content-note">
+        <strong>Content note:</strong> Some stories in this archive contain violence,
+        graphic injury, death, body horror, grief, and other mature themes.
+      </p>
 
       <article class="card">
         {ABOUT_HTML}

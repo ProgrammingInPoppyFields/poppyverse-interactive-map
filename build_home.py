@@ -303,6 +303,25 @@ def build_html() -> str:
       box-shadow: 0 0 26px rgba(255, 20, 71, 0.48);
     }}
 
+    .content-note {{
+      width: min(640px, 100%);
+      margin: 20px auto 0;
+      padding: 10px 20px;
+      border: 1px solid rgba(255, 20, 71, 0.3);
+      border-radius: 999px;
+      background: rgba(255, 20, 71, 0.09);
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 12.5px;
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+      text-shadow: 0 0 14px rgba(0, 0, 0, 0.7);
+    }}
+
+    .content-note strong {{
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 700;
+    }}
+
     .intro-shell {{
       width: min(920px, 100%);
       margin: 28px auto 0;
@@ -412,6 +431,11 @@ def build_html() -> str:
       <p class="subtitle">
         A quantum story archive for narrative inconsistency, emotional damage,
         and suspiciously well-organized chaos.
+      </p>
+
+      <p class="content-note">
+        <strong>Content note:</strong> Some stories in this archive contain violence,
+        graphic injury, death, body horror, grief, and other mature themes.
       </p>
 
       <div class="actions">
