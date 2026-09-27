@@ -1048,7 +1048,9 @@ def build_html(data: dict[str, Any]) -> str:
     // 0-360 degree sweep, no publish-status hemisphere). See
     // prepareGraphData() -- it's just a read now, not a formula.
     const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
-    const LINEAR_SCALE = 420;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only. Final X is now literal days since the earliest resolvable file creation date on the source drive (span ~822 days as of 2026-09-26), not a hash/eyeball position; rows with no resolvable file (POPPYSEED included) are pinned at 0.
+    const REAL_LINEAR_MAX_DAYS = 823; // the true data range -- days since the earliest resolvable file (span ~822 days as of 2026-09-26). Used for tooltip/legend text, which should describe real days, not the stretched visual scale below.
+    const X_STRETCH = 2.2;      // visual-only spread multiplier on top of the real day value, so heavily-merged mega-rows (many now sharing similar early Final X values after consolidation) don't render as one overlapping glow blob near the origin. Does not touch the underlying data.
+    const LINEAR_SCALE = (REAL_LINEAR_MAX_DAYS * X_STRETCH) / 2;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only, derived from the stretched range so camera/frame geometry matches where nodes actually render.
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1176,7 +1178,7 @@ def build_html(data: dict[str, Any]) -> str:
       // AXIS_SCALE, and a full circle), not just whatever this dataset
       // happens to span.
       const axes = [
-        ["#4D96FF", "Linearity", node.finalX, " days", 0, LINEAR_SCALE * 2],
+        ["#4D96FF", "Linearity", node.finalX, " days", 0, REAL_LINEAR_MAX_DAYS],
         ["#6BCB77", "Maturity", radius, "", 0, AXIS_SCALE],
         ["#FF6B6B", "Stability", angleDeg, "°", 0, 360]
       ];
@@ -1299,7 +1301,7 @@ def build_html(data: dict[str, Any]) -> str:
       legendRows.appendChild(axisLabel);
 
       const axes = [
-        ["#4D96FF", "Linearity", `Days since the earliest cataloged story's file was created. POPPYSEED and anything else with no resolvable file sit pinned at the origin; everything else grows outward from there, left to right, by real elapsed time. Range: 0-${{LINEAR_SCALE * 2}} days.`],
+        ["#4D96FF", "Linearity", `Days since the earliest cataloged story's file was created. POPPYSEED and anything else with no resolvable file sit pinned at the origin; everything else grows outward from there, left to right, by real elapsed time. Range: 0-${{REAL_LINEAR_MAX_DAYS}} days.`],
         ["#6BCB77", "Maturity", `How far a piece sits from the timeline -- distance only, not direction. Range: 0-${{AXIS_SCALE}}.`],
         ["#FF6B6B", "Stability", "How much multiversal 4th-wall/dimensional mess is going on -- an angle around the timeline, not a straight scale. Range: 0-360°."]
       ];
@@ -1378,7 +1380,7 @@ def build_html(data: dict[str, Any]) -> str:
       // can hand-edit directly in the CSV, instead of an opaque hash-seeded
       // computation nobody could tune per node.
       DATA.nodes.forEach(node => {{
-        node.x = Number(node.finalX) || 0;
+        node.x = (Number(node.finalX) || 0) * X_STRETCH;
         node.y = Number(node.finalY) || 0;
         node.z = Number(node.finalZ) || 0;
         node.fx = node.x;
@@ -1489,12 +1491,16 @@ def build_html(data: dict[str, Any]) -> str:
           );
 
           const sizeVal = Number(node.size) || 1;
-          // Experimental: pure proportional linear scale (no baseline offset),
-          // so scale is directly proportional to Size instead of Size + a floor.
+          // Square-root curve instead of pure linear: after consolidating many
+          // rows into mega-entries (some now Size 20+), a linear scale blew
+          // those nodes' glow up ~25x past a Size-1 node, and overlapping
+          // additive-blended glows that large washed the whole view out into
+          // one blinding blob. Sqrt keeps big entries visibly bigger without
+          // that runaway growth.
           // [TRAILER] nodes get a flat multiplier on top -- they need to read
           // as "notice me" even at low Size values, since there's no axis
           // score driving their prominence the way there is for story nodes.
-          const scale = sizeVal * 0.32 * (node.isTrailer ? 5.4 : 1);
+          const scale = Math.sqrt(sizeVal) * 0.42 * (node.isTrailer ? 5.4 : 1);
           core.scale.set(scale, scale, scale);
 
           if (node.isManga) {{
@@ -1590,8 +1596,8 @@ def build_html(data: dict[str, Any]) -> str:
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.max(16, 5 * scale * 4.0 * 1.3) * (node.isTrailer ? 1.5 : node.isIntro ? 1.0 : 1);
-          const idleOpacity = node.isTrailer ? 0.5 : node.isIntro ? 0.19 : 0.38;
+          const idleSize = Math.min(70, Math.max(16, 5 * scale * 4.0 * 1.3)) * (node.isTrailer ? 1.5 : node.isIntro ? 1.0 : 1);
+          const idleOpacity = node.isTrailer ? 0.5 : node.isIntro ? 0.19 : 0.22;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
           // Normal alpha blending just overlays a translucent patch, which reads
