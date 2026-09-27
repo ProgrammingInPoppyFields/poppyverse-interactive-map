@@ -13049,7 +13049,7 @@
     const REAL_AXIS_MAX = 560;  // the true data range -- max Maturity Depth/Multiverse Stability orbit radius. Used for tooltip/legend text, not the stretched visual scale below.
     const REAL_LINEAR_MAX_DAYS = 823; // the true data range -- days since the earliest resolvable file (span ~822 days as of 2026-09-26). Used for tooltip/legend text, which should describe real days, not the stretched visual scale below.
     const X_STRETCH = 2.4;      // visual-only spread multiplier on top of the real day value, so nodes don't collide/overlap positionally. Does not touch the underlying data. (Bigger now that core size scales independently of glow -- collisions were as much a spacing problem as a size problem.)
-    const YZ_STRETCH = 1.8;     // same idea, applied to the Maturity/Stability orbit (Y/Z) radius.
+    const YZ_STRETCH = 3.2;     // same idea, applied to the Maturity/Stability orbit (Y/Z) radius. (Was 1.8 -- still too tight, bumped further.)
     const LINEAR_SCALE = (REAL_LINEAR_MAX_DAYS * X_STRETCH) / 2;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only, derived from the stretched range so camera/frame geometry matches where nodes actually render.
     const AXIS_SCALE = REAL_AXIS_MAX * YZ_STRETCH;   // max reach of the Maturity Depth/Multiverse Stability orbit radius -- reference-frame sizing only, same stretched-vs-real split as LINEAR_SCALE above.
 
