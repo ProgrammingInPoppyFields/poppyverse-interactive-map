@@ -1047,10 +1047,12 @@ def build_html(data: dict[str, Any]) -> str:
     // as radius (always >= 0), Multiverse Stability as angle (a full
     // 0-360 degree sweep, no publish-status hemisphere). See
     // prepareGraphData() -- it's just a read now, not a formula.
-    const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
+    const REAL_AXIS_MAX = 560;  // the true data range -- max Maturity Depth/Multiverse Stability orbit radius. Used for tooltip/legend text, not the stretched visual scale below.
     const REAL_LINEAR_MAX_DAYS = 823; // the true data range -- days since the earliest resolvable file (span ~822 days as of 2026-09-26). Used for tooltip/legend text, which should describe real days, not the stretched visual scale below.
-    const X_STRETCH = 1.5;      // visual-only spread multiplier on top of the real day value, so heavily-merged mega-rows (many now sharing similar early Final X values after consolidation) don't render as one overlapping glow blob near the origin. Does not touch the underlying data. (Was 2.2 -- dialed back, it made everything read as lonely/scattered once combined with the dimmer glow below.)
+    const X_STRETCH = 2.4;      // visual-only spread multiplier on top of the real day value, so nodes don't collide/overlap positionally. Does not touch the underlying data. (Bigger now that core size scales independently of glow -- collisions were as much a spacing problem as a size problem.)
+    const YZ_STRETCH = 1.8;     // same idea, applied to the Maturity/Stability orbit (Y/Z) radius.
     const LINEAR_SCALE = (REAL_LINEAR_MAX_DAYS * X_STRETCH) / 2;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only, derived from the stretched range so camera/frame geometry matches where nodes actually render.
+    const AXIS_SCALE = REAL_AXIS_MAX * YZ_STRETCH;   // max reach of the Maturity Depth/Multiverse Stability orbit radius -- reference-frame sizing only, same stretched-vs-real split as LINEAR_SCALE above.
 
     const graphEl = document.getElementById("graph");
     const legend = document.getElementById("legend");
@@ -1179,7 +1181,7 @@ def build_html(data: dict[str, Any]) -> str:
       // happens to span.
       const axes = [
         ["#4D96FF", "Linearity", node.finalX, " days", 0, REAL_LINEAR_MAX_DAYS],
-        ["#6BCB77", "Maturity", radius, "", 0, AXIS_SCALE],
+        ["#6BCB77", "Maturity", radius, "", 0, REAL_AXIS_MAX],
         ["#FF6B6B", "Stability", angleDeg, "°", 0, 360]
       ];
 
@@ -1302,7 +1304,7 @@ def build_html(data: dict[str, Any]) -> str:
 
       const axes = [
         ["#4D96FF", "Linearity", `Days since the earliest cataloged story's file was created. POPPYSEED and anything else with no resolvable file sit pinned at the origin; everything else grows outward from there, left to right, by real elapsed time. Range: 0-${{REAL_LINEAR_MAX_DAYS}} days.`],
-        ["#6BCB77", "Maturity", `How far a piece sits from the timeline -- distance only, not direction. Range: 0-${{AXIS_SCALE}}.`],
+        ["#6BCB77", "Maturity", `How far a piece sits from the timeline -- distance only, not direction. Range: 0-${{REAL_AXIS_MAX}}.`],
         ["#FF6B6B", "Stability", "How much multiversal 4th-wall/dimensional mess is going on -- an angle around the timeline, not a straight scale. Range: 0-360°."]
       ];
 
@@ -1381,8 +1383,8 @@ def build_html(data: dict[str, Any]) -> str:
       // computation nobody could tune per node.
       DATA.nodes.forEach(node => {{
         node.x = (Number(node.finalX) || 0) * X_STRETCH;
-        node.y = Number(node.finalY) || 0;
-        node.z = Number(node.finalZ) || 0;
+        node.y = (Number(node.finalY) || 0) * YZ_STRETCH;
+        node.z = (Number(node.finalZ) || 0) * YZ_STRETCH;
         node.fx = node.x;
         node.fy = node.y;
         node.fz = node.z;
@@ -1504,7 +1506,7 @@ def build_html(data: dict[str, Any]) -> str:
           // dramatic size difference between a single-entry row and a
           // 26-sub-part mega-row, since an opaque mesh can't wash out a view
           // the way an oversized additive glow can.
-          const scale = Math.pow(sizeVal, 0.75) * 0.6 * (node.isTrailer ? 1.6 : 1);
+          const scale = Math.pow(sizeVal, 0.75) * 0.85 * (node.isTrailer ? 1.6 : 1);
           core.scale.set(scale, scale, scale);
 
           if (node.isManga) {{
@@ -1605,8 +1607,8 @@ def build_html(data: dict[str, Any]) -> str:
           // story should read as a bigger solid shape first; letting its
           // glow grow at the same aggressive rate is what caused the
           // original blown-out-blob problem.
-          const glowScale = Math.sqrt(sizeVal) * 0.55 * (node.isTrailer ? 1.3 : 1);
-          const idleSize = Math.min(85, Math.max(18, 5 * glowScale * 4.0 * 1.3)) * (node.isIntro ? 1.0 : 1);
+          const glowScale = Math.sqrt(sizeVal) * 0.7 * (node.isTrailer ? 1.3 : 1);
+          const idleSize = Math.min(100, Math.max(24, 5 * glowScale * 4.0 * 1.3)) * (node.isIntro ? 1.0 : 1);
           const idleOpacity = node.isTrailer ? 0.4 : node.isIntro ? 0.19 : 0.36;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
