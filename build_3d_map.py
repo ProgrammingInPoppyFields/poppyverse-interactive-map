@@ -1049,7 +1049,7 @@ def build_html(data: dict[str, Any]) -> str:
     // prepareGraphData() -- it's just a read now, not a formula.
     const AXIS_SCALE = 560;     // max reach of the Maturity Depth/Multiverse Stability orbit radius
     const REAL_LINEAR_MAX_DAYS = 823; // the true data range -- days since the earliest resolvable file (span ~822 days as of 2026-09-26). Used for tooltip/legend text, which should describe real days, not the stretched visual scale below.
-    const X_STRETCH = 2.2;      // visual-only spread multiplier on top of the real day value, so heavily-merged mega-rows (many now sharing similar early Final X values after consolidation) don't render as one overlapping glow blob near the origin. Does not touch the underlying data.
+    const X_STRETCH = 1.5;      // visual-only spread multiplier on top of the real day value, so heavily-merged mega-rows (many now sharing similar early Final X values after consolidation) don't render as one overlapping glow blob near the origin. Does not touch the underlying data. (Was 2.2 -- dialed back, it made everything read as lonely/scattered once combined with the dimmer glow below.)
     const LINEAR_SCALE = (REAL_LINEAR_MAX_DAYS * X_STRETCH) / 2;   // max reach of Linear Time (x2, since it starts at 0) -- reference-frame sizing only, derived from the stretched range so camera/frame geometry matches where nodes actually render.
 
     const graphEl = document.getElementById("graph");
@@ -1500,7 +1500,7 @@ def build_html(data: dict[str, Any]) -> str:
           // [TRAILER] nodes get a flat multiplier on top -- they need to read
           // as "notice me" even at low Size values, since there's no axis
           // score driving their prominence the way there is for story nodes.
-          const scale = Math.sqrt(sizeVal) * 0.42 * (node.isTrailer ? 5.4 : 1);
+          const scale = Math.sqrt(sizeVal) * 0.5 * (node.isTrailer ? 5.4 : 1);
           core.scale.set(scale, scale, scale);
 
           if (node.isManga) {{
@@ -1596,8 +1596,8 @@ def build_html(data: dict[str, Any]) -> str:
           glow.material.depthTest = false;
           glow.renderOrder = 10;
 
-          const idleSize = Math.min(70, Math.max(16, 5 * scale * 4.0 * 1.3)) * (node.isTrailer ? 1.5 : node.isIntro ? 1.0 : 1);
-          const idleOpacity = node.isTrailer ? 0.5 : node.isIntro ? 0.19 : 0.22;
+          const idleSize = Math.min(90, Math.max(20, 5 * scale * 4.0 * 1.3)) * (node.isTrailer ? 1.5 : node.isIntro ? 1.0 : 1);
+          const idleOpacity = node.isTrailer ? 0.5 : node.isIntro ? 0.19 : 0.32;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
           // Normal alpha blending just overlays a translucent patch, which reads
