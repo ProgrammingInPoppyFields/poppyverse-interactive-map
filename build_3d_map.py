@@ -1607,9 +1607,15 @@ def build_html(data: dict[str, Any]) -> str:
           // story should read as a bigger solid shape first; letting its
           // glow grow at the same aggressive rate is what caused the
           // original blown-out-blob problem.
-          const glowScale = Math.sqrt(sizeVal) * 0.7 * (node.isTrailer ? 1.3 : 1);
-          const idleSize = Math.min(100, Math.max(24, 5 * glowScale * 4.0 * 1.3)) * (node.isIntro ? 1.0 : 1);
-          const idleOpacity = node.isTrailer ? 0.4 : node.isIntro ? 0.19 : 0.36;
+          // Deliberately large and overlapping now, on purpose: with nodes
+          // properly spaced apart (X/YZ_STRETCH above), oversized glow reads
+          // as ambient rainbow haze filling the gaps between them instead of
+          // an unreadable pile-up on top of each other -- the earlier
+          // blown-out-blob problem was a spacing problem wearing a glow-size
+          // costume, not an argument against big glow on its own.
+          const glowScale = Math.sqrt(sizeVal) * 1.3 * (node.isTrailer ? 1.3 : 1);
+          const idleSize = Math.min(260, Math.max(55, 5 * glowScale * 4.0 * 1.3)) * (node.isIntro ? 1.0 : 1);
+          const idleOpacity = node.isTrailer ? 0.45 : node.isIntro ? 0.22 : 0.48;
           glow.scale.set(idleSize * 0.98, idleSize * 0.98, 1);
           glow.material.opacity = idleOpacity;
           // Normal alpha blending just overlays a translucent patch, which reads
