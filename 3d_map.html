@@ -12931,9 +12931,9 @@
       legendRows.appendChild(axisLabel);
 
       const axes = [
-        ["#4D96FF", "Linearity", `Days since the earliest cataloged story's file was created. POPPYSEED and anything else with no resolvable file sit pinned at the origin; everything else grows outward from there, left to right, by real elapsed time. Range: 0-${REAL_LINEAR_MAX_DAYS} days.`],
-        ["#6BCB77", "Maturity", `How far a piece sits from the timeline -- distance only, not direction. Range: 0-${REAL_AXIS_MAX}.`],
-        ["#FF6B6B", "Stability", "How much multiversal 4th-wall/dimensional mess is going on -- an angle around the timeline, not a straight scale. Range: 0-360°."]
+        ["#4D96FF", "Linearity", `The main timeline axis. Older stories sit near the origin; newer ones move outward left-to-right by real elapsed time -- days since the earliest cataloged story file was created. Range: 0-${REAL_LINEAR_MAX_DAYS} days.`],
+        ["#6BCB77", "Maturity", `How far a piece sits from the core timeline -- pure distance, not a measure of quality or depth. Range: 0-${REAL_AXIS_MAX}.`],
+        ["#FF6B6B", "Stability", "How much dimensional, multiversal, or fourth-wall instability is involved. It wraps around the timeline instead of increasing in a straight line. Range: 0-360°."]
       ];
 
       axes.forEach(([color, name, desc]) => {
