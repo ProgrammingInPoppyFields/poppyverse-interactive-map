@@ -1305,7 +1305,7 @@ def build_html(data: dict[str, Any]) -> str:
       const startNote = document.createElement("p");
       startNote.className = "legend-desc";
       startNote.style.margin = "0 0 4px";
-      startNote.textContent = `Start at the glowing white POPPYSEED node at the dead center of the map (literally the origin) -- it's also marked "START HERE" in the scene itself. From there, head to Beginnings, just a short hop out along the timeline. Everywhere else is free exploration.`;
+      startNote.textContent = `Start at the glowing white POPPYSEED node at the dead center of the map (literally the origin). From there, head to Beginnings, just a short hop out along the timeline. Everywhere else is free exploration. (Flip on "Show axes" below for "START HERE" / "THEN: BEGINNINGS" labels pointing right at them.)`;
       legendRows.appendChild(startNote);
 
       const axisLabel = document.createElement("p");
@@ -2029,11 +2029,43 @@ def build_html(data: dict[str, Any]) -> str:
       }});
 
       // "START HERE" / "THEN: BEGINNINGS" wayfinding callouts over the
-      // entry-point INTRO node and its immediate follow-up. Unlike the rest
-      // of the reference frame, this group is NOT gated behind "Show axes"
-      // -- a first-time visitor who never finds that toggle should still
-      // see where to start without digging for it.
-      const wayfindingGroup = new THREE.Group();
+      // entry-point INTRO node and its immediate follow-up. Lives inside
+      // axesGroup -- gated behind "Show axes" like the rest of the
+      // reference frame, not shown by default, since the other nodes
+      // clustered nearby made an always-visible label ambiguous about
+      // which node it was even pointing at.
+      //
+      // A thin connector line was tried first and dropped: standard WebGL
+      // basically ignores THREE.Line's linewidth (a well-known three.js
+      // limitation), so it rendered as a near-invisible 1px hair, easy to
+      // lose in a cluster this dense. A camera-facing ring drawn directly
+      // around the target node -- sized well past that node's own glow --
+      // is unambiguous regardless of viewing angle or clutter.
+      function makeTargetRingSprite(colorHex) {{
+        const canvas = document.createElement("canvas");
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext("2d");
+        ctx.strokeStyle = colorHex;
+        ctx.lineWidth = 14;
+        ctx.globalAlpha = 0.9;
+        ctx.beginPath();
+        ctx.arc(128, 128, 110, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const tex = new THREE.CanvasTexture(canvas);
+        const sprite = new THREE.Sprite(
+          new THREE.SpriteMaterial({{
+            map: tex,
+            transparent: true,
+            depthWrite: false,
+            depthTest: false
+          }})
+        );
+        sprite.raycast = () => {{}};
+        sprite.renderOrder = 19;
+        return sprite;
+      }}
 
       // Sized well beyond makeAxisLabel's old defaults -- X_STRETCH/YZ_STRETCH
       // have pushed the scene's overall scale up considerably since those
@@ -2041,33 +2073,35 @@ def build_html(data: dict[str, Any]) -> str:
       // before (gated off), so nothing caught that it had fallen far behind.
       const startHereNode = nodeById.get("700");
       if (startHereNode) {{
+        const nodePos = new THREE.Vector3(startHereNode.x, startHereNode.y, startHereNode.z);
         const startHereLabel = makeAxisLabel("START HERE", "#FFFFFF", {{
           fontPx: 140,
           spriteHeight: 200
         }});
-        startHereLabel.position.set(
-          startHereNode.x,
-          startHereNode.y + 180,
-          startHereNode.z
-        );
-        wayfindingGroup.add(startHereLabel);
+        startHereLabel.position.set(nodePos.x, nodePos.y + 180, nodePos.z);
+        axesGroup.add(startHereLabel);
+
+        const startHereRing = makeTargetRingSprite("#FFFFFF");
+        startHereRing.position.copy(nodePos);
+        startHereRing.scale.set(260, 260, 1);
+        axesGroup.add(startHereRing);
       }}
 
       const beginningsNode = nodeById.get("229");
       if (beginningsNode) {{
+        const nodePos = new THREE.Vector3(beginningsNode.x, beginningsNode.y, beginningsNode.z);
         const beginningsLabel = makeAxisLabel("THEN: BEGINNINGS", "#FFD93D", {{
           fontPx: 100,
           spriteHeight: 145
         }});
-        beginningsLabel.position.set(
-          beginningsNode.x,
-          beginningsNode.y + 330,
-          beginningsNode.z
-        );
-        wayfindingGroup.add(beginningsLabel);
-      }}
+        beginningsLabel.position.set(nodePos.x, nodePos.y + 330, nodePos.z);
+        axesGroup.add(beginningsLabel);
 
-      scene.add(wayfindingGroup);
+        const beginningsRing = makeTargetRingSprite("#FFD93D");
+        beginningsRing.position.copy(nodePos);
+        beginningsRing.scale.set(210, 210, 1);
+        axesGroup.add(beginningsRing);
+      }}
 
       Graph.onNodeHover((node, prev) => {{
         const prevNode = prev || hoveredNode;
