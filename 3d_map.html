@@ -12925,6 +12925,17 @@
     function buildLegend() {
       legendRows.innerHTML = "";
 
+      const startLabel = document.createElement("p");
+      startLabel.className = "legend-section-label";
+      startLabel.textContent = "Where to Start";
+      legendRows.appendChild(startLabel);
+
+      const startNote = document.createElement("p");
+      startNote.className = "legend-desc";
+      startNote.style.margin = "0 0 4px";
+      startNote.textContent = `Start at the glowing white POPPYSEED node at the dead center of the map (literally the origin) -- it's also marked "START HERE" in the scene itself. From there, head to Beginnings, just a short hop out along the timeline. Everywhere else is free exploration.`;
+      legendRows.appendChild(startNote);
+
       const axisLabel = document.createElement("p");
       axisLabel.className = "legend-section-label";
       axisLabel.textContent = "Coordinate System";
@@ -13645,24 +13656,46 @@
         Graph.linkOpacity(linksToggle.checked ? 0.8 : 0);
       });
 
-      // "START HERE" callout over the entry-point INTRO node, gated behind the
-      // same "Show axes" toggle as the rest of the reference frame -- it's a
-      // wayfinding aid for people poking at the raw graph, not part of the
-      // normal browsing experience.
-      const startHereNode = nodeById.get("700");
+      // "START HERE" / "THEN: BEGINNINGS" wayfinding callouts over the
+      // entry-point INTRO node and its immediate follow-up. Unlike the rest
+      // of the reference frame, this group is NOT gated behind "Show axes"
+      // -- a first-time visitor who never finds that toggle should still
+      // see where to start without digging for it.
+      const wayfindingGroup = new THREE.Group();
 
+      // Sized well beyond makeAxisLabel's old defaults -- X_STRETCH/YZ_STRETCH
+      // have pushed the scene's overall scale up considerably since those
+      // defaults were picked, and this callout was never actually visible
+      // before (gated off), so nothing caught that it had fallen far behind.
+      const startHereNode = nodeById.get("700");
       if (startHereNode) {
         const startHereLabel = makeAxisLabel("START HERE", "#FFFFFF", {
-          fontPx: 52,
-          spriteHeight: 75
+          fontPx: 140,
+          spriteHeight: 200
         });
         startHereLabel.position.set(
           startHereNode.x,
-          startHereNode.y + 72,
+          startHereNode.y + 180,
           startHereNode.z
         );
-        axesGroup.add(startHereLabel);
+        wayfindingGroup.add(startHereLabel);
       }
+
+      const beginningsNode = nodeById.get("229");
+      if (beginningsNode) {
+        const beginningsLabel = makeAxisLabel("THEN: BEGINNINGS", "#FFD93D", {
+          fontPx: 100,
+          spriteHeight: 145
+        });
+        beginningsLabel.position.set(
+          beginningsNode.x,
+          beginningsNode.y + 330,
+          beginningsNode.z
+        );
+        wayfindingGroup.add(beginningsLabel);
+      }
+
+      scene.add(wayfindingGroup);
 
       Graph.onNodeHover((node, prev) => {
         const prevNode = prev || hoveredNode;
