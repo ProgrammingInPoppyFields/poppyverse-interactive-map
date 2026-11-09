@@ -381,9 +381,9 @@ The 3D map's layout has been rebuilt more than once. These are snapshots from di
       <sub>Cube layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/cube%20-%20links.png" alt="The cube-based layout experiment with connection links shown" width="100%" />
+      <img src="/screenshots/layout-experiments/cube%20-%20links%20-%20axes.png" alt="The cube-based layout experiment with connection links shown" width="100%" />
       <br />
-      <sub>Cube layout experiment, with connection links</sub>
+      <sub>Cube layout experiment, axes on</sub>
     </td>
   </tr>
   <tr valign="top">
