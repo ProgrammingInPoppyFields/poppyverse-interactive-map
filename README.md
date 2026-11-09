@@ -1,10 +1,10 @@
 <table align="center" width="100%">
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/misc/cover%201.png" alt="The Poppyverse 3D map, cover image 1" width="100%" />
+      <img src="/screenshots/misc/cover-1.png" alt="The Poppyverse 3D map, cover image 1" width="100%" />
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/misc/cover%202.png" alt="The Poppyverse 3D map, cover image 2" width="100%" />
+      <img src="/screenshots/misc/cover-2.png" alt="The Poppyverse 3D map, cover image 2" width="100%" />
     </td>
   </tr>
 </table>
@@ -92,7 +92,7 @@ The five pages stay at the repo root because that is where their public GitHub P
 | `index.html`, `about.html`, `2d_map.html`, `3d_map_2.html`, `3d_map_1.html` | The published pages (generated, except the frozen `3d_map_1.html`) |
 | `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js`, `poppy-aurora.js` |
 | `scripts/` | The build scripts (run `build_all.py`); `scripts/old/` holds the retired 3D Map 1.0 generator |
-| `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1 - cylinder/` (the cylinder 3D map and its detail card), `v2 - rings/` (3D Map 2.0) |
+| `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1-cylinder/` (the cylinder 3D map and its detail card), `v2-rings/` (3D Map 2.0), `misc/` (README cover images and home-screen shots) |
 | `docs/` | Technical notes, e.g. `3d-map-pipeline.html` |
 | `archive/` | Unused leftovers (the `3d-force-graph` fork source); safe to ignore or delete |
 | `.github/`, `_config.yml`, `LICENSE`, `README.md` | Repo and GitHub Pages housekeeping |
@@ -155,9 +155,9 @@ The faint lines connecting nodes and cluster rings are authored through the Full
 Both concepts above show up together on a node's detail card — click any node on `3d_map_2.html` or `2d_map.html` to open it:
 
 <p align="center">
-  <img src="/screenshots/v1%20-%20cylinder/detail-card-view.png" alt="A story's detail card, showing its description, Relativity/Relatability/Depth coordinate meters, sub-parts, characters, connections, and read-more link" width="420" />
+  <img src="/screenshots/v2-rings/detail-card-open.png" alt="3D Map 2.0 with a story's detail card open on the right, showing its description, details, characters, connections, and content link" width="800" />
   <br />
-  <sub>A detail card populated from normalized catalogue metadata.</sub>
+  <sub>A story's detail card in 3D Map 2.0, populated from normalized catalogue metadata.</sub>
 </p>
 
 ---
@@ -357,7 +357,7 @@ The 3D map's layout has been rebuilt more than once. These are snapshots from di
       <sub>Layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/globe%20-%20axes.png" alt="A spherical globe layout experiment with axes revealed" width="100%" />
+      <img src="/screenshots/layout-experiments/globe-axes.png" alt="A spherical globe layout experiment with axes revealed" width="100%" />
       <br />
       <sub>Spherical globe layout experiment, axes revealed</sub>
     </td>
@@ -369,7 +369,7 @@ The 3D map's layout has been rebuilt more than once. These are snapshots from di
       <sub>Scatter/divide layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/plane%20-%20axes.png" alt="The scatter/divide layout experiment with axes, captions, and the Draft Horizon plane revealed" width="100%" />
+      <img src="/screenshots/layout-experiments/plane-axes.png" alt="The scatter/divide layout experiment with axes, captions, and the Draft Horizon plane revealed" width="100%" />
       <br />
       <sub>Scatter/divide layout experiment, axes revealed</sub>
     </td>
@@ -381,19 +381,19 @@ The 3D map's layout has been rebuilt more than once. These are snapshots from di
       <sub>Cube layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/cube%20-%20links%20-%20axes.png" alt="The cube-based layout experiment with connection links shown" width="100%" />
+      <img src="/screenshots/layout-experiments/cube-links-axes.png" alt="The cube-based layout experiment with connection links shown" width="100%" />
       <br />
       <sub>Cube layout experiment, axes on</sub>
     </td>
   </tr>
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/v1%20-%20cylinder/axes-on.png" alt="The cylinder layout with its axes shown" width="100%" />
+      <img src="/screenshots/v1-cylinder/axes-on.png" alt="The cylinder layout with its axes shown" width="100%" />
       <br />
       <sub>Cylinder layout, axes on</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/v1%20-%20cylinder/axes-off.png" alt="The cylinder layout with its axes hidden" width="100%" />
+      <img src="/screenshots/v1-cylinder/axes-off.png" alt="The cylinder layout with its axes hidden" width="100%" />
       <br />
       <sub>Cylinder layout, axes off</sub>
     </td>
