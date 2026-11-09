@@ -98,7 +98,7 @@ The five pages stay at the repo root because that is where their public GitHub P
 | Path | What's in it |
 |---|---|
 | `index.html`, `about.html`, `2d_map.html`, `3d_map_2.html`, `3d_map_1.html` | The published pages (generated, except the frozen `3d_map_1.html`) |
-| `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js` |
+| `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js`, `poppy-aurora.js` |
 | `scripts/` | The build scripts (run `build_all.py`); `scripts/old/` holds the retired 3D Map 1.0 generator |
 | `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1 - cylinder/` (the cylinder 3D map and its detail card), `v2 - rings/` (3D Map 2.0) |
 | `docs/` | Technical notes, e.g. `3d-map-pipeline.html` |
@@ -114,6 +114,8 @@ All pages share the same top navigation, a `<poppy-nav>` web component declared 
 - 3D Map 2.0
 
 The story/cluster detail card is a second shared component, `<poppy-card>` in `components/poppy-card.js`. The 3D map's side drawer uses the full card, and the 2D map's mobile story list uses its `variant="compact"` form. A page gives it data from JavaScript (`card.data = { title, badge, color, sections: [...] }`); the file's header comment documents the format and the `close` and `chip-select` events. Change the card's look or fields there once and both maps follow after a rebuild of the page that supplies the data. The two maps' generators still decide which fields each page passes in.
+
+The home and About pages share a third component, `<poppy-aurora>` in `components/poppy-aurora.js`: slowly drifting, fuzzy colour blobs painted with additive blending so overlaps glow. Drop `<poppy-aurora></poppy-aurora>` in as the first thing in `<body>`; it fixes itself behind the page. Optional attributes: `count`, `speed`, `intensity`, `scale` (documented at the top of the file). It draws one still frame for visitors who prefer reduced motion. The page's `<body>` must not have its own opaque background, or it will cover the layer.
 
 ### 3D Map 1.0 (legacy archive)
 
@@ -180,6 +182,7 @@ Both concepts above show up together on a node's detail card — click any node 
 | `scripts/poppyverse_notion.py` | Shared read-only Notion client and normalization layer |
 | `components/poppy-nav.js` | The shared top-navigation web component (links and styling), loaded by every page |
 | `components/poppy-card.js` | The shared story/cluster detail card web component, loaded by the 2D and 3D 2.0 maps |
+| `components/poppy-aurora.js` | The animated glowing-blobs background (`<poppy-aurora>`), loaded by the home and About pages |
 | `scripts/old/` | Retired CSVs and the original 3D generator (`build_3d_map_1.py`, which writes the frozen `3d_map_1.html`); never run by `build_all.py`. See [3D Map 1.0 (legacy archive)](#3d-map-10-legacy-archive) before touching it |
 
 You usually only need `build_all.py`.

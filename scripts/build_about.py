@@ -5,12 +5,8 @@ Build the Poppyverse About page.
 Output:
 - about.html
 
-Shared toolbar:
-- Home
-- About
-- 2D Map
-- 3D Map
-- Tumblr Archive
+The menu is the shared <poppy-nav> component and the animated background is
+<poppy-aurora>; both live in components/.
 """
 
 from __future__ import annotations
@@ -23,11 +19,6 @@ REPO_ROOT = SCRIPT_DIR.parent
 OUTPUT_HTML = REPO_ROOT / "about.html"
 
 POPPY_PINK = "#FF1447"
-BACKGROUND_IMAGE_URL = (
-    "https://images.unsplash.com/photo-1569470451072-68314f596aec"
-    "?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0"
-    "&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-)
 
 
 ABOUT_HTML = """
@@ -103,36 +94,17 @@ def build_html() -> str:
       min-height: 100%;
       color: var(--text);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }}
+
+    /* Only <html> paints the base colour: an opaque <body> background would
+       cover the fixed <poppy-aurora> layer sitting behind the content. */
+    html {{
       background: #06060a;
     }}
 
     body {{
       min-height: 100vh;
       overflow-x: hidden;
-    }}
-
-    body::before {{
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -3;
-      background-image: url("{BACKGROUND_IMAGE_URL}");
-      background-size: cover;
-      background-position: center;
-      filter: saturate(1.06) contrast(1.08) brightness(0.64);
-      transform: scale(1.02);
-    }}
-
-    body::after {{
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 50% 16%, rgba(255, 20, 71, 0.20), transparent 34%),
-        radial-gradient(circle at 20% 80%, rgba(120, 60, 255, 0.14), transparent 32%),
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.88));
     }}
 
     a {{
@@ -219,6 +191,8 @@ def build_html() -> str:
 </head>
 
 <body>
+  <script src="components/poppy-aurora.js"></script>
+  <poppy-aurora></poppy-aurora>
   {nav}
 
   <main class="page">

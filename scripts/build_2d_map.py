@@ -165,7 +165,15 @@ def build_map_data(
     story_count = 0
     published_count = 0
     for cluster in clusters:
-        cluster["stories"].sort(key=lambda story: (story["name"].casefold(), story["_sourceIndex"]))
+        # Stories follow the Notion table top to bottom, i.e. by catalogue ID
+        # (POPPYSEED is ID 1, so it leads the Welcome cluster). The Notion API
+        # returns rows in no particular order, so we cannot rely on fetch order.
+        # Rows without a numeric ID go last, in fetch order.
+        cluster["stories"].sort(key=lambda story: (
+            0 if story["id"].isdigit() else 1,
+            int(story["id"]) if story["id"].isdigit() else 0,
+            story["_sourceIndex"],
+        ))
         for story in cluster["stories"]:
             story.pop("_sourceIndex", None)
         cluster["storyCount"] = len(cluster["stories"])
