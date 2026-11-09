@@ -23,7 +23,11 @@ Source files:
 - SRC_toc.csv
 
 Output:
-- 3d_map.html
+- ../../3d_map_1.html  (the frozen 'Poppyverse 3D Map 1.0' legacy page)
+
+LEGACY: build_all.py never runs this. Run it by hand, from anywhere:
+  python3 scripts/old/build_3d_map_1.py
+It reads the CSVs next to this file and overwrites 3d_map_1.html in the repo root.
 
 3D visual rules:
 - Keep graph nodes.
@@ -59,10 +63,9 @@ ROOT = Path(__file__).resolve().parent
 
 CLUSTERS_CSV = ROOT / "SRC_clusters.csv"
 TOC_CSV = ROOT / "SRC_toc.csv"
-OUTPUT_HTML = ROOT / "3d_map.html"
+OUTPUT_HTML = ROOT.parent.parent / "3d_map_1.html"
 
 POPPY_PINK = "#FF1447"
-TUMBLR_ARCHIVE_URL = "https://inpoppyfields.tumblr.com/"
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -167,36 +170,10 @@ def normalize_url(value: str) -> str:
 
 
 def make_nav(active: str) -> str:
-    items = [
-        ("Home", "index.html", "home"),
-        ("About", "about.html", "about"),
-        ("2D Map", "2d_map.html", "2d"),
-        ("3D Map", "3d_map.html", "3d"),
-        ("Tumblr Archive", TUMBLR_ARCHIVE_URL, "archive"),
-    ]
-
-    links: list[str] = []
-
-    for label, href, key in items:
-        active_class = " active" if key == active else ""
-        external_attrs = ""
-
-        if href.startswith("http"):
-            external_attrs = ' target="_blank" rel="noopener"'
-
-        links.append(
-            f'<a class="top-nav-link{active_class}" href="{html.escape(href, quote=True)}"{external_attrs}>'
-            f"{html.escape(label)}"
-            f"</a>"
-        )
-
-    return f"""
-<nav class="top-nav" aria-label="Main navigation">
-  <div class="top-nav-inner">
-    {"".join(links)}
-  </div>
-</nav>
-""".strip()
+    # The shared <poppy-nav> component (components/poppy-nav.js) draws the bar
+    # and detects the current page itself, so `active` is no longer needed.
+    return """<script src="components/poppy-nav.js"></script>
+<poppy-nav></poppy-nav>"""
 
 
 def favicon_html() -> str:
@@ -348,15 +325,25 @@ def json_script(data: dict[str, Any]) -> str:
 
 
 def build_html(data: dict[str, Any]) -> str:
-    nav = make_nav("3d")
+    nav = make_nav("3d1")
     data_blob = json_script(data)
 
     return f"""<!DOCTYPE html>
+<!--
+  LEGACY ARCHIVE: Poppyverse 3D Map 1.0.
+  This page is frozen. scripts/build_all.py does NOT rebuild it, and it no longer
+  reads Notion. It was generated from the retired CSV snapshots by
+  scripts/old/build_3d_map_1.py (inputs: scripts/old/SRC_toc.csv and
+  scripts/old/SRC_clusters.csv; output: this file).
+  To deliberately update it, edit those CSVs, then run from the repo root:
+      python3 scripts/old/build_3d_map_1.py
+  The live, Notion-driven map is 3d_map_2.html (scripts/build_3d_map_2.py).
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Poppyverse 3D Map</title>
+  <title>Poppyverse 3D Map 1.0 (legacy)</title>
   {favicon_html()}
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -412,57 +399,6 @@ def build_html(data: dict[str, Any]) -> str:
 
     a {{
       color: inherit;
-    }}
-
-    .top-nav {{
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      padding: 10px 16px;
-      pointer-events: none;
-    }}
-
-    .top-nav-inner {{
-      width: max-content;
-      max-width: calc(100vw - 32px);
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.58);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
-      pointer-events: auto;
-      overflow-x: auto;
-    }}
-
-    .top-nav-link {{
-      flex: 0 0 auto;
-      padding: 8px 13px;
-      border-radius: 999px;
-      color: rgba(255, 255, 255, 0.82);
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition:
-        color 160ms ease,
-        background 160ms ease,
-        box-shadow 160ms ease;
-    }}
-
-    .top-nav-link:hover,
-    .top-nav-link.active {{
-      color: #fff;
-      background: var(--poppy-pink);
-      box-shadow: 0 0 18px rgba(255, 20, 71, 0.44);
     }}
 
     #graph {{
@@ -974,16 +910,6 @@ def build_html(data: dict[str, Any]) -> str:
       text-transform: uppercase;
     }}
 
-    @media (max-width: 760px) {{
-      .top-nav {{
-        padding-left: 8px;
-        padding-right: 8px;
-      }}
-
-      .top-nav-inner {{
-        justify-content: flex-start;
-      }}
-    }}
   </style>
 </head>
 

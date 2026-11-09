@@ -1,9 +1,19 @@
 <!DOCTYPE html>
+<!--
+  LEGACY ARCHIVE: Poppyverse 3D Map 1.0.
+  This page is frozen. scripts/build_all.py does NOT rebuild it, and it no longer
+  reads Notion. It was generated from the retired CSV snapshots by
+  scripts/old/build_3d_map_1.py (inputs: scripts/old/SRC_toc.csv and
+  scripts/old/SRC_clusters.csv; output: this file).
+  To deliberately update it, edit those CSVs, then run from the repo root:
+      python3 scripts/old/build_3d_map_1.py
+  The live, Notion-driven map is 3d_map_2.html (scripts/build_3d_map_2.py).
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Poppyverse 3D Map</title>
+  <title>Poppyverse 3D Map 1.0 (legacy)</title>
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="50%" x="50%" dominant-baseline="middle" text-anchor="middle" font-size="52">🌷</text></svg>'>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,57 +69,6 @@
 
     a {
       color: inherit;
-    }
-
-    .top-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      padding: 10px 16px;
-      pointer-events: none;
-    }
-
-    .top-nav-inner {
-      width: max-content;
-      max-width: calc(100vw - 32px);
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.58);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
-      pointer-events: auto;
-      overflow-x: auto;
-    }
-
-    .top-nav-link {
-      flex: 0 0 auto;
-      padding: 8px 13px;
-      border-radius: 999px;
-      color: rgba(255, 255, 255, 0.82);
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition:
-        color 160ms ease,
-        background 160ms ease,
-        box-shadow 160ms ease;
-    }
-
-    .top-nav-link:hover,
-    .top-nav-link.active {
-      color: #fff;
-      background: var(--poppy-pink);
-      box-shadow: 0 0 18px rgba(255, 20, 71, 0.44);
     }
 
     #graph {
@@ -620,26 +579,12 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
     }
-
-    @media (max-width: 760px) {
-      .top-nav {
-        padding-left: 8px;
-        padding-right: 8px;
-      }
-
-      .top-nav-inner {
-        justify-content: flex-start;
-      }
-    }
   </style>
 </head>
 
 <body>
-  <nav class="top-nav" aria-label="Main navigation">
-  <div class="top-nav-inner">
-    <a class="top-nav-link" href="index.html">Home</a><a class="top-nav-link" href="about.html">About</a><a class="top-nav-link" href="2d_map.html">2D Map</a><a class="top-nav-link active" href="3d_map.html">3D Map</a><a class="top-nav-link" href="https://inpoppyfields.tumblr.com/" target="_blank" rel="noopener">Tumblr Archive</a>
-  </div>
-</nav>
+  <script src="components/poppy-nav.js"></script>
+  <poppy-nav></poppy-nav>
 
   <div id="graph"></div>
 

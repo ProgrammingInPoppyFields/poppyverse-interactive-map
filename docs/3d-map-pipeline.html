@@ -1,0 +1,214 @@
+<title>3D Map Pipeline</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root {
+    /* layout: single-column technical note; diagram is the one wide element, scrolling in its own box */
+    --bg: #faf7f8;
+    --surface: #ffffff;
+    --border: #e3dbde;
+    --fg: #241a1d;
+    --fg-muted: #746469;
+    --accent: #ff1447;
+    --accent-soft: #ffe2e8;
+    --mono-dim: #9b8a8f;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161012;
+      --surface: #1f1719;
+      --border: #3b2c30;
+      --fg: #f3e9ea;
+      --fg-muted: #b3a0a4;
+      --accent: #ff5577;
+      --accent-soft: #3a1620;
+      --mono-dim: #7d6c70;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161012;
+    --surface: #1f1719;
+    --border: #3b2c30;
+    --fg: #f3e9ea;
+    --fg-muted: #b3a0a4;
+    --accent: #ff5577;
+    --accent-soft: #3a1620;
+    --mono-dim: #7d6c70;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Source Sans 3", system-ui, sans-serif;
+    padding-top: max(32px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(48px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  main {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-family: "Archivo", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 5vw, 38px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--fg);
+    max-width: 65ch;
+  }
+  p.lede { color: var(--fg-muted); font-size: 17px; }
+  code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.92em;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+  }
+  .diagram-wrap {
+    margin: 34px 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow-x: auto;
+    padding: 6px;
+  }
+  figure { margin: 0; }
+  svg { display: block; min-width: 760px; width: 100%; height: auto; }
+  figcaption {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--fg-muted);
+    margin-top: 14px;
+    max-width: 68ch;
+  }
+  .closing {
+    margin-top: 36px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+  }
+  .closing p { font-size: 15px; color: var(--fg-muted); }
+</style>
+
+<main>
+  <p class="eyebrow">architecture · build pipeline</p>
+  <h1>3D Map Pipeline</h1>
+  <p class="lede"><code>SRC_clusters.csv</code> + <code>SRC_toc.csv</code> → <code>build_3d_map.py</code> → <code>3d_map.html</code>. Everything left of the dashed line below runs once, offline, when you re-run the build script. Everything right of it runs fresh in every visitor's browser — and never touches a CSV.</p>
+
+  <div class="diagram-wrap">
+    <figure>
+      <svg viewBox="0 0 1200 600" role="img" aria-label="Diagram of the 3D map build pipeline: SRC_clusters.csv and SRC_toc.csv feed build_data(), which joins nodes to clusters, copies Final X/Y/Z as literal coordinates, and derives link and flag data from text; build_html() wraps the result with nav, CSS and viewer JS into 3d_map.html. That file ships as one self-contained document; at runtime the browser only parses its embedded JSON and renders the scene, with no further CSV access.">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- phase labels -->
+        <text x="30" y="26" font-family="IBM Plex Mono, monospace" font-size="12.5" letter-spacing="0.04em" fill="var(--accent)">BUILD TIME — offline, "python build_3d_map.py"</text>
+        <text x="30" y="320" font-family="IBM Plex Mono, monospace" font-size="12.5" letter-spacing="0.04em" fill="var(--accent)">RUNTIME — every page load, in the browser</text>
+
+        <!-- divider -->
+        <line x1="20" y1="300" x2="1180" y2="300" stroke="currentColor" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="2 6"/>
+
+        <!-- ===== BUILD TIME ROW ===== -->
+
+        <!-- source: clusters csv -->
+        <rect x="30" y="70" width="230" height="56" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.55"/>
+        <text x="48" y="92" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="currentColor">SRC_clusters.csv</text>
+        <text x="48" y="109" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">name · color · description</text>
+
+        <!-- source: toc csv -->
+        <rect x="30" y="170" width="230" height="56" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.55"/>
+        <text x="48" y="192" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="currentColor">SRC_toc.csv</text>
+        <text x="48" y="209" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">name · Final X/Y/Z · Connections · …</text>
+
+        <!-- fan-in arrows to build_data -->
+        <line x1="260" y1="98" x2="328" y2="140" stroke="currentColor" marker-end="url(#arrow)"/>
+        <text x="270" y="110" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">clusters</text>
+        <line x1="260" y1="198" x2="328" y2="156" stroke="currentColor" marker-end="url(#arrow)"/>
+        <text x="270" y="196" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">rows</text>
+
+        <!-- build_data() -->
+        <rect x="330" y="88" width="190" height="120" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+        <text x="425" y="140" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14.5" fill="currentColor">build_data()</text>
+        <text x="425" y="160" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">joins nodes to clusters</text>
+
+        <!-- leader to annotation -->
+        <line x1="425" y1="208" x2="425" y2="226" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="2 4"/>
+        <rect x="330" y="226" width="190" height="66" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="2 4"/>
+        <text x="342" y="242" font-family="Source Sans 3, sans-serif" font-size="10.5" fill="var(--fg-muted)">• Final X/Y/Z copied as literal</text>
+        <text x="342" y="256" font-family="Source Sans 3, sans-serif" font-size="10.5" fill="var(--fg-muted)">  numbers, not re-derived</text>
+        <text x="342" y="270" font-family="Source Sans 3, sans-serif" font-size="10.5" fill="var(--fg-muted)">• Connections → ID lookup →</text>
+        <text x="342" y="284" font-family="Source Sans 3, sans-serif" font-size="10.5" fill="var(--fg-muted)">  deduped links</text>
+
+        <!-- build_data -> build_html -->
+        <line x1="520" y1="148" x2="598" y2="148" stroke="currentColor" marker-end="url(#arrow)"/>
+        <text x="559" y="135" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">JSON blob</text>
+
+        <!-- build_html() -->
+        <rect x="600" y="88" width="190" height="120" rx="8" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.55"/>
+        <text x="695" y="140" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14.5" fill="currentColor">build_html()</text>
+        <text x="695" y="160" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">+ nav, CSS, viewer JS</text>
+        <text x="695" y="174" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">(hardcoded in the script)</text>
+
+        <!-- build_html -> file -->
+        <line x1="790" y1="148" x2="898" y2="148" stroke="currentColor" marker-end="url(#arrow)"/>
+        <text x="844" y="135" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">write_text()</text>
+
+        <!-- 3d_map.html file -->
+        <rect x="900" y="108" width="230" height="80" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+        <text x="1015" y="142" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" fill="currentColor">3d_map.html</text>
+        <text x="1015" y="160" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">self-contained output file</text>
+
+        <!-- elbow connector into runtime -->
+        <path d="M 1015 188 L 1015 360 L 200 360 L 200 428" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#arrow)"/>
+        <text x="610" y="352" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11.5" fill="var(--fg-muted)">ships as one file — never re-reads a CSV</text>
+
+        <!-- ===== RUNTIME ROW ===== -->
+
+        <rect x="40" y="430" width="320" height="80" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.55"/>
+        <text x="200" y="464" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" fill="currentColor">JSON.parse()</text>
+        <text x="200" y="482" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">reads the #poppy-data script tag</text>
+
+        <line x1="360" y1="470" x2="438" y2="470" stroke="currentColor" marker-end="url(#arrow)"/>
+        <text x="399" y="457" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">DATA.nodes</text>
+
+        <rect x="440" y="430" width="320" height="80" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.55"/>
+        <text x="600" y="464" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" fill="currentColor">prepareGraphData()</text>
+        <text x="600" y="482" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">x = finalX × 2.4 (stretch only)</text>
+
+        <line x1="760" y1="470" x2="838" y2="470" stroke="currentColor" marker-end="url(#arrow)"/>
+        <text x="799" y="457" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">x, y, z</text>
+
+        <rect x="840" y="430" width="320" height="80" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+        <text x="1000" y="464" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" fill="currentColor">3d-force-graph scene</text>
+        <text x="1000" y="482" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--fg-muted)">renders nodes/links — no CSV access</text>
+      </svg>
+      <figcaption>The two CSVs are joined, flattened and serialized into one JSON blob at build time, then baked straight into <code>3d_map.html</code> alongside the viewer's CSS and JS. The browser only ever parses that embedded JSON — it never fetches or re-reads either CSV. That's also why deleting <code>SRC_toc.csv</code> doesn't break the published page, only the next rebuild.</figcaption>
+    </figure>
+  </div>
+
+  <div class="closing">
+    <p><code>SRC_clusters.csv</code> supplies per-verse color and description; <code>SRC_toc.csv</code> supplies everything per-story, including the already-computed <code>Final X</code>/<code>Final Y</code>/<code>Final Z</code> columns — <code>build_data()</code> reads those as plain numbers rather than deriving a layout formula. Node flags like <code>isIntro</code>, <code>isTrailer</code>, and <code>isMeta</code> are decided the same way the Notion renumbering just was: by pattern-matching the story's <code>Name</code> text at build time.</p>
+  </div>
+</main>

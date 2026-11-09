@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="/screenshots/header.png" alt="A field of glowing multiverse nodes and nebulae drifting in space" width="100%" />
+  <img src="/screenshots/v1%20-%20cylinder/header.png" alt="A field of glowing multiverse nodes and nebulae drifting in space" width="100%" />
 </p>
 
 <table align="center" width="100%">
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-plain.png" alt="The 3D map showing glowing story clusters" width="100%" />
+      <img src="/screenshots/layout-experiments/3d-map-plain.png" alt="The 3D map showing glowing story clusters" width="100%" />
       <br />
       <sub><strong>3D map</strong><br />Story nodes floating in space, colored by cluster.</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-globe.png" alt="The 3D map with the Relativity / Relatability / Depth axes and connection lines revealed" width="100%" />
+      <img src="/screenshots/layout-experiments/3d-map-globe.png" alt="The 3D map with the Relativity / Relatability / Depth axes and connection lines revealed" width="100%" />
       <br />
       <sub><strong>3D map, "Show axes" enabled</strong><br />The same nodes with the axes, origin marker, and connection-link lines made visible.</sub>
     </td>
@@ -44,13 +44,13 @@ This project turns its stories, characters, timelines, and relationships into a 
 - **2D Map** — a calmer cluster-first dashboard for structured browsing
 - **3D Map** — an interactive force-directed graph for seeing connections and narrative gravity
 
-The site is generated from structured CSV data rather than maintained as a pile of hand-edited HTML pages. Content, metadata, relationships, and presentation logic stay separate, which makes the archive easier to expand without manually rebuilding the universe every time canon shifts.
+The site is generated directly from the Full Catalogue and Cluster Catalogue in Notion rather than maintained as a pile of hand-edited HTML pages. Content, metadata, relationships, and presentation logic stay separate, which makes the archive easier to expand without manually rebuilding the universe every time canon shifts.
 
 ---
 
 ## technical highlights
 
-- Data-driven content model built from shared CSV source files
+- Notion-backed content model shared by both map generators
 - Python generators for repeatable static-site builds
 - 2D cluster dashboard for structured navigation
 - Interactive 3D relationship graph using Three.js and `3d-force-graph`
@@ -64,9 +64,9 @@ The site is generated from structured CSV data rather than maintained as a pile 
 ## how it works
 
 ```text
-CSV content + relationship data
+Full Catalogue + Cluster Catalogue (Notion)
             ↓
-      Python build scripts
+      scripts/*.py
             ↓
 generated HTML / CSS / JavaScript
             ↓
@@ -75,7 +75,7 @@ generated HTML / CSS / JavaScript
       GitHub Pages deployment
 ```
 
-The source CSVs hold the actual archive data. Python scripts transform that data into the public site, including the homepage, informational pages, cluster dashboard, and 3D relationship graph.
+The Notion catalogues hold the actual archive data. Python scripts fetch and normalize the public fields in memory, then transform them into the cluster dashboard and 3D relationship graph. No intermediate CSV or raw Notion dump is written to the public repository.
 
 The generated HTML files are outputs, not the source of truth.
 
@@ -88,68 +88,82 @@ The generated HTML files are outputs, not the source of truth.
 | `index.html` | Splash page and site entrance |
 | `about.html` | About H.A.H., GenAI usage, and lucid generation |
 | `2d_map.html` | Cluster-card dashboard with story and character metadata |
-| `3d_map.html` | Interactive 3D relationship graph using Three.js and `3d-force-graph` |
+| `3d_map_2.html` | Cluster-ring 3D relationship graph using Three.js and `3d-force-graph` (3D Map 2.0) |
+| `3d_map_1.html` | **3D Map 1.0: a static, frozen archive page. Do not disturb.** See [3D Map 1.0 (legacy archive)](#3d-map-10-legacy-archive) below |
 
-All pages share the same top navigation:
+### Repository layout
+
+The five pages stay at the repo root because that is where their public GitHub Pages URLs come from. Everything else lives in a folder:
+
+| Path | What's in it |
+|---|---|
+| `index.html`, `about.html`, `2d_map.html`, `3d_map_2.html`, `3d_map_1.html` | The published pages (generated, except the frozen `3d_map_1.html`) |
+| `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js` |
+| `scripts/` | The build scripts (run `build_all.py`); `scripts/old/` holds the retired 3D Map 1.0 generator |
+| `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1 - cylinder/` (the cylinder 3D map and its detail card), `v2 - rings/` (3D Map 2.0) |
+| `docs/` | Technical notes, e.g. `3d-map-pipeline.html` |
+| `archive/` | Unused leftovers (the `3d-force-graph` fork source); safe to ignore or delete |
+| `.github/`, `_config.yml`, `LICENSE`, `README.md` | Repo and GitHub Pages housekeeping |
+
+All pages share the same top navigation, a `<poppy-nav>` web component declared once in `components/poppy-nav.js`. Each page just includes the script and the tag; the component works out the current page from the URL. Edit that one file to change the menu everywhere, with no rebuild needed (even the frozen legacy page picks it up):
 
 - Home
 - About
 - 2D Map
-- 3D Map
-- Tumblr Archive
+- 3D Map 1.0
+- 3D Map 2.0
+
+The story/cluster detail card is a second shared component, `<poppy-card>` in `components/poppy-card.js`. The 3D map's side drawer uses the full card, and the 2D map's mobile story list uses its `variant="compact"` form. A page gives it data from JavaScript (`card.data = { title, badge, color, sections: [...] }`); the file's header comment documents the format and the `close` and `chip-select` events. Change the card's look or fields there once and both maps follow after a rebuild of the page that supplies the data. The two maps' generators still decide which fields each page passes in.
+
+### 3D Map 1.0 (legacy archive)
+
+> **`3d_map_1.html` is a static, frozen archive of the original 3D map. Leave it alone.**
+>
+> - It is **not** generated from Notion and is **not** part of the normal build: `scripts/build_all.py` never touches it, and it has no page name to rebuild.
+> - Its data is a fixed snapshot of the retired CSVs, baked into the file. Changes to the Notion catalogues will never show up in it, and that is intentional.
+> - Don't hand-edit it either. The shared menu (`components/poppy-nav.js`) is the only thing that updates it, and that happens automatically.
+>
+> **If you really, truly want to rebuild it**, run this from the repo root:
+>
+> ```bash
+> python3 scripts/old/build_3d_map_1.py
+> ```
+>
+> That reads `scripts/old/SRC_toc.csv` and `scripts/old/SRC_clusters.csv` (not Notion) and **overwrites** `3d_map_1.html` in place, and the CSVs are older than the current catalogue. Commit or back up the existing page first if you might want it back.
 
 ---
 
 ## source of truth
 
-| File | What it controls |
+| Notion database | What it controls |
 |---|---|
-| `SRC_clusters.csv` | Cluster names, descriptions, colors, and optional cover images |
-| `SRC_toc.csv` | Story entries, characters, relationships, descriptions, and archive metadata |
+| **The Cluster Catalogue** | Cluster names, descriptions, colors, cover images, order, and cluster connections |
+| **The Full Catalogue** | Story entries, characters, relationships, descriptions, public URLs, status, and manuscript byte counts |
 
-These files drive both map views and the surrounding archive interface.
-
-To change the content or structure of the site, update the CSVs or generator scripts rather than editing the generated HTML directly.
+The retired CSV snapshots are kept only in `scripts/old/` for archaeology. Active generators never read them.
 
 ---
 
-## the 3D coordinate system
+## the current 3D model
 
-`3d_map.html` plots each node as a simple 3D scatter point centered at `(0, 0, 0)`. Three `0`–`10` scores in `SRC_toc.csv` drive the X and Y axes directly, while the Z axis is split by publish status:
+`3d_map_2.html` treats clusters as large spatial rings and places their child stories throughout a three-dimensional volume around each ring. Ring size follows the combined manuscript byte count. Story volume follows manuscript size, while entries without a byte count receive a substantial default.
 
-| CSV column | Controls | Behavior |
-|---|---|---|
-| `(X) Relativity` | X position | Scaled directly; `0` and `10` sit at opposite edges of the X spread. |
-| `(Y) Relatability` | Y position | Scaled directly; `0` and `10` sit at opposite edges of the Y spread. |
-| `(Z) Depth` | Z magnitude only | Controls *distance* from the z=0 divide plane, not direction — see below. |
-| `Content URL` (presence) | Z sign | Has a URL -> **+Z** (in front of the divide). No URL -> **-Z** (behind it). |
-
-What each score is actually rating, story-wise:
-
-* **RELATIVITY:** How far the story has wandered from ordinary reality into alternate universes, interdimensional events, cosmic entities, or related complications.
-* **RELATABILITY:** How closely the story resembles recognizable human life, including familiar relationships, everyday problems, and the general inconvenience of being a person.
-* **DEPTH:** How emotionally dark, psychologically complex, mature, or otherwise unsuitable for casual bedtime reading the story becomes.
-
-A translucent plane sits at `z = 0` marking the divide: published stories (with a Content URL) float in front of it, everything still unpublished floats behind it.
-
-Cluster no longer affects position, only color. A small seeded jitter keeps nodes with identical scores from stacking exactly on top of each other, but is deterministic per node id, so rebuilds don't shuffle anyone around.
-
-Axes, the z=0 divide plane, and connection lines are all hidden by default — toggle "Show axes" (bottom-left) to see the three labeled axis lines, the origin marker, the divide plane, and the faint connection-link lines connecting nodes.
+Story-to-story, story-to-cluster, cluster-to-story, and cluster-to-cluster relationships are rendered as straight links. Published stories receive a planetary ring; intros, e-books, and trailers use distinct shapes described in the map legend. The seeded layout is reproducible.
 
 ---
 
 ## what is a connection
 
-The faint lines connecting nodes on the map, and the "Connections" list on each detail card, aren't a technical link — they're a story relationship, defined in the `Connections` column of `SRC_toc.csv`:
+The faint lines connecting nodes and cluster rings are authored through the Full Catalogue and Cluster Catalogue connection properties:
 
 > **CONNECTION:** A connection defines a relationship between 2 stories where characters, timelines, or alternate versions of the same people from separate universes come into direct contact and begin affecting one another. Less "special crossover episode," more "the walls between realities have failed inspection."
 
-Both concepts above show up together on a node's detail card — click any node on `3d_map.html` or `2d_map.html` to open it:
+Both concepts above show up together on a node's detail card — click any node on `3d_map_2.html` or `2d_map.html` to open it:
 
 <p align="center">
-  <img src="/screenshots/detail-card-view.png" alt="A story's detail card, showing its description, Relativity/Relatability/Depth coordinate meters, sub-parts, characters, connections, and read-more link" width="420" />
+  <img src="/screenshots/v1%20-%20cylinder/detail-card-view.png" alt="A story's detail card, showing its description, Relativity/Relatability/Depth coordinate meters, sub-parts, characters, connections, and read-more link" width="420" />
   <br />
-  <sub>A detail card — Coordinates meters and Connections chips are populated straight from <code>SRC_toc.csv</code>.</sub>
+  <sub>A detail card populated from normalized catalogue metadata.</sub>
 </p>
 
 ---
@@ -158,11 +172,15 @@ Both concepts above show up together on a node's detail card — click any node 
 
 | File | What it does |
 |---|---|
-| `build_all.py` | Runs the complete site build |
-| `build_home.py` | Generates `index.html` |
-| `build_about.py` | Generates `about.html` |
-| `build_2d_map.py` | Generates the 2D cluster dashboard from the source CSVs |
-| `build_3d_map_with_nav.py` | Generates the 3D relationship graph and shared navigation |
+| `scripts/build_all.py` | Runs the complete active site build. It is the only script that calls Notion by default: it fetches both catalogues once and passes the rows to the 2D and 3D generators in memory |
+| `scripts/build_home.py` | Generates `index.html` |
+| `scripts/build_about.py` | Generates `about.html` |
+| `scripts/build_2d_map.py` | Generates the searchable 2D cluster catalogue from Notion |
+| `scripts/build_3d_map_2.py` | Generates the cluster-ring 3D graph from Notion |
+| `scripts/poppyverse_notion.py` | Shared read-only Notion client and normalization layer |
+| `components/poppy-nav.js` | The shared top-navigation web component (links and styling), loaded by every page |
+| `components/poppy-card.js` | The shared story/cluster detail card web component, loaded by the 2D and 3D 2.0 maps |
+| `scripts/old/` | Retired CSVs and the original 3D generator (`build_3d_map_1.py`, which writes the frozen `3d_map_1.html`); never run by `build_all.py`. See [3D Map 1.0 (legacy archive)](#3d-map-10-legacy-archive) before touching it |
 
 You usually only need `build_all.py`.
 
@@ -170,10 +188,69 @@ You usually only need `build_all.py`.
 
 ## rebuilding the site
 
+`scripts/build_all.py` reads **The Full Catalogue** and **The Cluster Catalogue** from Notion once and hands the same rows to `scripts/build_2d_map.py` and `scripts/build_3d_map_2.py` over stdin (`--snapshot -`). Nothing is written to disk besides the finished HTML, so no intermediate CSV or JSON export is created or committed. Either map script can still be run on its own, in which case it fetches from Notion itself.
+
+Create a Notion connection or personal access token, grant it read access to
+both catalogue databases, then keep the token outside the repository:
+
+```zsh
+read -rs "NOTION_TOKEN?Paste Notion token: "
+echo
+export NOTION_TOKEN
+python3 -u scripts/build_all.py
+unset NOTION_TOKEN
+```
+
+The silent prompt keeps the token out of the command itself and therefore out
+of ordinary shell history. The builder uses Python's installed `certifi` CA
+bundle when available, reports every 100-row Notion page as it arrives, logs
+retry delays, and never prints the token.
+
+The two current data-source IDs are safe defaults in the script. They can be
+overridden without editing code:
+
+```bash
+NOTION_FULL_CATALOG_DATA_SOURCE_ID="..." \
+NOTION_CLUSTER_CATALOG_DATA_SOURCE_ID="..." \
+python3 scripts/build_3d_map_2.py --seed 20261108
+```
+
+The seed makes the random cluster and story placement reproducible. Change it
+only when you deliberately want a new arrangement.
+
+Text relationship fields accept catalog IDs separated by slashes, commas,
+semicolons, pipes, or newlines. JSON arrays are also accepted:
+
+- Full Catalogue `Node connections`: story-to-story links, such as
+  `123 / 456 / 789`
+- Full Catalogue `Cluster connections`: a multi-value relation to Cluster
+  Catalogue records, producing story-to-cluster links
+- Cluster Catalogue `Cluster connections`: cluster-to-cluster links
+- Cluster Catalogue `Node connections`: cluster-to-story links
+
+The last two Cluster Catalogue properties are optional; add them when those
+connection types are ready to be authored. Cluster membership itself is shown
+spatially and does not create a visible spoke for every child.
+
+Published nodes receive a small planetary ring. Entries whose type is
+`youtube` are free-floating sphere-headed comet nodes, and entries with `intro`
+in the title use triangular pyramids. Story colors receive a small deterministic
+hue shift around their Cluster Catalogue color so sibling glows can mingle
+without losing their cluster identity. Cluster ring radius is derived from the sum of child
+manuscript bytes, with a minimum radius large enough to hold its children.
+Story-sphere volume scales with manuscript bytes; entries with no byte count
+use a substantial default equivalent to 100,000 bytes. The final visual radius
+is multiplied by 1.5 for readability while preserving those byte proportions.
+
+The generated HTML contains only the normalized public display data required
+by the map; the Notion token and raw database responses are never embedded.
+
+---
+
 From the repository root:
 
 ```bash
-python build_all.py
+python3 -u scripts/build_all.py
 ```
 
 This regenerates:
@@ -182,14 +259,14 @@ This regenerates:
 index.html
 about.html
 2d_map.html
-3d_map.html
+3d_map_2.html
 ```
 
 The normal update flow is:
 
-1. Update `SRC_clusters.csv`.
-2. Update `SRC_toc.csv`.
-3. Run `python build_all.py`.
+1. Update The Cluster Catalogue and/or The Full Catalogue in Notion.
+2. Set `NOTION_TOKEN` in the current shell.
+3. Run `python3 -u scripts/build_all.py`.
 4. Review the generated pages locally.
 5. Commit the source data, generator scripts, and generated outputs.
 6. Let GitHub Pages do its thing.
@@ -198,14 +275,15 @@ The normal update flow is:
 
 ## optional build shortcuts
 
-Regenerate only the parts you need:
+With no arguments `build_all.py` rebuilds everything. Name the pages you want and it rebuilds only those (`home`, `about`, `2d`, `3d`):
 
 ```bash
-python build_all.py --skip-3d
-python build_all.py --skip-2d
-python build_all.py --skip-home
-python build_all.py --skip-about
+python3 -u scripts/build_all.py 2d          # just the 2D map
+python3 -u scripts/build_all.py 2d 3d       # both maps
+python3 -u scripts/build_all.py home about  # static pages only (no Notion token needed)
 ```
+
+Notion is only contacted when `2d` and/or `3d` is among the pages.
 
 Useful when the cursed glowing space cube does not need to be awakened.
 
@@ -257,10 +335,10 @@ The primary generated pages live beside it:
 /index.html
 /about.html
 /2d_map.html
-/3d_map.html
+/3d_map_2.html
 ```
 
-Do not hand-edit the generated HTML unless you enjoy losing those changes the next time the build runs. Update the source CSVs or generator scripts instead.
+Do not hand-edit the generated HTML unless you enjoy losing those changes the next time the build runs. Update Notion or the generator scripts instead.
 
 ---
 
@@ -279,36 +357,36 @@ The 3D map's layout has been rebuilt more than once. These are snapshots from di
 <table align="center" width="100%">
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-plain.png" alt="An early 3D map layout experiment" width="100%" />
+      <img src="/screenshots/layout-experiments/3d-map-plain.png" alt="An early 3D map layout experiment" width="100%" />
       <br />
       <sub>Layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-globe.png" alt="A spherical globe layout experiment with axes revealed" width="100%" />
+      <img src="/screenshots/layout-experiments/3d-map-globe.png" alt="A spherical globe layout experiment with axes revealed" width="100%" />
       <br />
       <sub>Spherical globe layout experiment, axes revealed</sub>
     </td>
   </tr>
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-cube.png" alt="A cube-based layout experiment" width="100%" />
+      <img src="/screenshots/layout-experiments/3d-map-cube.png" alt="A cube-based layout experiment" width="100%" />
       <br />
       <sub>Cube layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-cube-ON.png" alt="The cube-based layout experiment with axes revealed" width="100%" />
+      <img src="/screenshots/layout-experiments/3d-map-cube-ON.png" alt="The cube-based layout experiment with axes revealed" width="100%" />
       <br />
       <sub>Cube layout experiment, axes revealed</sub>
     </td>
   </tr>
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-div.png" alt="A scatter layout experiment split by the publish-divide plane" width="100%" />
+      <img src="/screenshots/layout-experiments/3d-map-div.png" alt="A scatter layout experiment split by the publish-divide plane" width="100%" />
       <br />
       <sub>Scatter/divide layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/3d-map-div-ON.png" alt="The scatter/divide layout experiment with axes, captions, and the Draft Horizon plane revealed" width="100%" />
+      <img src="/screenshots/layout-experiments/3d-map-div-ON.png" alt="The scatter/divide layout experiment with axes, captions, and the Draft Horizon plane revealed" width="100%" />
       <br />
       <sub>Scatter/divide layout experiment, axes revealed</sub>
     </td>

@@ -64,57 +64,6 @@
       color: inherit;
     }
 
-    .top-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      padding: 10px 16px;
-      pointer-events: none;
-    }
-
-    .top-nav-inner {
-      width: max-content;
-      max-width: calc(100vw - 32px);
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.58);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
-      pointer-events: auto;
-      overflow-x: auto;
-    }
-
-    .top-nav-link {
-      flex: 0 0 auto;
-      padding: 8px 13px;
-      border-radius: 999px;
-      color: rgba(255, 255, 255, 0.82);
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition:
-        color 160ms ease,
-        background 160ms ease,
-        box-shadow 160ms ease;
-    }
-
-    .top-nav-link:hover,
-    .top-nav-link.active {
-      color: #fff;
-      background: var(--poppy-pink);
-      box-shadow: 0 0 18px rgba(255, 20, 71, 0.44);
-    }
-
     .page {
       min-height: 100vh;
       padding: calc(var(--nav-height) + 72px) 24px 64px;
@@ -189,25 +138,6 @@
       border-color: rgba(255, 255, 255, 0.42);
       background: var(--poppy-pink);
       box-shadow: 0 0 26px rgba(255, 20, 71, 0.48);
-    }
-
-    .content-note {
-      width: min(640px, 100%);
-      margin: 20px auto 0;
-      padding: 10px 20px;
-      border: 1px solid rgba(255, 20, 71, 0.3);
-      border-radius: 999px;
-      background: rgba(255, 20, 71, 0.09);
-      color: rgba(255, 255, 255, 0.68);
-      font-size: 12.5px;
-      line-height: 1.55;
-      letter-spacing: 0.01em;
-      text-shadow: 0 0 14px rgba(0, 0, 0, 0.7);
-    }
-
-    .content-note strong {
-      color: rgba(255, 255, 255, 0.9);
-      font-weight: 700;
     }
 
     .intro-shell {
@@ -293,15 +223,6 @@
         padding-right: 16px;
       }
 
-      .top-nav {
-        padding-left: 8px;
-        padding-right: 8px;
-      }
-
-      .top-nav-inner {
-        justify-content: flex-start;
-      }
-
       .intro-card {
         padding: 22px;
       }
@@ -310,11 +231,8 @@
 </head>
 
 <body>
-  <nav class="top-nav" aria-label="Main navigation">
-  <div class="top-nav-inner">
-    <a class="top-nav-link active" href="index.html">Home</a><a class="top-nav-link" href="about.html">About</a><a class="top-nav-link" href="2d_map.html">2D Map</a><a class="top-nav-link" href="3d_map.html">3D Map</a><a class="top-nav-link" href="https://inpoppyfields.tumblr.com/" target="_blank" rel="noopener">Tumblr Archive</a>
-  </div>
-</nav>
+  <script src="components/poppy-nav.js"></script>
+<poppy-nav></poppy-nav>
 
   <main class="page">
     <section class="hero">
@@ -325,17 +243,12 @@
         and suspiciously well-organized chaos.
       </p>
 
-      <p class="content-note">
-        <strong>Content note:</strong> Some stories in this archive contain violence,
-        graphic injury, death, body horror, grief, and other mature themes.
-      </p>
-
       <div class="actions">
         <button id="introToggle" class="button" type="button" aria-expanded="false" aria-controls="introPanel">
           Intro
         </button>
         <a class="button" href="2d_map.html">Enter 2D Map</a>
-        <a class="button" href="3d_map.html">Enter 3D Map</a>
+        <a class="button" href="3d_map_2.html">Enter 3D Map</a>
       </div>
 
       <div id="introPanel" class="intro-shell">

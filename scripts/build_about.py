@@ -18,11 +18,11 @@ from __future__ import annotations
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
-OUTPUT_HTML = ROOT / "about.html"
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parent
+OUTPUT_HTML = REPO_ROOT / "about.html"
 
 POPPY_PINK = "#FF1447"
-TUMBLR_ARCHIVE_URL = "https://inpoppyfields.tumblr.com/"
 BACKGROUND_IMAGE_URL = (
     "https://images.unsplash.com/photo-1569470451072-68314f596aec"
     "?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0"
@@ -63,34 +63,10 @@ def favicon_html() -> str:
 
 
 def make_nav(active: str) -> str:
-    items = [
-        ("Home", "index.html", "home"),
-        ("About", "about.html", "about"),
-        ("2D Map", "2d_map.html", "2d"),
-        ("3D Map", "3d_map.html", "3d"),
-        ("Tumblr Archive", TUMBLR_ARCHIVE_URL, "archive"),
-    ]
-
-    links: list[str] = []
-
-    for label, href, key in items:
-        active_class = " active" if key == active else ""
-        external_attrs = ""
-
-        if href.startswith("http"):
-            external_attrs = ' target="_blank" rel="noopener"'
-
-        links.append(
-            f'<a class="top-nav-link{active_class}" href="{href}"{external_attrs}>{label}</a>'
-        )
-
-    return f"""
-<nav class="top-nav" aria-label="Main navigation">
-  <div class="top-nav-inner">
-    {"".join(links)}
-  </div>
-</nav>
-""".strip()
+    # The shared <poppy-nav> component (components/poppy-nav.js) draws the bar
+    # and detects the current page itself, so `active` is no longer needed.
+    return """<script src="components/poppy-nav.js"></script>
+<poppy-nav></poppy-nav>"""
 
 
 def build_html() -> str:
@@ -163,57 +139,6 @@ def build_html() -> str:
       color: inherit;
     }}
 
-    .top-nav {{
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      padding: 10px 16px;
-      pointer-events: none;
-    }}
-
-    .top-nav-inner {{
-      width: max-content;
-      max-width: calc(100vw - 32px);
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.58);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 28px rgba(0, 0, 0, 0.42);
-      pointer-events: auto;
-      overflow-x: auto;
-    }}
-
-    .top-nav-link {{
-      flex: 0 0 auto;
-      padding: 8px 13px;
-      border-radius: 999px;
-      color: rgba(255, 255, 255, 0.82);
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition:
-        color 160ms ease,
-        background 160ms ease,
-        box-shadow 160ms ease;
-    }}
-
-    .top-nav-link:hover,
-    .top-nav-link.active {{
-      color: #fff;
-      background: var(--poppy-pink);
-      box-shadow: 0 0 18px rgba(255, 20, 71, 0.44);
-    }}
-
     .page {{
       min-height: 100vh;
       padding: calc(var(--nav-height) + 72px) 24px 72px;
@@ -238,25 +163,6 @@ def build_html() -> str:
         0 0 12px rgba(255, 20, 71, 0.68),
         0 0 36px rgba(255, 20, 71, 0.38),
         0 0 70px rgba(0, 0, 0, 0.92);
-    }}
-
-    .content-note {{
-      width: min(640px, 100%);
-      margin: 0 auto 24px;
-      padding: 10px 20px;
-      border: 1px solid rgba(255, 20, 71, 0.3);
-      border-radius: 999px;
-      background: rgba(255, 20, 71, 0.09);
-      color: rgba(255, 255, 255, 0.68);
-      font-size: 12.5px;
-      line-height: 1.55;
-      letter-spacing: 0.01em;
-      text-align: center;
-    }}
-
-    .content-note strong {{
-      color: rgba(255, 255, 255, 0.9);
-      font-weight: 700;
     }}
 
     .card {{
@@ -305,15 +211,6 @@ def build_html() -> str:
         padding-right: 16px;
       }}
 
-      .top-nav {{
-        padding-left: 8px;
-        padding-right: 8px;
-      }}
-
-      .top-nav-inner {{
-        justify-content: flex-start;
-      }}
-
       .card {{
         padding: 24px;
       }}
@@ -327,11 +224,6 @@ def build_html() -> str:
   <main class="page">
     <section class="shell">
       <h1 class="page-title">ABOUT</h1>
-
-      <p class="content-note">
-        <strong>Content note:</strong> Some stories in this archive contain violence,
-        graphic injury, death, body horror, grief, and other mature themes.
-      </p>
 
       <article class="card">
         {ABOUT_HTML}
