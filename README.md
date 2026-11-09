@@ -1,18 +1,10 @@
-<p align="center">
-  <img src="/screenshots/v1%20-%20cylinder/header.png" alt="A field of glowing multiverse nodes and nebulae drifting in space" width="100%" />
-</p>
-
 <table align="center" width="100%">
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/3d-map-plain.png" alt="The 3D map showing glowing story clusters" width="100%" />
-      <br />
-      <sub><strong>3D map</strong><br />Story nodes floating in space, colored by cluster.</sub>
+      <img src="/screenshots/misc/cover%201.png" alt="The Poppyverse 3D map, cover image 1" width="100%" />
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/3d-map-globe.png" alt="The 3D map with the Relativity / Relatability / Depth axes and connection lines revealed" width="100%" />
-      <br />
-      <sub><strong>3D map, "Show axes" enabled</strong><br />The same nodes with the axes, origin marker, and connection-link lines made visible.</sub>
+      <img src="/screenshots/misc/cover%202.png" alt="The Poppyverse 3D map, cover image 2" width="100%" />
     </td>
   </tr>
 </table>
@@ -177,7 +169,7 @@ Both concepts above show up together on a node's detail card — click any node 
 | `scripts/build_all.py` | Runs the complete active site build. It is the only script that calls Notion by default: it fetches both catalogues once and passes the rows to the 2D and 3D generators in memory |
 | `scripts/build_home.py` | Generates `index.html` |
 | `scripts/build_about.py` | Generates `about.html` |
-| `scripts/build_2d_map.py` | Generates the searchable 2D cluster catalogue from Notion |
+| `scripts/build_2d_map.py` | Generates the 2D cluster catalogue from Notion |
 | `scripts/build_3d_map_2.py` | Generates the cluster-ring 3D graph from Notion |
 | `scripts/poppyverse_notion.py` | Shared read-only Notion client and normalization layer |
 | `components/poppy-nav.js` | The shared top-navigation web component (links and styling), loaded by every page |
@@ -360,38 +352,50 @@ The 3D map's layout has been rebuilt more than once. These are snapshots from di
 <table align="center" width="100%">
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/3d-map-plain.png" alt="An early 3D map layout experiment" width="100%" />
+      <img src="/screenshots/layout-experiments/globe.png" alt="An early 3D map layout experiment" width="100%" />
       <br />
       <sub>Layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/3d-map-globe.png" alt="A spherical globe layout experiment with axes revealed" width="100%" />
+      <img src="/screenshots/layout-experiments/globe%20-%20axes.png" alt="A spherical globe layout experiment with axes revealed" width="100%" />
       <br />
       <sub>Spherical globe layout experiment, axes revealed</sub>
     </td>
   </tr>
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/3d-map-cube.png" alt="A cube-based layout experiment" width="100%" />
-      <br />
-      <sub>Cube layout experiment</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/3d-map-cube-ON.png" alt="The cube-based layout experiment with axes revealed" width="100%" />
-      <br />
-      <sub>Cube layout experiment, axes revealed</sub>
-    </td>
-  </tr>
-  <tr valign="top">
-    <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/3d-map-div.png" alt="A scatter layout experiment split by the publish-divide plane" width="100%" />
+      <img src="/screenshots/layout-experiments/plane.png" alt="A scatter layout experiment split by the publish-divide plane" width="100%" />
       <br />
       <sub>Scatter/divide layout experiment</sub>
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/layout-experiments/3d-map-div-ON.png" alt="The scatter/divide layout experiment with axes, captions, and the Draft Horizon plane revealed" width="100%" />
+      <img src="/screenshots/layout-experiments/plane%20-%20axes.png" alt="The scatter/divide layout experiment with axes, captions, and the Draft Horizon plane revealed" width="100%" />
       <br />
       <sub>Scatter/divide layout experiment, axes revealed</sub>
+    </td>
+  </tr>
+  <tr valign="top">
+    <td align="center" width="50%">
+      <img src="/screenshots/layout-experiments/cube.png" alt="A cube-based layout experiment" width="100%" />
+      <br />
+      <sub>Cube layout experiment</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="/screenshots/layout-experiments/cube%20-%20links.png" alt="The cube-based layout experiment with connection links shown" width="100%" />
+      <br />
+      <sub>Cube layout experiment, with connection links</sub>
+    </td>
+  </tr>
+  <tr valign="top">
+    <td align="center" width="50%">
+      <img src="/screenshots/v1%20-%20cylinder/axes-on.png" alt="The cylinder layout with its axes shown" width="100%" />
+      <br />
+      <sub>Cylinder layout, axes on</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="/screenshots/v1%20-%20cylinder/axes-off.png" alt="The cylinder layout with its axes hidden" width="100%" />
+      <br />
+      <sub>Cylinder layout, axes off</sub>
     </td>
   </tr>
 </table>
