@@ -4,14 +4,16 @@
 Sources of truth:
   - The Full Catalogue
   - The Cluster Catalogue
+  - The Character Catalogue
+  - The Crossover Catalogue
 
 Where NOTION_TOKEN comes from:
   1. In Notion, open Settings -> Connections and turn on Developer Mode.
   2. Open Personal access tokens, create a new internal connection, and copy
      its internal API/installation access token.
-  3. Open The Full Catalogue and The Cluster Catalogue in Notion and add that
-     connection to each database from its ... -> Connections menu. Read-only
-     content access is sufficient for this generator.
+  3. Open the Full, Cluster, Character, and Crossover catalogues in Notion and
+     add that connection to each database from its ... -> Connections menu.
+     Read-only content access is sufficient for this generator.
 
 Safe zsh/macOS setup (the token stays out of ordinary shell history):
   read -rs "NOTION_TOKEN?Paste Notion token: "
@@ -51,7 +53,9 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from poppyverse_notion import (
+    DEFAULT_CHARACTER_DATA_SOURCE,
     DEFAULT_CLUSTER_DATA_SOURCE,
+    DEFAULT_CROSSOVER_DATA_SOURCE,
     DEFAULT_FULL_DATA_SOURCE,
     EXCLUDED_CATALOG_IDS,
     EXCLUDED_TITLES,
@@ -850,6 +854,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT), help="Generated HTML path")
     parser.add_argument("--full-data-source", default=os.environ.get("NOTION_FULL_CATALOG_DATA_SOURCE_ID", DEFAULT_FULL_DATA_SOURCE))
     parser.add_argument("--cluster-data-source", default=os.environ.get("NOTION_CLUSTER_CATALOG_DATA_SOURCE_ID", DEFAULT_CLUSTER_DATA_SOURCE))
+    parser.add_argument("--character-data-source", default=os.environ.get("NOTION_CHARACTER_CATALOG_DATA_SOURCE_ID", DEFAULT_CHARACTER_DATA_SOURCE))
+    parser.add_argument("--crossover-data-source", default=os.environ.get("NOTION_CROSSOVER_CATALOG_DATA_SOURCE_ID", DEFAULT_CROSSOVER_DATA_SOURCE))
     parser.add_argument("--seed", type=int, default=20261108, help="Stable layout seed")
     parser.add_argument("--snapshot", help="Read catalogue rows as JSON from this file ('-' for stdin) instead of calling Notion; build_all.py uses this.")
     return parser.parse_args(argv)
@@ -861,7 +867,12 @@ def main(argv: list[str] | None = None) -> int:
         full_rows, cluster_rows = load_snapshot(args.snapshot)
     else:
         try:
-            full_rows, cluster_rows = fetch_catalogues(args.full_data_source, args.cluster_data_source)
+            full_rows, cluster_rows = fetch_catalogues(
+                args.full_data_source,
+                args.cluster_data_source,
+                args.character_data_source,
+                args.crossover_data_source,
+            )
         except NotionError as exc:
             raise SystemExit(f"Notion fetch failed: {exc}") from None
 

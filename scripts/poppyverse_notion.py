@@ -24,6 +24,8 @@ from typing import Any
 
 DEFAULT_FULL_DATA_SOURCE = "3b599d3f-e3d2-8343-925a-879eb54fe721"
 DEFAULT_CLUSTER_DATA_SOURCE = "41199d3f-e3d2-8033-964b-000ba93df5fd"
+DEFAULT_CHARACTER_DATA_SOURCE = "c94a2642-84b7-4adf-906a-21e14968326b"
+DEFAULT_CROSSOVER_DATA_SOURCE = "27b0735f-abcd-4760-aaf8-44b96a84e5ca"
 NOTION_VERSION = "2026-03-11"
 
 # These catalogue records were deleted intentionally. Keeping their old IDs
@@ -272,14 +274,55 @@ class NotionClient:
         return [normalize_api_page(page) for page in rows]
 
 
+def relation_title_lookup(rows: list[dict[str, Any]], label: str) -> dict[str, str]:
+    """Return relation page ID -> public display title for a catalogue."""
+    lookup: dict[str, str] = {}
+    for row in rows:
+        page_id = clean_id(first(row, "__page_id", default=first(row, "__url")))
+        title = clean_display_text(first(row, "Name", default=""))
+        if page_id and title:
+            lookup[page_id] = title
+    if not lookup:
+        raise NotionError(f"The {label} query returned no titled rows.")
+    return lookup
+
+
+def resolve_relation_titles(
+    rows: list[dict[str, Any]],
+    property_name: str,
+    lookup: dict[str, str],
+) -> None:
+    """Replace Notion relation IDs with titles before data reaches a generator."""
+    unresolved: set[str] = set()
+    for row in rows:
+        if property_name not in row:
+            continue
+        titles: list[str] = []
+        for page_id in relation_ids(row[property_name]):
+            title = lookup.get(page_id)
+            if title:
+                titles.append(title)
+            else:
+                unresolved.add(page_id)
+        row[property_name] = titles
+    if unresolved:
+        sample = ", ".join(sorted(unresolved)[:5])
+        raise NotionError(
+            f"Could not resolve {len(unresolved)} {property_name} relation page(s) "
+            f"to catalogue titles: {sample}"
+        )
+
+
 def fetch_catalogues(
     full_data_source: str = DEFAULT_FULL_DATA_SOURCE,
     cluster_data_source: str = DEFAULT_CLUSTER_DATA_SOURCE,
+    character_data_source: str = DEFAULT_CHARACTER_DATA_SOURCE,
+    crossover_data_source: str = DEFAULT_CROSSOVER_DATA_SOURCE,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     token = os.environ.get("NOTION_TOKEN") or os.environ.get("NOTION_API_KEY")
     if not token:
         raise NotionError(
-            "Set NOTION_TOKEN to a Notion token with read access to both catalogues. "
+            "Set NOTION_TOKEN to a Notion token with read access to all four catalogues. "
             "See README.md for the safe zsh command."
         )
     client = NotionClient(token)
@@ -288,8 +331,22 @@ def fetch_catalogues(
     full_rows = client.query_data_source(full_data_source, "Full Catalogue")
     print("Fetching The Cluster Catalogue from Notion…", flush=True)
     cluster_rows = client.query_data_source(cluster_data_source, "Cluster Catalogue")
+    print("Fetching The Character Catalogue from Notion…", flush=True)
+    character_rows = client.query_data_source(character_data_source, "Character Catalogue")
+    print("Fetching The Crossover Catalogue from Notion…", flush=True)
+    crossover_rows = client.query_data_source(crossover_data_source, "Crossover Catalogue")
     if not full_rows:
         raise NotionError("The Full Catalogue query returned no rows; refusing to overwrite the map.")
     if not cluster_rows:
         raise NotionError("The Cluster Catalogue query returned no rows; refusing to overwrite the map.")
+    resolve_relation_titles(
+        full_rows,
+        "Characters",
+        relation_title_lookup(character_rows, "Character Catalogue"),
+    )
+    resolve_relation_titles(
+        full_rows,
+        "Canon crossovers",
+        relation_title_lookup(crossover_rows, "Crossover Catalogue"),
+    )
     return full_rows, cluster_rows

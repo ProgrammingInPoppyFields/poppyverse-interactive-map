@@ -29,7 +29,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from poppyverse_notion import (
+    DEFAULT_CHARACTER_DATA_SOURCE,
     DEFAULT_CLUSTER_DATA_SOURCE,
+    DEFAULT_CROSSOVER_DATA_SOURCE,
     DEFAULT_FULL_DATA_SOURCE,
     NotionError,
     fetch_catalogues,
@@ -72,6 +74,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=os.environ.get("NOTION_CLUSTER_CATALOG_DATA_SOURCE_ID", DEFAULT_CLUSTER_DATA_SOURCE),
         help="Cluster Catalogue data-source ID (or NOTION_CLUSTER_CATALOG_DATA_SOURCE_ID).",
     )
+    parser.add_argument(
+        "--character-data-source",
+        default=os.environ.get("NOTION_CHARACTER_CATALOG_DATA_SOURCE_ID", DEFAULT_CHARACTER_DATA_SOURCE),
+        help="Character Catalogue data-source ID (or NOTION_CHARACTER_CATALOG_DATA_SOURCE_ID).",
+    )
+    parser.add_argument(
+        "--crossover-data-source",
+        default=os.environ.get("NOTION_CROSSOVER_CATALOG_DATA_SOURCE_ID", DEFAULT_CROSSOVER_DATA_SOURCE),
+        help="Crossover Catalogue data-source ID (or NOTION_CROSSOVER_CATALOG_DATA_SOURCE_ID).",
+    )
     args = parser.parse_args(argv)
     # Validated by hand: argparse's `choices` rejects the empty default for nargs="*".
     unknown = [page for page in args.pages if page not in PAGES]
@@ -104,7 +116,12 @@ def main(argv: list[str] | None = None) -> int:
     snapshot: bytes | None = None
     if any(step.needs_notion for step in steps):
         try:
-            full_rows, cluster_rows = fetch_catalogues(args.full_data_source, args.cluster_data_source)
+            full_rows, cluster_rows = fetch_catalogues(
+                args.full_data_source,
+                args.cluster_data_source,
+                args.character_data_source,
+                args.crossover_data_source,
+            )
         except NotionError as exc:
             raise SystemExit(f"Notion fetch failed: {exc}") from None
         snapshot = json.dumps({"full": full_rows, "clusters": cluster_rows}).encode("utf-8")

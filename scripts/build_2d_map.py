@@ -22,7 +22,9 @@ from typing import Any
 from urllib.parse import quote, urlsplit, urlunsplit
 
 from poppyverse_notion import (
+    DEFAULT_CHARACTER_DATA_SOURCE,
     DEFAULT_CLUSTER_DATA_SOURCE,
+    DEFAULT_CROSSOVER_DATA_SOURCE,
     DEFAULT_FULL_DATA_SOURCE,
     EXCLUDED_CATALOG_IDS,
     EXCLUDED_TITLES,
@@ -257,6 +259,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT), help="Generated HTML path")
     parser.add_argument("--full-data-source", default=os.environ.get("NOTION_FULL_CATALOG_DATA_SOURCE_ID", DEFAULT_FULL_DATA_SOURCE))
     parser.add_argument("--cluster-data-source", default=os.environ.get("NOTION_CLUSTER_CATALOG_DATA_SOURCE_ID", DEFAULT_CLUSTER_DATA_SOURCE))
+    parser.add_argument("--character-data-source", default=os.environ.get("NOTION_CHARACTER_CATALOG_DATA_SOURCE_ID", DEFAULT_CHARACTER_DATA_SOURCE))
+    parser.add_argument("--crossover-data-source", default=os.environ.get("NOTION_CROSSOVER_CATALOG_DATA_SOURCE_ID", DEFAULT_CROSSOVER_DATA_SOURCE))
     parser.add_argument("--snapshot", help="Read catalogue rows as JSON from this file ('-' for stdin) instead of calling Notion; build_all.py uses this.")
     return parser.parse_args(argv)
 
@@ -264,7 +268,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     try:
-        full_rows, cluster_rows = load_snapshot(args.snapshot) if args.snapshot else fetch_catalogues(args.full_data_source, args.cluster_data_source)
+        full_rows, cluster_rows = load_snapshot(args.snapshot) if args.snapshot else fetch_catalogues(
+            args.full_data_source,
+            args.cluster_data_source,
+            args.character_data_source,
+            args.crossover_data_source,
+        )
     except NotionError as exc:
         raise SystemExit(f"Notion fetch failed: {exc}") from None
     data = build_map_data(full_rows, cluster_rows)

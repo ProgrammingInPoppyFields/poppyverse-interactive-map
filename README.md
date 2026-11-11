@@ -148,7 +148,7 @@ Both concepts above show up together on a node's detail card — click any node 
 
 | File | What it does |
 |---|---|
-| `scripts/build_all.py` | Runs the complete active site build. It is the only script that calls Notion by default: it fetches both catalogues once and passes the rows to the 2D and 3D generators in memory |
+| `scripts/build_all.py` | Runs the complete active site build. It is the only script that calls Notion by default: it fetches all four catalogues once and passes normalized rows to the 2D and 3D generators in memory |
 | `scripts/build_home.py` | Generates `index.html` |
 | `scripts/build_about.py` | Generates `about.html` |
 | `scripts/build_reading_guide.py` | Generates `reading_guide.html` |
@@ -165,10 +165,10 @@ You usually only need `build_all.py`.
 
 ## rebuilding the site
 
-`scripts/build_all.py` reads **The Full Catalogue** and **The Cluster Catalogue** from Notion once and hands the same rows to `scripts/build_2d_map.py` and `scripts/build_3d_map.py` over stdin (`--snapshot -`). Nothing is written to disk besides the finished HTML, so no intermediate CSV or JSON export is created or committed. Either map script can still be run on its own, in which case it fetches from Notion itself.
+`scripts/build_all.py` reads **The Full Catalogue**, **The Cluster Catalogue**, **The Character Catalogue**, and **The Crossover Catalogue** from Notion once and hands normalized rows to `scripts/build_2d_map.py` and `scripts/build_3d_map.py` over stdin (`--snapshot -`). Character and crossover relation IDs are resolved to their catalogue titles in memory before the maps are generated. Nothing is written to disk besides the finished HTML, so no intermediate CSV or JSON export is created or committed. Either map script can still be run on its own, in which case it fetches from Notion itself.
 
 Create a Notion connection or personal access token, grant it read access to
-both catalogue databases, then keep the token outside the repository:
+all four catalogue databases, then keep the token outside the repository:
 
 ```zsh
 read -rs "NOTION_TOKEN?Paste Notion token: "
@@ -183,12 +183,14 @@ of ordinary shell history. The builder uses Python's installed `certifi` CA
 bundle when available, reports every 100-row Notion page as it arrives, logs
 retry delays, and never prints the token.
 
-The two current data-source IDs are safe defaults in the script. They can be
+The four current data-source IDs are safe defaults in the script. They can be
 overridden without editing code:
 
 ```bash
 NOTION_FULL_CATALOG_DATA_SOURCE_ID="..." \
 NOTION_CLUSTER_CATALOG_DATA_SOURCE_ID="..." \
+NOTION_CHARACTER_CATALOG_DATA_SOURCE_ID="..." \
+NOTION_CROSSOVER_CATALOG_DATA_SOURCE_ID="..." \
 python3 scripts/build_3d_map.py --seed 20261108
 ```
 
