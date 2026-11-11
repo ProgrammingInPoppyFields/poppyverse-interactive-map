@@ -90,9 +90,10 @@ def build_html() -> str:
 
     .page {{
       min-height: 100vh;
-      padding: calc(var(--nav-height) + 72px) 24px 64px;
+      padding: calc(var(--nav-height) + clamp(28px, 7vh, 64px)) 24px 72px;
       display: grid;
-      place-items: center;
+      grid-template-columns: minmax(0, 1fr);
+      place-items: start center;
     }}
 
     .hero {{
@@ -104,7 +105,7 @@ def build_html() -> str:
       margin: 0;
       color: var(--poppy-pink);
       font-family: "Michroma", sans-serif;
-      font-size: clamp(38px, 8vw, 62px);
+      font-size: clamp(26px, 8vw, 62px);
       line-height: 1.05;
       letter-spacing: 0.055em;
       text-transform: uppercase;
@@ -164,12 +165,75 @@ def build_html() -> str:
       box-shadow: 0 0 26px rgba(255, 20, 71, 0.48);
     }}
 
+    .welcome {{
+      width: min(820px, 100%);
+      margin: clamp(36px, 6vh, 56px) auto 0;
+      padding: 34px 38px 32px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 26px;
+      background: rgba(7, 7, 13, 0.78);
+      backdrop-filter: blur(14px);
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.52),
+        0 0 28px rgba(255, 20, 71, 0.16);
+      text-align: left;
+    }}
+
+    .welcome p {{
+      margin: 0 0 14px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 16px;
+      line-height: 1.75;
+    }}
+
+    .welcome .lead {{
+      color: #fff;
+      font-size: clamp(18px, 2.1vw, 21px);
+      line-height: 1.55;
+    }}
+
+    .welcome strong {{
+      color: #fff;
+    }}
+
+    .welcome hr {{
+      margin: 22px 0 20px;
+      border: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+    }}
+
+    .reader-note {{
+      margin-top: 24px;
+      padding: 16px 20px 6px;
+      border-left: 3px solid var(--poppy-pink);
+      border-radius: 4px 14px 14px 4px;
+      background: rgba(255, 20, 71, 0.08);
+    }}
+
+    .reader-note .label {{
+      display: block;
+      margin-bottom: 6px;
+      color: var(--poppy-pink);
+      font-family: "Michroma", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }}
+
+    .reader-note p {{
+      font-size: 15px;
+      line-height: 1.7;
+    }}
+
     @media (max-width: 760px) {{
       .page {{
         padding-left: 16px;
         padding-right: 16px;
       }}
 
+      .welcome {{
+        padding: 24px 22px 20px;
+      }}
     }}
   </style>
 </head>
@@ -193,6 +257,20 @@ def build_html() -> str:
         <a class="button" href="3d_map.html">Enter 3D Map</a>
       </div>
 
+      <article class="welcome">
+        <p class="lead">Poppyverse is a long-running, experimental speculative-fiction multiverse about machines, memory, identity, intimacy, mortality, and realities that refuse to stay put.</p>
+        <p>Built one story at a time, it moves between workplace comedy, quiet grief, impossible crossovers, and the occasional branch that notices it is fictional.</p>
+
+        <hr />
+
+        <p><strong>Every story belongs to a universe</strong> with its own tone, characters, and corner of the lore.</p>
+        <p>Some remain comfortably inside it. Others reach across timelines, collide with alternate versions of familiar people, or become suspicious of the story containing them.</p>
+
+        <aside class="reader-note">
+          <span class="label">Reader note</span>
+          <p>The archive ranges from playful and tender to mature and intense. Individual content notes are provided for material that is especially direct, sustained, or graphic.</p>
+        </aside>
+      </article>
     </section>
   </main>
 </body>
