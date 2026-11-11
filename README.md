@@ -1,10 +1,10 @@
 <table align="center" width="100%">
   <tr valign="top">
     <td align="center" width="50%">
-      <img src="/screenshots/misc/cover-1.png" alt="The Poppyverse 3D map, cover image 1" width="100%" />
+      <img src="/screenshots/v2-rings/cover-1.png" alt="The Poppyverse 3D map, cover image 1" width="100%" />
     </td>
     <td align="center" width="50%">
-      <img src="/screenshots/misc/cover-2.png" alt="The Poppyverse 3D map, cover image 2" width="100%" />
+      <img src="/screenshots/v2-rings/cover-2.png" alt="The Poppyverse 3D map, cover image 2" width="100%" />
     </td>
   </tr>
 </table>
@@ -91,8 +91,7 @@ The four pages stay at the repo root because that is where their public GitHub P
 | `index.html`, `about.html`, `2d_map.html`, `3d_map_2.html` | The published pages (all generated) |
 | `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js`, `poppy-aurora.js` |
 | `scripts/` | The build scripts (run `build_all.py`) |
-| `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1-cylinder/` (the cylinder 3D map and its detail card), `v2-rings/` (3D Map 2.0), `misc/` (README cover images and home-screen shots) |
-| `docs/` | Technical notes, e.g. `3d-map-pipeline.html` |
+| `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1-cylinder/` (the cylinder 3D map and its detail card), `v2-rings/` (3D Map 2.0), `misc/` (home-screen shots and the original concept sketch) |
 | `archive/` | Unused leftovers (the `3d-force-graph` fork source); safe to ignore or delete |
 | `.github/`, `_config.yml`, `LICENSE`, `README.md` | Repo and GitHub Pages housekeeping |
 
