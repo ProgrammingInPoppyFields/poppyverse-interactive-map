@@ -9,7 +9,7 @@
  * The current page is detected from the URL, so no per-page setting is needed
  * (override with <poppy-nav active="2d"> if you ever have to). Edit NAV_ITEMS or
  * the styles below and every page that includes this file picks it up on its
- * next load, with no rebuild. That includes the frozen legacy 3d_map_1.html.
+ * next load, with no rebuild.
  *
  * Styling lives in a shadow root, so page CSS cannot break it. The pink accent
  * comes from the page's --poppy-pink (or --pink) variable if it defines one.
@@ -22,7 +22,6 @@
     ["Home", "index.html", "home"],
     ["About", "about.html", "about"],
     ["2D Map", "2d_map.html", "2d"],
-    ["3D Map 1.0", "3d_map_1.html", "3d1"],
     ["3D Map 2.0", "3d_map_2.html", "3d2"],
   ];
 

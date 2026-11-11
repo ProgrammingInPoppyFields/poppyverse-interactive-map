@@ -81,49 +81,32 @@ The generated HTML files are outputs, not the source of truth.
 | `about.html` | About H.A.H., GenAI usage, and lucid generation |
 | `2d_map.html` | Cluster-card dashboard with story and character metadata |
 | `3d_map_2.html` | Cluster-ring 3D relationship graph using Three.js and `3d-force-graph` (3D Map 2.0) |
-| `3d_map_1.html` | **3D Map 1.0: a static, frozen archive page. Do not disturb.** See [3D Map 1.0 (legacy archive)](#3d-map-10-legacy-archive) below |
 
 ### Repository layout
 
-The five pages stay at the repo root because that is where their public GitHub Pages URLs come from. Everything else lives in a folder:
+The four pages stay at the repo root because that is where their public GitHub Pages URLs come from. Everything else lives in a folder:
 
 | Path | What's in it |
 |---|---|
-| `index.html`, `about.html`, `2d_map.html`, `3d_map_2.html`, `3d_map_1.html` | The published pages (generated, except the frozen `3d_map_1.html`) |
+| `index.html`, `about.html`, `2d_map.html`, `3d_map_2.html` | The published pages (all generated) |
 | `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js`, `poppy-aurora.js` |
-| `scripts/` | The build scripts (run `build_all.py`); `scripts/old/` holds the retired 3D Map 1.0 generator |
+| `scripts/` | The build scripts (run `build_all.py`) |
 | `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1-cylinder/` (the cylinder 3D map and its detail card), `v2-rings/` (3D Map 2.0), `misc/` (README cover images and home-screen shots) |
 | `docs/` | Technical notes, e.g. `3d-map-pipeline.html` |
 | `archive/` | Unused leftovers (the `3d-force-graph` fork source); safe to ignore or delete |
 | `.github/`, `_config.yml`, `LICENSE`, `README.md` | Repo and GitHub Pages housekeeping |
 
-All pages share the same top navigation, a `<poppy-nav>` web component declared once in `components/poppy-nav.js`. Each page just includes the script and the tag; the component works out the current page from the URL. Edit that one file to change the menu everywhere, with no rebuild needed (even the frozen legacy page picks it up):
+All pages share the same top navigation, a `<poppy-nav>` web component declared once in `components/poppy-nav.js`. Each page just includes the script and the tag; the component works out the current page from the URL. Edit that one file to change the menu everywhere, with no rebuild needed:
 
 - Home
 - About
 - 2D Map
-- 3D Map 1.0
 - 3D Map 2.0
 
 The story/cluster detail card is a second shared component, `<poppy-card>` in `components/poppy-card.js`. The 3D map's side drawer uses the full card, and the 2D map's mobile story list uses its `variant="compact"` form. A page gives it data from JavaScript (`card.data = { title, badge, color, sections: [...] }`); the file's header comment documents the format and the `close` and `chip-select` events. Change the card's look or fields there once and both maps follow after a rebuild of the page that supplies the data. The two maps' generators still decide which fields each page passes in.
 
 The home and About pages share a third component, `<poppy-aurora>` in `components/poppy-aurora.js`: slowly drifting, fuzzy colour blobs painted with additive blending so overlaps glow. Drop `<poppy-aurora></poppy-aurora>` in as the first thing in `<body>`; it fixes itself behind the page. Optional attributes: `count`, `speed`, `intensity`, `scale` (documented at the top of the file). It draws one still frame for visitors who prefer reduced motion. The page's `<body>` must not have its own opaque background, or it will cover the layer.
 
-### 3D Map 1.0 (legacy archive)
-
-> **`3d_map_1.html` is a static, frozen archive of the original 3D map. Leave it alone.**
->
-> - It is **not** generated from Notion and is **not** part of the normal build: `scripts/build_all.py` never touches it, and it has no page name to rebuild.
-> - Its data is a fixed snapshot of the retired CSVs, baked into the file. Changes to the Notion catalogues will never show up in it, and that is intentional.
-> - Don't hand-edit it either. The shared menu (`components/poppy-nav.js`) is the only thing that updates it, and that happens automatically.
->
-> **If you really, truly want to rebuild it**, run this from the repo root:
->
-> ```bash
-> python3 scripts/old/build_3d_map_1.py
-> ```
->
-> That reads `scripts/old/SRC_toc.csv` and `scripts/old/SRC_clusters.csv` (not Notion) and **overwrites** `3d_map_1.html` in place, and the CSVs are older than the current catalogue. Commit or back up the existing page first if you might want it back.
 
 ---
 
@@ -133,8 +116,6 @@ The home and About pages share a third component, `<poppy-aurora>` in `component
 |---|---|
 | **The Cluster Catalogue** | Cluster names, descriptions, colors, cover images, order, and cluster connections |
 | **The Full Catalogue** | Story entries, characters, relationships, descriptions, public URLs, status, and manuscript byte counts |
-
-The retired CSV snapshots are kept only in `scripts/old/` for archaeology. Active generators never read them.
 
 ---
 
@@ -175,7 +156,6 @@ Both concepts above show up together on a node's detail card — click any node 
 | `components/poppy-nav.js` | The shared top-navigation web component (links and styling), loaded by every page |
 | `components/poppy-card.js` | The shared story/cluster detail card web component, loaded by the 2D and 3D 2.0 maps |
 | `components/poppy-aurora.js` | The animated glowing-blobs background (`<poppy-aurora>`), loaded by the home and About pages |
-| `scripts/old/` | Retired CSVs and the original 3D generator (`build_3d_map_1.py`, which writes the frozen `3d_map_1.html`); never run by `build_all.py`. See [3D Map 1.0 (legacy archive)](#3d-map-10-legacy-archive) before touching it |
 
 You usually only need `build_all.py`.
 
