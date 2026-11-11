@@ -22,7 +22,7 @@
     ["Home", "index.html", "home"],
     ["About", "about.html", "about"],
     ["2D Map", "2d_map.html", "2d"],
-    ["3D Map 2.0", "3d_map_2.html", "3d2"],
+    ["3D Map", "3d_map.html", "3d"],
   ];
 
   const STYLE = `

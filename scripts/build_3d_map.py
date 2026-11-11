@@ -17,7 +17,7 @@ Safe zsh/macOS setup (the token stays out of ordinary shell history):
   read -rs "NOTION_TOKEN?Paste Notion token: "
   echo
   export NOTION_TOKEN
-  python3 -u scripts/build_3d_map_2.py
+  python3 -u scripts/build_3d_map.py
   unset NOTION_TOKEN
 
 `read -rs` stores the pasted text in the shell variable without displaying it.
@@ -70,7 +70,7 @@ from poppyverse_notion import (
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
-DEFAULT_OUTPUT = REPO_ROOT / "3d_map_2.html"
+DEFAULT_OUTPUT = REPO_ROOT / "3d_map.html"
 POPPY_PINK = "#FF1447"
 DEFAULT_NODE_BYTES = 100_000
 NODE_SIZE_REFERENCE_BYTES = 16_000
@@ -513,7 +513,7 @@ HTML_TEMPLATE = r'''<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>POPPYVERSE 3D MAP 2.0</title>
+  <title>POPPYVERSE 3D MAP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
@@ -848,7 +848,7 @@ def build_html(data: dict[str, Any]) -> str:
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Build 3d_map_2.html directly from the Poppyverse Notion catalogues.")
+    parser = argparse.ArgumentParser(description="Build 3d_map.html directly from the Poppyverse Notion catalogues.")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT), help="Generated HTML path")
     parser.add_argument("--full-data-source", default=os.environ.get("NOTION_FULL_CATALOG_DATA_SOURCE_ID", DEFAULT_FULL_DATA_SOURCE))
     parser.add_argument("--cluster-data-source", default=os.environ.get("NOTION_CLUSTER_CATALOG_DATA_SOURCE_ID", DEFAULT_CLUSTER_DATA_SOURCE))

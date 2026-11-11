@@ -8,7 +8,7 @@ Output:
 This is the GitHub Pages landing page.
 The actual maps live at:
 - 2d_map.html
-- 3d_map_2.html
+- 3d_map.html
 """
 
 from __future__ import annotations
@@ -314,7 +314,7 @@ def build_html() -> str:
           Intro
         </button>
         <a class="button" href="2d_map.html">Enter 2D Map</a>
-        <a class="button" href="3d_map_2.html">Enter 3D Map</a>
+        <a class="button" href="3d_map.html">Enter 3D Map</a>
       </div>
 
       <div id="introPanel" class="intro-shell">

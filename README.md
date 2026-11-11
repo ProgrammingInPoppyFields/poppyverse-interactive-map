@@ -80,7 +80,7 @@ The generated HTML files are outputs, not the source of truth.
 | `index.html` | Splash page and site entrance |
 | `about.html` | About H.A.H., GenAI usage, and lucid generation |
 | `2d_map.html` | Cluster-card dashboard with story and character metadata |
-| `3d_map_2.html` | Cluster-ring 3D relationship graph using Three.js and `3d-force-graph` (3D Map 2.0) |
+| `3d_map.html` | Cluster-ring 3D relationship graph using Three.js and `3d-force-graph` |
 
 ### Repository layout
 
@@ -88,10 +88,10 @@ The four pages stay at the repo root because that is where their public GitHub P
 
 | Path | What's in it |
 |---|---|
-| `index.html`, `about.html`, `2d_map.html`, `3d_map_2.html` | The published pages (all generated) |
+| `index.html`, `about.html`, `2d_map.html`, `3d_map.html` | The published pages (all generated) |
 | `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js`, `poppy-aurora.js` |
 | `scripts/` | The build scripts (run `build_all.py`) |
-| `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1-cylinder/` (the cylinder 3D map and its detail card), `v2-rings/` (3D Map 2.0), `misc/` (home-screen shots and the original concept sketch) |
+| `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1-cylinder/` (the cylinder 3D map and its detail card), `v2-rings/` (the cluster-ring map), `misc/` (home-screen shots and the original concept sketch) |
 | `archive/` | Unused leftovers (the `3d-force-graph` fork source); safe to ignore or delete |
 | `.github/`, `_config.yml`, `LICENSE`, `README.md` | Repo and GitHub Pages housekeeping |
 
@@ -100,7 +100,7 @@ All pages share the same top navigation, a `<poppy-nav>` web component declared 
 - Home
 - About
 - 2D Map
-- 3D Map 2.0
+- 3D Map
 
 The story/cluster detail card is a second shared component, `<poppy-card>` in `components/poppy-card.js`. The 3D map's side drawer uses the full card, and the 2D map's mobile story list uses its `variant="compact"` form. A page gives it data from JavaScript (`card.data = { title, badge, color, sections: [...] }`); the file's header comment documents the format and the `close` and `chip-select` events. Change the card's look or fields there once and both maps follow after a rebuild of the page that supplies the data. The two maps' generators still decide which fields each page passes in.
 
@@ -120,7 +120,7 @@ The home and About pages share a third component, `<poppy-aurora>` in `component
 
 ## the current 3D model
 
-`3d_map_2.html` treats clusters as large spatial rings and places their child stories throughout a three-dimensional volume around each ring. Ring size follows the combined manuscript byte count. Story volume follows manuscript size, while entries without a byte count receive a substantial default.
+`3d_map.html` treats clusters as large spatial rings and places their child stories throughout a three-dimensional volume around each ring. Ring size follows the combined manuscript byte count. Story volume follows manuscript size, while entries without a byte count receive a substantial default.
 
 Story-to-story, story-to-cluster, cluster-to-story, and cluster-to-cluster relationships are rendered as straight links. Published stories receive a planetary ring; intros, e-books, and trailers use distinct shapes described in the map legend. The seeded layout is reproducible.
 
@@ -132,12 +132,12 @@ The faint lines connecting nodes and cluster rings are authored through the Full
 
 > **CONNECTION:** A connection defines a relationship between 2 stories where characters, timelines, or alternate versions of the same people from separate universes come into direct contact and begin affecting one another. Less "special crossover episode," more "the walls between realities have failed inspection."
 
-Both concepts above show up together on a node's detail card — click any node on `3d_map_2.html` or `2d_map.html` to open it:
+Both concepts above show up together on a node's detail card — click any node on `3d_map.html` or `2d_map.html` to open it:
 
 <p align="center">
-  <img src="/screenshots/v2-rings/detail-card-open.png" alt="3D Map 2.0 with a story's detail card open on the right, showing its description, details, characters, connections, and content link" width="800" />
+  <img src="/screenshots/v2-rings/detail-card-open.png" alt="The 3D map with a story's detail card open on the right, showing its description, details, characters, connections, and content link" width="800" />
   <br />
-  <sub>A story's detail card in 3D Map 2.0, populated from normalized catalogue metadata.</sub>
+  <sub>A story's detail card on the 3D map, populated from normalized catalogue metadata.</sub>
 </p>
 
 ---
@@ -150,7 +150,7 @@ Both concepts above show up together on a node's detail card — click any node 
 | `scripts/build_home.py` | Generates `index.html` |
 | `scripts/build_about.py` | Generates `about.html` |
 | `scripts/build_2d_map.py` | Generates the 2D cluster catalogue from Notion |
-| `scripts/build_3d_map_2.py` | Generates the cluster-ring 3D graph from Notion |
+| `scripts/build_3d_map.py` | Generates the cluster-ring 3D graph from Notion |
 | `scripts/poppyverse_notion.py` | Shared read-only Notion client and normalization layer |
 | `components/poppy-nav.js` | The shared top-navigation web component (links and styling), loaded by every page |
 | `components/poppy-card.js` | The shared story/cluster detail card web component, loaded by the 2D and 3D 2.0 maps |
@@ -162,7 +162,7 @@ You usually only need `build_all.py`.
 
 ## rebuilding the site
 
-`scripts/build_all.py` reads **The Full Catalogue** and **The Cluster Catalogue** from Notion once and hands the same rows to `scripts/build_2d_map.py` and `scripts/build_3d_map_2.py` over stdin (`--snapshot -`). Nothing is written to disk besides the finished HTML, so no intermediate CSV or JSON export is created or committed. Either map script can still be run on its own, in which case it fetches from Notion itself.
+`scripts/build_all.py` reads **The Full Catalogue** and **The Cluster Catalogue** from Notion once and hands the same rows to `scripts/build_2d_map.py` and `scripts/build_3d_map.py` over stdin (`--snapshot -`). Nothing is written to disk besides the finished HTML, so no intermediate CSV or JSON export is created or committed. Either map script can still be run on its own, in which case it fetches from Notion itself.
 
 Create a Notion connection or personal access token, grant it read access to
 both catalogue databases, then keep the token outside the repository:
@@ -186,7 +186,7 @@ overridden without editing code:
 ```bash
 NOTION_FULL_CATALOG_DATA_SOURCE_ID="..." \
 NOTION_CLUSTER_CATALOG_DATA_SOURCE_ID="..." \
-python3 scripts/build_3d_map_2.py --seed 20261108
+python3 scripts/build_3d_map.py --seed 20261108
 ```
 
 The seed makes the random cluster and story placement reproducible. Change it
@@ -233,7 +233,7 @@ This regenerates:
 index.html
 about.html
 2d_map.html
-3d_map_2.html
+3d_map.html
 ```
 
 The normal update flow is:
@@ -309,7 +309,7 @@ The primary generated pages live beside it:
 /index.html
 /about.html
 /2d_map.html
-/3d_map_2.html
+/3d_map.html
 ```
 
 Do not hand-edit the generated HTML unless you enjoy losing those changes the next time the build runs. Update Notion or the generator scripts instead.

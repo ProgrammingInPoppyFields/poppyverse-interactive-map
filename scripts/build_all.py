@@ -7,7 +7,7 @@ Usage (from the repo root):
   python3 -u scripts/build_all.py 2d 3d        # only the 2D and 3D maps
   python3 -u scripts/build_all.py home about   # only the static pages
 
-Pages: home, about, 2d, 3d (3d = 3d_map_2.html).
+Pages: home, about, 2d, 3d (3d = 3d_map.html).
 
 This script is the only place that talks to Notion. It fetches The Full
 Catalogue and The Cluster Catalogue once, then hands the same rows to the 2D
@@ -92,8 +92,8 @@ def main(argv: list[str] | None = None) -> int:
         steps.append(Step("2D map", "build_2d_map.py", "2d_map.html",
                           ("--output", str(REPO_ROOT / "2d_map.html")), needs_notion=True))
     if "3d" in wanted:
-        steps.append(Step("3D map 2.0", "build_3d_map_2.py", "3d_map_2.html",
-                          ("--output", str(REPO_ROOT / "3d_map_2.html"), "--seed", str(args.seed)),
+        steps.append(Step("3D map", "build_3d_map.py", "3d_map.html",
+                          ("--output", str(REPO_ROOT / "3d_map.html"), "--seed", str(args.seed)),
                           needs_notion=True))
 
     print(f"Building Poppyverse in {REPO_ROOT}", flush=True)
