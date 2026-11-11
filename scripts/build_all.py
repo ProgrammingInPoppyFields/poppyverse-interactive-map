@@ -7,7 +7,7 @@ Usage (from the repo root):
   python3 -u scripts/build_all.py 2d 3d        # only the 2D and 3D maps
   python3 -u scripts/build_all.py home about   # only the static pages
 
-Pages: home, about, 2d, 3d (3d = 3d_map.html).
+Pages: home, about, guide, 2d, 3d (guide = reading_guide.html, 3d = 3d_map.html).
 
 This script is the only place that talks to Notion. It fetches The Full
 Catalogue and The Cluster Catalogue once, then hands the same rows to the 2D
@@ -40,7 +40,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
 
 
-PAGES = ("home", "about", "2d", "3d")
+PAGES = ("home", "about", "guide", "2d", "3d")
 
 
 @dataclass(frozen=True)
@@ -88,6 +88,8 @@ def main(argv: list[str] | None = None) -> int:
         steps.append(Step("Home", "build_home.py", "index.html"))
     if "about" in wanted:
         steps.append(Step("About", "build_about.py", "about.html"))
+    if "guide" in wanted:
+        steps.append(Step("Reading guide", "build_reading_guide.py", "reading_guide.html"))
     if "2d" in wanted:
         steps.append(Step("2D map", "build_2d_map.py", "2d_map.html",
                           ("--output", str(REPO_ROOT / "2d_map.html")), needs_notion=True))

@@ -26,13 +26,6 @@ ABOUT_HTML = """
 <p>H.A.H is the pseudonym of this blog&rsquo;s author.<br /> By daylight: a product designer + engineer.<br /> By starlight: the kind of person who dreams of programming 30-foot mechs optimized for emotional support, deadpan sarcasm, and the occasional high-yield detonation.</p>
 <p>And yes, H.A.H sounds suspiciously like a rogue comedy AI having an identity crisis.<br /> This is not entirely a coincidence.</p>
 
-<h2>What the hell is <em>lucid generation?</em></h2>
-<p>A dramatic name for a pretty simple process:</p>
-<p>The machine generates.<br /> The human stays awake.</p>
-<p>Nothing here runs on autopilot. Ideas get prompted, redirected, rejected, rewritten, stitched together, contradicted, resurrected, and occasionally dragged back from somewhere deeply stupid.</p>
-<p>It&rsquo;s less &ldquo;press button, receive story&rdquo; and more an ongoing conversation with a machine that is very good at pattern-making and has absolutely no idea why any of this matters.</p>
-<p>That part is still the human&rsquo;s job.</p>
-<p>So: guided hallucination.<br /> With fingerprints.<br /> And somebody still awake in the middle of it.</p>
 """.strip()
 
 

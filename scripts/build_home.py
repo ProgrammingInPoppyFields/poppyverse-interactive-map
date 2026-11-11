@@ -23,47 +23,6 @@ OUTPUT_HTML = REPO_ROOT / "index.html"
 POPPY_PINK = "#FF1447"
 
 
-INTRO_HTML = """
-<h1>Welcome to the Poppyverse</h1>
-<p>A collection of stories set across a quantum multiverse framework, characterized primarily by narrative inconsistency, emotional damage, and a complete disregard for traditional storytelling structure.</p>
-<p><strong>Disclaimer:</strong> Table of Content titles won&rsquo;t always match post titles. This is a work in progress. Confusion is part of the experience.</p>
-<hr />
-<h1>Suggested Reading Logic</h1>
-<p><em>A non-binding attempt at structural clarity</em></p>
-<h2>p# &rarr; Progressive Thread</h2>
-<p>Indicates chronological sequence. Used when a story pretends to follow linear causality. Read in order. Pretend it matters.</p>
-<ul>
-<li><strong>p1</strong> &rarr; the mech sneezes</li>
-<li><strong>p2</strong> &rarr; the mech then dies heroically in a sandwich fire</li>
-</ul>
-<h2>v# &rarr; Narrative Variant</h2>
-<p>Alternate versions of the same key event. May differ by perspective, tone, emotional damage, or ethical collapse. Choose your fighter.</p>
-<ul>
-<li><strong>v1</strong> &rarr; everyone survives but hates each other</li>
-<li><strong>v2</strong> &rarr; everyone dies but hugs first</li>
-</ul>
-<h2>(no prefix) &rarr; Wildcard Unit</h2>
-<p>Independent entry. Possibly self-contained. Possibly entangled with eight other entries via an anomalous IKEA desk and one very specific trauma response.</p>
-<ul>
-<li>postmortem dog walk</li>
-<li>emotional tax fraud</li>
-</ul>
-<p>All timelines are canon.<br /> Even the ones that mutually invalidate each other.<br /> Especially those.</p>
-<hr />
-<h1>Extra: Story Music (Optional, but Highly Recommended)</h1>
-<p>Some stories include a YouTube track. Totally optional. But if you want a vibe assist:</p>
-<ul>
-<li>Click the link.</li>
-<li>Let the music play for a few seconds.</li>
-<li>Read on with the soundtrack running.</li>
-</ul>
-<p>We&rsquo;re not saying it&rsquo;ll change your life. But it might hit harder with a haunting piano or a slow-burn synth humming in your ears. Consider it mood lighting for your soul.</p>
-<hr />
-<h1>Final Notes</h1>
-<p>Confused? Good. You&rsquo;re supposed to be. That&rsquo;s how you know it&rsquo;s working.</p>
-<p>Please enjoy your descent. And remember: it&rsquo;s not a contradiction, it&rsquo;s a multiverse.</p>
-""".strip()
-
 
 def favicon_html() -> str:
     return """
@@ -205,92 +164,12 @@ def build_html() -> str:
       box-shadow: 0 0 26px rgba(255, 20, 71, 0.48);
     }}
 
-    .intro-shell {{
-      width: min(920px, 100%);
-      margin: 28px auto 0;
-      display: none;
-      text-align: left;
-    }}
-
-    .intro-shell.open {{
-      display: block;
-      animation: introDrop 220ms ease both;
-    }}
-
-    .intro-card {{
-      padding: 28px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 24px;
-      background: rgba(7, 7, 13, 0.78);
-      backdrop-filter: blur(14px);
-      box-shadow:
-        0 24px 80px rgba(0, 0, 0, 0.52),
-        0 0 28px rgba(255, 20, 71, 0.16);
-    }}
-
-    .intro-card h1,
-    .intro-card h2 {{
-      font-family: "Michroma", sans-serif;
-      line-height: 1.2;
-      text-transform: uppercase;
-    }}
-
-    .intro-card h1 {{
-      margin: 0 0 14px;
-      color: var(--poppy-pink);
-      font-size: 24px;
-      letter-spacing: 0.08em;
-    }}
-
-    .intro-card h2 {{
-      margin: 26px 0 10px;
-      color: #fff;
-      font-size: 16px;
-      letter-spacing: 0.06em;
-    }}
-
-    .intro-card p,
-    .intro-card li {{
-      color: rgba(255, 255, 255, 0.83);
-      font-size: 15px;
-      line-height: 1.7;
-    }}
-
-    .intro-card p {{
-      margin: 0 0 14px;
-    }}
-
-    .intro-card ul {{
-      margin: 8px 0 18px 22px;
-      padding: 0;
-    }}
-
-    .intro-card hr {{
-      margin: 28px 0;
-      border: 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.16);
-    }}
-
-    @keyframes introDrop {{
-      from {{
-        opacity: 0;
-        transform: translateY(-8px);
-      }}
-      to {{
-        opacity: 1;
-        transform: translateY(0);
-      }}
-    }}
-
     @media (max-width: 760px) {{
       .page {{
         padding-left: 16px;
         padding-right: 16px;
       }}
 
-      .intro-card {{
-        padding: 22px;
-      }}
     }}
   </style>
 </head>
@@ -310,33 +189,13 @@ def build_html() -> str:
       </p>
 
       <div class="actions">
-        <button id="introToggle" class="button" type="button" aria-expanded="false" aria-controls="introPanel">
-          Intro
-        </button>
+        <a class="button" href="reading_guide.html">Reading Guide</a>
         <a class="button" href="2d_map.html">Enter 2D Map</a>
         <a class="button" href="3d_map.html">Enter 3D Map</a>
       </div>
 
-      <div id="introPanel" class="intro-shell">
-        <article class="intro-card">
-          {INTRO_HTML}
-        </article>
-      </div>
     </section>
   </main>
-
-  <script>
-    "use strict";
-
-    const introToggle = document.getElementById("introToggle");
-    const introPanel = document.getElementById("introPanel");
-
-    introToggle.addEventListener("click", () => {{
-      const isOpen = introPanel.classList.toggle("open");
-      introToggle.setAttribute("aria-expanded", String(isOpen));
-      introToggle.textContent = isOpen ? "Hide Intro" : "Intro";
-    }});
-  </script>
 </body>
 </html>
 """

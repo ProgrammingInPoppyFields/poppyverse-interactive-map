@@ -78,17 +78,18 @@ The generated HTML files are outputs, not the source of truth.
 | Page | What it is |
 |---|---|
 | `index.html` | Splash page and site entrance |
-| `about.html` | About H.A.H., GenAI usage, and lucid generation |
+| `about.html` | About H.A.H. |
+| `reading_guide.html` | Reading Guide: the suggested reading logic (progressive threads, variants, wildcards) and story-music tips, formerly the home page's Intro |
 | `2d_map.html` | Cluster-card dashboard with story and character metadata |
 | `3d_map.html` | Cluster-ring 3D relationship graph using Three.js and `3d-force-graph` |
 
 ### Repository layout
 
-The four pages stay at the repo root because that is where their public GitHub Pages URLs come from. Everything else lives in a folder:
+The five pages stay at the repo root because that is where their public GitHub Pages URLs come from. Everything else lives in a folder:
 
 | Path | What's in it |
 |---|---|
-| `index.html`, `about.html`, `2d_map.html`, `3d_map.html` | The published pages (all generated) |
+| `index.html`, `about.html`, `reading_guide.html`, `2d_map.html`, `3d_map.html` | The published pages (all generated) |
 | `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js`, `poppy-aurora.js` |
 | `scripts/` | The build scripts (run `build_all.py`) |
 | `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1-cylinder/` (the cylinder 3D map and its detail card), `v2-rings/` (the cluster-ring map), `misc/` (home-screen shots and the original concept sketch) |
@@ -99,6 +100,7 @@ All pages share the same top navigation, a `<poppy-nav>` web component declared 
 
 - Home
 - About
+- Reading Guide
 - 2D Map
 - 3D Map
 
@@ -149,6 +151,7 @@ Both concepts above show up together on a node's detail card — click any node 
 | `scripts/build_all.py` | Runs the complete active site build. It is the only script that calls Notion by default: it fetches both catalogues once and passes the rows to the 2D and 3D generators in memory |
 | `scripts/build_home.py` | Generates `index.html` |
 | `scripts/build_about.py` | Generates `about.html` |
+| `scripts/build_reading_guide.py` | Generates `reading_guide.html` |
 | `scripts/build_2d_map.py` | Generates the 2D cluster catalogue from Notion |
 | `scripts/build_3d_map.py` | Generates the cluster-ring 3D graph from Notion |
 | `scripts/poppyverse_notion.py` | Shared read-only Notion client and normalization layer |
@@ -232,6 +235,7 @@ This regenerates:
 ```text
 index.html
 about.html
+reading_guide.html
 2d_map.html
 3d_map.html
 ```
@@ -249,12 +253,12 @@ The normal update flow is:
 
 ## optional build shortcuts
 
-With no arguments `build_all.py` rebuilds everything. Name the pages you want and it rebuilds only those (`home`, `about`, `2d`, `3d`):
+With no arguments `build_all.py` rebuilds everything. Name the pages you want and it rebuilds only those (`home`, `about`, `guide`, `2d`, `3d`):
 
 ```bash
 python3 -u scripts/build_all.py 2d          # just the 2D map
 python3 -u scripts/build_all.py 2d 3d       # both maps
-python3 -u scripts/build_all.py home about  # static pages only (no Notion token needed)
+python3 -u scripts/build_all.py home about guide  # static pages only (no Notion token needed)
 ```
 
 Notion is only contacted when `2d` and/or `3d` is among the pages.
@@ -308,6 +312,7 @@ The primary generated pages live beside it:
 ```text
 /index.html
 /about.html
+/reading_guide.html
 /2d_map.html
 /3d_map.html
 ```

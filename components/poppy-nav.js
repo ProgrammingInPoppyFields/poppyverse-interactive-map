@@ -21,6 +21,7 @@
   const NAV_ITEMS = [
     ["Home", "index.html", "home"],
     ["About", "about.html", "about"],
+    ["Reading Guide", "reading_guide.html", "guide"],
     ["2D Map", "2d_map.html", "2d"],
     ["3D Map", "3d_map.html", "3d"],
   ];
