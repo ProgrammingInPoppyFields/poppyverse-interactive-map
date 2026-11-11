@@ -90,22 +90,30 @@ def build_html() -> str:
 
     .page {{
       min-height: 100vh;
-      padding: calc(var(--nav-height) + clamp(28px, 7vh, 64px)) 24px 72px;
+      padding: calc(var(--nav-height) + 28px) clamp(20px, 5vw, 64px) calc(var(--nav-height) + 40px);
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      place-items: start center;
+      place-items: center;
     }}
 
     .hero {{
-      width: min(1080px, 100%);
-      text-align: center;
+      width: min(1180px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+      align-items: center;
+      gap: clamp(40px, 6.5vw, 96px);
+      text-align: left;
+    }}
+
+    .intro-left {{
+      min-width: 0;
     }}
 
     .title {{
       margin: 0;
       color: var(--poppy-pink);
       font-family: "Michroma", sans-serif;
-      font-size: clamp(26px, 8vw, 62px);
+      font-size: clamp(28px, 3.9vw, 58px);
       line-height: 1.05;
       letter-spacing: 0.055em;
       text-transform: uppercase;
@@ -116,8 +124,8 @@ def build_html() -> str:
     }}
 
     .subtitle {{
-      max-width: 760px;
-      margin: 22px auto 0;
+      max-width: 520px;
+      margin: 26px 0 0;
       color: var(--muted);
       font-size: clamp(15px, 1.7vw, 19px);
       line-height: 1.65;
@@ -127,7 +135,7 @@ def build_html() -> str:
     .actions {{
       margin-top: 34px;
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
@@ -166,9 +174,9 @@ def build_html() -> str:
     }}
 
     .welcome {{
-      width: min(820px, 100%);
-      margin: clamp(36px, 6vh, 56px) auto 0;
-      padding: 34px 38px 32px;
+      width: 100%;
+      margin: 0;
+      padding: 36px 40px 34px;
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 26px;
       background: rgba(7, 7, 13, 0.78);
@@ -225,10 +233,24 @@ def build_html() -> str:
       line-height: 1.7;
     }}
 
+    @media (max-width: 900px) {{
+      .hero {{
+        grid-template-columns: minmax(0, 1fr);
+        gap: 40px;
+      }}
+
+      .title {{
+        font-size: clamp(28px, 8vw, 50px);
+      }}
+
+      .page {{
+        place-items: start center;
+      }}
+    }}
+
     @media (max-width: 760px) {{
       .page {{
-        padding-left: 16px;
-        padding-right: 16px;
+        padding: calc(var(--nav-height) + 40px) 16px 56px;
       }}
 
       .welcome {{
@@ -245,6 +267,7 @@ def build_html() -> str:
 
   <main class="page">
     <section class="hero">
+      <div class="intro-left">
       <h1 class="title">WELCOME TO THE POPPYVERSE</h1>
 
       <p class="subtitle">
@@ -255,6 +278,7 @@ def build_html() -> str:
       <div class="actions">
         <a class="button" href="2d_map.html">Enter 2D Map</a>
         <a class="button" href="3d_map.html">Enter 3D Map</a>
+      </div>
       </div>
 
       <article class="welcome">
