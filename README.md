@@ -93,7 +93,7 @@ The five pages stay at the repo root because that is where their public GitHub P
 | `components/` | Shared web components loaded by the pages: `poppy-nav.js`, `poppy-card.js`, `poppy-aurora.js` |
 | `scripts/` | The build scripts (run `build_all.py`) |
 | `screenshots/` | Images, grouped by era: `early-prototype/` (first bounding-box 3D views), `layout-experiments/` (globe, cube and divide layouts), `v1-cylinder/` (the cylinder 3D map and its detail card), `v2-rings/` (the cluster-ring map), `misc/` (home-screen shots and the original concept sketch) |
-| `archive/` | Unused leftovers (the `3d-force-graph` fork source); safe to ignore or delete |
+| `archive/` | Unused leftovers (the `3d-force-graph` fork source, which keeps its own upstream `LICENSE`); safe to ignore or delete |
 | `.github/`, `_config.yml`, `LICENSE`, `README.md` | Repo and GitHub Pages housekeeping |
 
 All pages share the same top navigation, a `<poppy-nav>` web component declared once in `components/poppy-nav.js`. Each page just includes the script and the tag; the component works out the current page from the URL. Edit that one file to change the menu everywhere, with no rebuild needed:
