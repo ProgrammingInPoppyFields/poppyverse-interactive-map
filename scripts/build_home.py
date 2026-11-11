@@ -189,7 +189,6 @@ def build_html() -> str:
       </p>
 
       <div class="actions">
-        <a class="button" href="reading_guide.html">Reading Guide</a>
         <a class="button" href="2d_map.html">Enter 2D Map</a>
         <a class="button" href="3d_map.html">Enter 3D Map</a>
       </div>
